@@ -1,6 +1,7 @@
 import os
-# os.mkdir("tempfiles")
-print("Текущая деректория:", os.getcwd())
+os.chdir("crawler")
+os.mkdir("tempfiles")
 os.chdir("tempfiles")
-print("Текущая деректория:", os.getcwd())
 os.mkdir("result")
+os.chdir("result")
+open('result.json', 'w').close()

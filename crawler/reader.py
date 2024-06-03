@@ -1,10 +1,14 @@
 from pywebcopy import save_webpage
-from os import startfile
+from os import startfile, getcwd, chdir
 from json import dump
 import validators
 
 
+print("Текущая деректория:", getcwd())
+
+
 def getsite(siteurl):
+    chdir("crawler")
     startfile("filemaker.py")
     print("\033[1m\033[31m{}\033[0m".format(
         'ВНИМАНИЕ! Для корректной работы необходимо соединение с интернетом.'))
@@ -14,7 +18,8 @@ def getsite(siteurl):
         raise ValueError
     save_webpage(
         url=siteurl,
-        project_folder='/богдан/програмирование/Python/считывание базы данных/tempfiles',
+        project_folder='/богдан/програмирование/Python/КРОК 2024/' +
+        'ChGK-helper/crawler/tempfiles',
         project_name='site',
         bypass_robots=True,
         debug=True,
@@ -50,7 +55,7 @@ def finish(questions):
     startfile("filecleaner.py")
 
 
-# getsite('https://db.chgk.info/tour/quizbr3_u')
-finish(getrawquestions(getsite(
-    input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))))
+getsite(input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))
+# finish(getrawquestions(getsite(
+# input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))))
 # getrawquestions('quizbr3_u')
