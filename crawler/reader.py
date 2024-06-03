@@ -44,9 +44,11 @@ def getrawquestions(tourname):
     rawquestions = []
     while (site.find('<div class="question"') != -1):
         site = site[site.find('<div class="question"'):]
-        site = site[:site.find("</div>")] + site[te.find("</div>")+6:]
+        site = site[:site.find("</div>")] + site[site.find("</div>")+6:]
         raw_question = site[:site.find('</div>')]
         rawquestions.append(raw_question)
+    #
+    return rawquestions
 
 
 def finish(questions):
@@ -55,7 +57,7 @@ def finish(questions):
     startfile("filecleaner.py")
 
 
-getsite(input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))
-# finish(getrawquestions(getsite(
-# input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))))
+# getsite(input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))
+finish(getrawquestions(getsite(
+    input('Введите адрес страницы с вопросами (с сайта https://db.chgk.info): '))))
 # getrawquestions('quizbr3_u')
