@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+    postgresql-service:
+        image: postgres:latest
+        env_file:
+            - ./postgres-service/postgresql.env
+        restart: on-failure
+        expose:
+            - "5432:5432"
+        volumes:
+            - ./postgres-service/data:/var/lib/postgresql/data/pgdata
+            - ./postgres-service/postgres.conf:/etc/postgresql.conf
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d postgres"]
+            interval: 10s
+            timeout: 30s
+            retries: 5
+            start_period: 10s
+
+    postgresql-admin:
+        image: dpage/pgadmin4:7.2
+        env_file:
+            - path: ./postgres-admin-service/postgres-admin.env
+        volumes:
+            - ./postgres-admin-service/data:/var/lib/pgadmin
+        ports:
+            - "11000:80"
+        restart: unless-stopped
+        depends_on:
+            postgresql-service:
+                condition: service_healthy
+
+    nginx-service:
+        image: nginx:latest
+        ports:
+            - "11001:80"
+        restart: always
+        volumes:
+            - ./nginx-service/nginx.conf:/etc/nginx/conf.d/default.conf
+            - ./nginx-service/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx-service/sites-enabled:/etc/nginx/sites-enabled:ro
+            - ./nginx-service/ssl:/etc/nginx/ssl
+            - ./nginx-service/var/www:/var/www
+    
