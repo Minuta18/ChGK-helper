@@ -1,0 +1,6 @@
+nginx-service/sites-enabled/
+nginx-service/ssl/
+nginx-service/var/
+postgres-admin-tar/
+postgres-service/data/
+postgres-admin-service/data/
