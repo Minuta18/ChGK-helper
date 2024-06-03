@@ -3,7 +3,10 @@ from json import dump
 chdir("crawler")
 
 # kostyl_dlya_VScode = 'програмирование/Python/считывание базы данных/'  # это костыль
-tourname = open('tempfiles')
+tourname = 'dsgsdg'
+with open('tempfiles/link.txt', 'r') as l:
+    l2 = l.read()
+    tourname = l2[len('https://db.chgk.info/tour/'):]
 path = 'tempfiles/site/db.chgk.info/tour/' + tourname + '.html'
 site = ''
 with open(path, 'r') as s:
@@ -20,9 +23,8 @@ while (site.find('<div class="question"') != -1):
     raw_question = site[:site.find('</div>')]
     rawquestions.append(raw_question)
 #
-return rawquestions
 
 
 with open("result.json", 'w') as res:
-    res.dump(questions)
+    res.dump(rawquestions)
 startfile("filecleaner.py")
