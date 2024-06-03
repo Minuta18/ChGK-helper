@@ -1,4 +1,4 @@
-import os
-os.chdir("crawler")
-os.replace("tempfiles/result/result.json", "result.json")
-os.remove("tempfiles")
+from os import chdir, replace, remove
+chdir("crawler")
+replace("tempfiles/result/raw_result.json", "raw_result.json")
+# remove("tempfiles")

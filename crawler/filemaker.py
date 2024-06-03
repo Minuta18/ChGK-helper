@@ -1,7 +1,9 @@
-import os
-os.chdir("crawler")
-os.mkdir("tempfiles")
-os.chdir("tempfiles")
-os.mkdir("result")
-os.chdir("result")
-open('result.json', 'w').close()
+from os import chdir, mkdir
+chdir("crawler")
+mkdir("tempfiles")
+chdir("tempfiles")
+mkdir("result")
+chdir("result")
+open('raw_result.json', 'w').close()
+chdir('..')
+open('link.txt', 'w').close()
