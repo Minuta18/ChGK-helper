@@ -1,4 +1,6 @@
-from os import chdir, replace, remove
+from os import chdir, replace
+from shutil import rmtree
 chdir("crawler")
-replace("tempfiles/result/raw_result.json", "raw_result.json")
+replace("tempfiles/result/result.json", "result.json")
+rmtree("tempfiles")
 # remove("tempfiles")

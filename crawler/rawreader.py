@@ -1,10 +1,9 @@
 from json import dump
 from os import startfile, getcwd, chdir
-import soupsieve as bs  # beautiful soup 4
+import bs4 as bs  # beautiful soup 4
 chdir("crawler")
 
-# kostyl_dlya_VScode = 'програмирование/Python/считывание базы данных/'  # это костыль
-tourname = 'dsgsdg'
+tourname = ''
 with open('tempfiles/link.txt', 'r') as l:
     l2 = l.read()
     tourname = l2[len('https://db.chgk.info/tour/'):]
@@ -13,10 +12,7 @@ site = ''
 with open(path, 'r') as s:
     site = s.read()
 #
-rawquestions = []
+rawquestions = bs.BeautifulSoup(site, 'html.parser').select("div.question")
 #
-
-
-with open("result.json", 'w') as res:
-    res.dump(rawquestions)
-startfile("filecleaner.py")
+with open("raw_result.json", 'w') as rawres:
+    dump(rawres, rawquestions)
