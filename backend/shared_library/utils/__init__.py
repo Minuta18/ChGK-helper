@@ -1,4 +1,4 @@
-'''This module contains useful functions and utils, that can be used in many 
+'''This module contains useful functions and utils, that can be used in many
 different situations.
 
 Attributes:

@@ -8,17 +8,17 @@ Attributes:
 
 class Singleton:
     '''Singleton
-    
-    This class implements a singleton design pattern. Source: 
+
+    This class implements a singleton design pattern. Source:
     https://stackoverflow.com/questions/6760685/what-is-the-best-way-of-impleme
     nting-singleton-in-python.
-    
+
     Attributes:
         _instance (object or None): Created instance
     '''
-    
+
     _instance = None
-    
+
     def __new__(class_, *args, **kwargs):
         ''':obj:`object`: returns a new instance if it not already exist.
         Otherwise, returns created instance
