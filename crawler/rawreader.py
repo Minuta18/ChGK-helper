@@ -1,5 +1,4 @@
-from json import dump
-from os import startfile, getcwd, chdir
+from os import chdir
 import bs4 as bs  # beautiful soup 4
 chdir("crawler")
 
@@ -12,7 +11,9 @@ site = ''
 with open(path, 'r') as s:
     site = s.read()
 #
-rawquestions = bs.BeautifulSoup(site, 'html.parser').select("div.question")
+ps = bs.BeautifulSoup(site, 'html.parser')  # parsed site
+rawquestions = [str(i) for i in ps.select("div.question")]
 #
-with open("raw_result.json", 'w') as rawres:
-    dump(rawres, rawquestions)
+rawres = open("tempfiles/result/raw_result.json", 'bw')
+rawres.write('#elementend#'.join(rawquestions).encode())
+rawres.close()

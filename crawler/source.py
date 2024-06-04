@@ -9,3 +9,4 @@ with open('tempfiles/link.txt', 'w') as l:
 
 startfile('sitegetter.py')
 startfile('rawreader.py')
+startfile('rawfile_editor.py')
