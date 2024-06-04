@@ -1,0 +1,4 @@
+beautifulsoup4==4.12.3
+pywebcopy==7.0.2
+validators==0.28.3
+soupsieve==1.2

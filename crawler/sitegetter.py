@@ -1,5 +1,4 @@
 from pywebcopy import save_webpage
-from os import startfile, getcwd, chdir
 import validators
 from os import startfile, getcwd, chdir
 
