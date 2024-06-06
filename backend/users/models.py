@@ -1,5 +1,6 @@
 import sqlalchemy
 import api
+import typing
 from sqlalchemy import orm
 
 class User(api.orm_base):
@@ -29,3 +30,18 @@ class User(api.orm_base):
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=False,
     )
+
+    @staticmethod
+    def get_user(user_id: int) -> typing.Self|None:
+        '''Returns user by id or None if it not found'''
+        session = api.db.get_session()
+        return session.get(user_id)
+    
+    @staticmethod
+    def get_users(from_id: int = 1, to_id: int = 1) -> list[typing.Self]:
+        '''Returns users with ids from from_id to to_id'''
+        session = api.db.get_session()
+        return session.scalars(sqlalchemy.select(User).where(
+            (User.id >= from_id) & (User.id <= to_id)
+        )).all()
+
