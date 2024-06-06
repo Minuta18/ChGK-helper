@@ -1,0 +1,3 @@
+[flake8]
+extend-ignore=E302,F401
+exclude=__pychache__,requirements.txt
