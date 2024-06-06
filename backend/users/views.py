@@ -6,7 +6,7 @@ import flask
 
 users_router = flask.Blueprint('users_urls', 'users')
 
-@users_router.route('/<int:user_id>')
+@users_router.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id: int):
     '''Gets user by an id.
     
@@ -26,3 +26,5 @@ def get_user(user_id: int):
         'nickname': user.nickname,
     }), 200
     
+@users_router.route()
+def get_users()    
