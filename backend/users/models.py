@@ -1,7 +1,10 @@
+from sqlalchemy import orm
 import sqlalchemy
 import api
 import typing
-from sqlalchemy import orm
+import passlib
+
+context = passlib.context()
 
 class User(api.orm_base):
     '''User model
