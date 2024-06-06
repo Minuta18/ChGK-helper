@@ -85,3 +85,8 @@ class DB_connection(utils.singleton):
         '''Drops all tables'''
         with self._engine.begin() as conn:
             conn.run_sync(self._declarative_base.metadata.drop_all)
+            
+    def get_session(self):
+        '''Returns orm session'''
+        with self._session_maker.session() as session:
+            yield session
