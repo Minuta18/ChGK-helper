@@ -167,7 +167,35 @@ def edit_user(user_id: int):
         }), 404
     
     if email is not None:
-        if not models.User.validate_email(email):
+        if not models.User.validate_email():
             return flask.jsonify({
                 'error': True,
+                'detail': 'Email is invalid',
             })
+            
+        user.email = email
+        
+    if nickname is not None:
+        if not models.User.validate_nickname():
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Nickname is invalid',
+            })
+            
+        user.nickname = nickname
+        
+    session = api.db.get_session()
+    session.add(user)
+    try:
+        session.commit()
+        return flask.jsonify({
+            'error': False,
+        }), 200
+    except sqlalchemy.exc.IntegrityError:
+        session.rollback()
+        return flask.jsonify({
+            'error': True,
+            'detail': 'email already exists',
+        }), 400
+        
+        

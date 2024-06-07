@@ -42,6 +42,21 @@ class User(api.orm_base):
     def set_password(self, plain_password: str):
         '''Set password and hashes it'''
         self.hashed_password = crypt_context.hash(plain_password)
+        session = api.db.get_session()
+        session.add(self)
+        session.commit()
+        
+    def set_email(self, email: str):
+        if not self.validate_email(email):
+            ValueError('Invalid email')
+        self.email = email
+        session = api.db.get_session()
+        session.add(self)
+        try:
+            session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            session.rollback()
+            raise ValueError('Email already exists')
 
     def verify_password(self, password: str) -> bool:
         '''Verify current password with given. 
@@ -142,5 +157,6 @@ class User(api.orm_base):
             session.add(user)
             session.commit()
         except sqlalchemy.exc.IntegrityError:
+            session.rollback()
             raise ValueError('Email already used')
         
