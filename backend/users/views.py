@@ -144,4 +144,30 @@ def change_password(user_id: int):
         'error': False,
     }), 200
 
+@users_router.route('/<int:user_id>', methods=['GET'])
+def edit_user(user_id: int):
+    '''Edits user by given id.
+    
+    Edits user by given id.
+    
+    Args:
+        email (:obj:`str`, optional): New email of the user. 
+        nickname (:obj:`str`, optional): New nickname of the new user.
+    '''
 
+    email = flask.request.args.get('email', None, type=str)
+    nickname = flask.request.args.get('nickname', None, type=str)
+    
+    user = models.User.get_user(user_id)
+    
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'User not found'
+        }), 404
+    
+    if email is not None:
+        if not models.User.validate_email(email):
+            return flask.jsonify({
+                'error': True,
+            })
