@@ -1,12 +1,12 @@
 from sqlalchemy import orm
+from passlib import context
 import sqlalchemy
 import api
 import typing
-import passlib
 import re
 
-crypt_context = passlib.context.CryptContext(
-    schemas=['bcrypt'], deprecated='auto'
+crypt_context = context.CryptContext(
+    schemes=['bcrypt'], deprecated='auto',
 )
 
 EMAIL_REGEX = api.load_regex('users/email.re')

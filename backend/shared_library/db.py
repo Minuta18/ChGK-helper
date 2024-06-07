@@ -16,10 +16,10 @@ from sqlalchemy import orm
 from shared_library import utils
 import typing
 
-class DB_connection(utils.singleton):
+class DB_connection(utils.Singleton):
     '''Object that represents the database connection'''
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, *args, **kwargs):
         '''DB_connection class constructor.
 
         Constructor of DB_connection class.
@@ -27,6 +27,7 @@ class DB_connection(utils.singleton):
         Args:
             url(str): URL of the database
         '''
+
         self._engine, self._session_maker = self._create_connection(url)
         self._declarative_base = self._create_orm_base()
 
@@ -35,7 +36,11 @@ class DB_connection(utils.singleton):
 
         Destructor for DB_connection class.
         '''
-        self._destroy_connection()
+        
+        try: 
+            self._destroy_connection()
+        except AttributeError:
+            pass
 
     def _create_connection(
         self, database_url: str
@@ -67,11 +72,11 @@ class DB_connection(utils.singleton):
         '''Destroy connection to database.'''
         self._engine.dispose()
 
-    def _create_orm_base(self) -> orm.DeclarativeMetaData:
+    def _create_orm_base(self) -> orm.DeclarativeMeta:
         '''Creates SQLAlchemy\'s declarative base.'''
         return orm.declarative_base()
 
-    def get_base(self) -> orm.DeclarativeMetaData:
+    def get_base(self) -> orm.DeclarativeMeta:
         '''sqlalchemy.orm.DeclarativeMetaData: returns SQLAlchemy\'s
         declarative base.'''
         return self._declarative_base
