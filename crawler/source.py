@@ -1,12 +1,21 @@
-from os import chdir, startfile
+from filemaker import make_tempfiles
+from filecleaner import clean_tempfiles
+from rawfile_editor import seprawquestions
+from rawreader import getrawquestions
+from sitegetter import get_site
+from shutil import rmtree
+from os import chdir, getcwd
+#
+print(getcwd())
 chdir("crawler")
-
-startfile('filemaker.py')
+make_tempfiles()
 with open('tempfiles/link.txt', 'w') as l:
     link = input(
         'Введите адрес страницы с вопросами (с сайта https://db.chgk.info): ')
     l.write(link)
+get_site()
+getrawquestions()
+seprawquestions()
+clean_tempfiles()
 
-startfile('sitegetter.py')
-startfile('rawreader.py')
-startfile('rawfile_editor.py')
+rmtree("__pycache__")

@@ -1,2 +1,4 @@
 tempfiles/
+__pycache__/
 result.json
+README.md
