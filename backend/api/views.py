@@ -26,13 +26,13 @@ def health_check():
         'status': 'working',
     }), 200
 
-with open('./swagger.yaml', 'r') as f:
+with open('./swagger.json', 'r') as f:
     swagger_file = f.read()
 
 @router.route('/swagger', methods=['GET'])
 def get_swagger_json():
     '''Returns a swagger.json file'''
-    response = flask.Response(content_type='application/x-yaml', status=200)
+    response = flask.Response(content_type='application/json', status=200)
     response.set_data(swagger_file)
     return response
     
