@@ -9,10 +9,10 @@ from os import chdir, getcwd
 print(getcwd())
 chdir("crawler")
 make_tempfiles()
-with open('tempfiles/link.txt', 'w') as l:
+with open('tempfiles/link.txt', 'w') as link_file:
     link = input(
         'Введите адрес страницы с вопросами (с сайта https://db.chgk.info): ')
-    l.write(link)
+    link_file.write(link)
 get_site()
 getrawquestions()
 seprawquestions()

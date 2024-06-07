@@ -4,7 +4,8 @@ import bs4 as bs  # beautiful soup 4
 
 def seprawquestions():
     rawquestions = []
-    with open('tempfiles/result/raw_result.txt', 'br') as rq:  # raw questions, not request
+    with open('tempfiles/result/raw_result.txt', 'br') as rq:
+        # rq means raw questions, not request
         rawquestions = rq.read().decode().split("#elementend#")
     #
     questions = []
@@ -23,7 +24,8 @@ def seprawquestions():
         stronganswer = [str(s) for s in PSi.select("strong.Answer")][0]
         question["answer"] = i[
             (i.find(stronganswer) + len(stronganswer) + 1):
-            i[i.find(stronganswer):].find("</p>") + i.find(stronganswer)].split(" или ")
+            i[i.find(stronganswer):].find("</p>") +
+            i.find(stronganswer)].split(" или ")
         for j in range(len(question["answer"])):
             a_sp = 2
             while (' '*a_sp in question["answer"][j]):
