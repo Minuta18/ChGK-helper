@@ -14,6 +14,6 @@ with open(path, 'r') as s:
 ps = bs.BeautifulSoup(site, 'html.parser')  # parsed site
 rawquestions = [str(i) for i in ps.select("div.question")]
 #
-rawres = open("tempfiles/result/raw_result.json", 'bw')
+rawres = open("tempfiles/result/raw_result.txt", 'bw')
 rawres.write('#elementend#'.join(rawquestions).encode())
 rawres.close()
