@@ -5,3 +5,4 @@ postgres-admin-tar/
 postgres-service/data/
 postgres-admin-service/data/
 .venv
+__pycache__
