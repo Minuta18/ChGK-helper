@@ -144,7 +144,7 @@ def change_password(user_id: int):
         'error': False,
     }), 200
 
-@users_router.route('/<int:user_id>', methods=['GET'])
+@users_router.route('/<int:user_id>', methods=['PUT'])
 def edit_user(user_id: int):
     '''Edits user by given id.
     
@@ -198,4 +198,17 @@ def edit_user(user_id: int):
             'detail': 'email already exists',
         }), 400
         
-        
+@users_router.route('/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id: int):
+    '''Deletes user by given id'''
+    try:
+        models.User.delete_user(user_id)
+        return flask.jsonify({
+            'error': False,
+        }), 200
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'User not found',
+        }), 404
+

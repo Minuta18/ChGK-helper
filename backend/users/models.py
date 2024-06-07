@@ -160,3 +160,12 @@ class User(api.orm_base):
             session.rollback()
             raise ValueError('Email already used')
         
+    @staticmethod
+    def delete_user(user_id: int) -> None:
+        '''Deletes user by given id'''
+        user = User.get_user(user_id)
+        if user is None:
+            raise ValueError('User not found')
+        session = api.db.get_session()
+        session.delete(user)
+        session.commit()
