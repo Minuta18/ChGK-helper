@@ -35,14 +35,14 @@
                 ],
                 "summary": "Health-check endpoint",
                 "description": "Returns the current status of the server (usually it's \"running\")",
-                "operationId": "healthCheck",
+                "operationId": "health_check",
                 "responses": {
                     "200": {
                         "description": "Server is working",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/healthCheck"
+                                    "$ref": "#/components/schemas/health_check"
                                 }
                             }
                         }
@@ -57,7 +57,7 @@
                 ],
                 "summary": "Gets multiple users by given page",
                 "description": "Gets multiple users from a specified page. Page is users from n + 1 to n + page_size.",
-                "operationId": "getUserByPage",
+                "operationId": "get_user_by_page",
                 "parameters": [
                     {
                         "name": "page_size",
@@ -90,7 +90,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/getUserByPage"
+                                    "$ref": "#/components/schemas/get_user_by_page"
                                 }
                             }
                         }
@@ -113,12 +113,12 @@
                 ],
                 "summary": "Creates new user",
                 "description": "Creates new user",
-                "operationId": "createUser",
+                "operationId": "create_user",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/createUser"
+                                "$ref": "#/components/schemas/create_user"
                             }
                         }
                     },
@@ -130,7 +130,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/createUserResponse"
+                                    "$ref": "#/components/schemas/create_user_response"
                                 }
                             }
                         }
@@ -148,17 +148,17 @@
                 }
             }
         },
-        "/users/{userId}": {
+        "/users/{user_id}": {
             "get": {
                 "tags": [
                     "users"
                 ],
                 "summary": "Gets users by given id",
                 "description": "Returns user by given id (int). If user not found returns 404 error.",
-                "operationId": "getUserById",
+                "operationId": "get_user_by_id",
                 "parameters": [
                     {
-                        "name": "userId",
+                        "name": "user_id",
                         "in": "path",
                         "description": "ID of user to return",
                         "required": true,
@@ -174,7 +174,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/getUserById"
+                                    "$ref": "#/components/schemas/get_user_by_id"
                                 }
                             }
                         }
@@ -200,7 +200,7 @@
                 "operationId": "changeUserById",
                 "parameters": [
                     {
-                        "name": "userId",
+                        "name": "user_id",
                         "in": "path",
                         "description": "Id of user to return",
                         "required": true,
@@ -216,7 +216,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/getUserById"
+                                    "$ref": "#/components/schemas/get_user_by_id"
                                 }
                             }
                         }
@@ -226,7 +226,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/getUserById"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -236,7 +236,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/getUserById"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -252,7 +252,7 @@
                 "operationId": "deleteUserById",
                 "parameters": [
                     {
-                        "name": "userId",
+                        "name": "user_id",
                         "in": "path",
                         "description": "Id of user to return",
                         "required": true,
@@ -268,7 +268,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/deleteUserById"
+                                    "$ref": "#/components/schemas/change_password"
                                 }
                             }
                         }
@@ -278,7 +278,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/deleteUserById"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -286,17 +286,17 @@
                 }
             }
         },
-        "/users/{userId}/change_password": {
+        "/users/{user_id}/change_password": {
             "put": {
                 "tags": [
                     "users"
                 ],
                 "summary": "Changes password of a user by an id.",
                 "description": "Changes password of a user by an id. Needs old password.",
-                "operationId": "changePassword",
+                "operationId": "change_password",
                 "parameters": [
                     {
-                        "name": "userId",
+                        "name": "user_id",
                         "in": "path",
                         "description": "Id of user to change password",
                         "required": true,
@@ -306,13 +306,23 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/change_password"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "Password successfully changed",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/changePassword"
+                                    "$ref": "#/components/schemas/ok_response"
                                 }
                             }
                         }
@@ -322,7 +332,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/changePassword"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -332,7 +342,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/changePassword"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -342,7 +352,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/changePassword"
+                                    "$ref": "#/components/schemas/error"
                                 }
                             }
                         }
@@ -353,8 +363,8 @@
     },
     "components": {
         "schemas": {
-            "healthCheck": {
-                "type": "Object",
+            "health_check": {
+                "type": "object",
                 "properties": {
                     "status": {
                         "type": "string",
@@ -366,8 +376,8 @@
                     }   
                 }
             },
-            "getUserByPage": {
-                "type": "Object",
+            "get_user_by_page": {
+                "type": "object",
                 "properties": {
                     "error": {
                         "type": "boolean",
@@ -376,18 +386,14 @@
                     "users": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/getUserById"
+                            "$ref": "#/components/schemas/user"
                         }
                     }
                 }
             },
-            "getUserById": {
-                "type": "Object",
+            "user": {
+                "type": "object",
                 "properties": {
-                    "error": {
-                        "type": "boolean",
-                        "example": "false"
-                    },
                     "id": {
                         "type": "integer",
                         "format": "int64",
@@ -396,11 +402,28 @@
                     "email": {
                         "type": "string",
                         "example": "john@email.com"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "Proger"
+                    }
+                }
+            },
+            "get_user_by_id": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "user": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/user"
                     }
                 }
             },
             "error": {
-                "type": "Object",
+                "type": "object",
                 "properties": {
                     "error": {
                         "type": "boolean",
@@ -408,12 +431,12 @@
                     },
                     "detail": {
                         "type": "string",
-                        "example": "Invalid programmer"
+                        "example": "Error description"
                     }
                 }
             },
-            "createUser": {
-                "type": "Object",
+            "create_user": {
+                "type": "object",
                 "properties": {
                     "email": {
                         "type": "string",
@@ -429,8 +452,8 @@
                     }
                 }
             },
-            "createUserResponse": {
-                "type": "Object",
+            "create_user_response": {
+                "type": "object",
                 "properties": {
                     "error": {
                         "type": "boolean",
@@ -448,6 +471,28 @@
                     "nickname": {
                         "type": "string",
                         "example": "Proger"
+                    }
+                }
+            },
+            "ok_response": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    }
+                }
+            },
+            "change_password": {
+                "type": "object",
+                "properties": {
+                    "old_password": {
+                        "type": "string",
+                        "example": "12345"
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "example": "12345678"
                     }
                 }
             }

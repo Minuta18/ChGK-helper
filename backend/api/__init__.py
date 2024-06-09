@@ -16,5 +16,7 @@ API_URL = '/api/v1/swagger' # I have no idea what does it do, I just copied
                             # articles/542204/ 
 
 swagger_router = flask_swagger_ui.get_swaggerui_blueprint(
-    SWAGGER_URL, API_URL, config={'app_name': 'ChGK-helper'}, 
+    SWAGGER_URL, API_URL, config={
+        'app_name': 'ChGK-helper',
+    }, 
 )

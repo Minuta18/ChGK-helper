@@ -24,9 +24,11 @@ def get_user(user_id: int):
         }), 404
     return flask.jsonify({
         'error': False,
-        'id': user_id,
-        'email': user.email,
-        'nickname': user.nickname,
+        'user': {
+            'id': user_id,
+            'email': user.email,
+            'nickname': user.nickname,
+        }
     }), 200
     
 @users_router.route('/', methods=['GET'])
@@ -196,6 +198,9 @@ def edit_user(user_id: int):
         session.commit()
         return flask.jsonify({
             'error': False,
+            'id': user.id,
+            'email': user.email,
+            'nickname': user.nickname,  
         }), 200
     except sqlalchemy.exc.IntegrityError:
         session.rollback()
