@@ -47,10 +47,16 @@ def get_users():
     if (page_size < 1 or page_size > 100):
         return flask.jsonify({
             'error': True,
-            'detail': f'Incorrect page size: { page_size }'
-        })
+            'detail': f'Invalid page size: { page_size }'
+        }), 400
     
     page = flask.request.args.get('page', 1, type=int)
+
+    if (page < 1):
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Invalid page: { page }',
+        }), 400
 
     return flask.jsonify({
         'error': False,
@@ -171,7 +177,7 @@ def edit_user(user_id: int):
             return flask.jsonify({
                 'error': True,
                 'detail': 'Email is invalid',
-            })
+            }), 400
             
         user.email = email
         
@@ -180,7 +186,7 @@ def edit_user(user_id: int):
             return flask.jsonify({
                 'error': True,
                 'detail': 'Nickname is invalid',
-            })
+            }), 400
             
         user.nickname = nickname
         
