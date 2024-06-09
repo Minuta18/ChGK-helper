@@ -30,6 +30,7 @@ class DB_connection(utils.Singleton):
 
         self._engine, self._session_maker = self._create_connection(url)
         self._declarative_base = self._create_orm_base()
+        self._session = orm.Session(self._engine)
 
     def __del__(self):
         '''DB_connection class destructor.
@@ -39,6 +40,7 @@ class DB_connection(utils.Singleton):
         
         try: 
             self._destroy_connection()
+            self._session.close()
         except AttributeError:
             pass
 
@@ -93,5 +95,4 @@ class DB_connection(utils.Singleton):
             
     def get_session(self):
         '''Returns orm session'''
-        with self._session_maker.session() as session:
-            yield session
+        return self._session
