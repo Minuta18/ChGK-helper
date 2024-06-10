@@ -105,3 +105,48 @@ def create_user():
         'text': question.text,
         'comment': question.comment,    
     }), 201
+
+@questions_router.route('/<int:user_id>', methods=['PUT'])
+def edit_question(question_id: int):
+    '''Edits question by given id.
+    
+    Edits question by given id.
+    
+    Args:
+        text (:obj:`str`, optional): New text of the question. 
+        comment (:obj:`str`, optional): New comment of the new question.
+    '''
+
+    text = flask.request.args.get('text', None, type=str)
+    comment = flask.request.args.get('comment', None, type=str)
+    
+    question = models.Question.get_question(question_id)
+    
+    if question is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Question not found'
+        }), 404
+    
+    if text is not None:
+        question.text = text
+        
+    if comment is not None:
+        question.comment = comment
+        
+    session = api.db.get_session()
+    session.add(question)
+    try:
+        session.commit()
+        return flask.jsonify({
+            'error': False,
+            'id': question.id,
+            'text': question.text,
+            'comment': question.comment,  
+        }), 200
+    except sqlalchemy.exc.IntegrityError:
+        session.rollback()
+        return flask.jsonify({
+            'error': True,
+            'detail': 'question already exists',
+        }), 400
