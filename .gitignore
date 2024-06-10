@@ -6,3 +6,4 @@ postgres-service/data/
 postgres-admin-service/data/
 .venv
 __pycache__
+app.db
