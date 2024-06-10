@@ -35,7 +35,7 @@ def get_question(question_id: int):
 @questions_router.route('/', methods=['GET'])
 def get_questions():
     '''Gets multiple questions
-    
+
     Gets multiple question from a specified page. A page is questions
     from n + 1 to n + page size
 
@@ -75,7 +75,7 @@ def get_questions():
 @questions_router.route('/', methods=['POST'])
 def create_user():
     '''Creates new question.
-    
+
     Creates new question.
 
     Args:
@@ -98,42 +98,42 @@ def create_user():
             'error': True,
             'message': str(e),
         }), 400
-    
+
     return flask.jsonify({
         'error': False,
         'id': question.id,
         'text': question.text,
-        'comment': question.comment,    
+        'comment': question.comment,
     }), 201
 
 @questions_router.route('/<int:user_id>', methods=['PUT'])
 def edit_question(question_id: int):
     '''Edits question by given id.
-    
+
     Edits question by given id.
-    
+
     Args:
-        text (:obj:`str`, optional): New text of the question. 
+        text (:obj:`str`, optional): New text of the question.
         comment (:obj:`str`, optional): New comment of the new question.
     '''
 
     text = flask.request.args.get('text', None, type=str)
     comment = flask.request.args.get('comment', None, type=str)
-    
+
     question = models.Question.get_question(question_id)
-    
+
     if question is None:
         return flask.jsonify({
             'error': True,
             'detail': 'Question not found'
         }), 404
-    
+
     if text is not None:
         question.text = text
-        
+
     if comment is not None:
         question.comment = comment
-        
+
     session = api.db.get_session()
     session.add(question)
     try:
@@ -142,7 +142,7 @@ def edit_question(question_id: int):
             'error': False,
             'id': question.id,
             'text': question.text,
-            'comment': question.comment,  
+            'comment': question.comment,
         }), 200
     except sqlalchemy.exc.IntegrityError:
         session.rollback()
@@ -150,3 +150,17 @@ def edit_question(question_id: int):
             'error': True,
             'detail': 'question already exists',
         }), 400
+
+@questions_router.route('/<int:user_id>', methods=['DELETE'])
+def delete_question(question_id: int):
+    '''Deletes question by given id'''
+    try:
+        models.Question.delete_question(question_id)
+        return flask.jsonify({
+            'error': False,
+        }), 200
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Question not found',
+        }), 404
