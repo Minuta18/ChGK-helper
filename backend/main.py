@@ -3,12 +3,13 @@ import users
 import os
 import api
 import json
+import questions
 from werkzeug import exceptions
 
 app = flask.Flask('ChKG-helper')
 
 app.register_blueprint(api.views.router, url_prefix='/api/v1')
-api.register_blueprint(questions.views.questions_router, url_prefix='/api/v1/questions')
+app.register_blueprint(questions.views.questions_router, url_prefix='/api/v1/questions')
 app.register_blueprint(users.views.users_router, url_prefix='/api/v1/users')
 app.register_blueprint(api.swagger_router, url_prefix='/api/v1/docs')
 
