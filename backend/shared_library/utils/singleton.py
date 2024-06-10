@@ -19,7 +19,8 @@ class Singleton:
 
     _instance = None
 
-    def __new__(class_, *args, **kwargs):
+    # TODO: remove arg1. Currently I'm not sure how to handle this
+    def __new__(class_, arg1, *args, **kwargs):
         ''':obj:`object`: returns a new instance if it not already exist.
         Otherwise, returns created instance
         '''
