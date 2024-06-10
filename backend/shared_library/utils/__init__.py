@@ -5,4 +5,4 @@ Attributes:
     Singleton: class that implements a singleton design pattern
 '''
 
-from shared_library.utils import singleton
+from shared_library.utils.singleton import Singleton
