@@ -213,7 +213,7 @@
                         "name": "email",
                         "in": "query",
                         "description": "New email",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "string",
                             "example": "john@email.com"
@@ -223,10 +223,9 @@
                         "name": "nickname",
                         "in": "query",
                         "description": "New nickname",
-                        "required": true,
+                        "required": false,
                         "schema": {
-                            "type": "string",
-                            "format": "Amogus"
+                            "type": "string"
                         }
                     }
                 ],

@@ -16,7 +16,13 @@ def get_user(user_id: int):
         user_id(int): user\'s id
     '''
     
-    user = models.User.get_user(user_id)
+    try:
+        user = models.User.get_user(user_id)
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
     if user is None:
         return flask.jsonify({
             'error': True,
@@ -60,16 +66,22 @@ def get_users():
             'detail': f'Invalid page: { page }',
         }), 400
 
-    return flask.jsonify({
-        'error': False,
-        'users': [{
-            'id': user.id,
-            'email': user.email,
-            'nickname': user.nickname,
-        } for user in models.User.get_users(
-            from_id=((page - 1) * page_size + 1), to_id=(page * page_size)
-        )],
-    }), 200
+    try:
+        return flask.jsonify({
+            'error': False,
+            'users': [{
+                'id': user.id,
+                'email': user.email,
+                'nickname': user.nickname,
+            } for user in models.User.get_users(
+                from_id=((page - 1) * page_size + 1), to_id=(page * page_size)
+            )],
+        }), 200
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Arguments too big'
+        })
 
 @users_router.route('/', methods=['POST'])
 def create_user():
@@ -124,16 +136,24 @@ def change_password(user_id: int):
             'message': 'Incorrect Content-Type header',
         })
         
-    password = flask.request.headers.get('old_password', '')
-    new_password = flask.request.headers.get('new_password', '')
+    password = flask.request.json.get('old_password', '')
+    new_password = flask.request.json.get('new_password', '')
                
-    user = models.User.get_user(user_id)
+    try:
+        user = models.User.get_user(user_id)
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
+    
     if user is None:
         return flask.jsonify({
             'error': True,
             'message': 'User not found',
         }), 404
         
+    # print(password, user.hashed_password, user.verify_password(password))
     if not user.verify_password(password):
         return flask.jsonify({
             'error': True,
@@ -166,7 +186,13 @@ def edit_user(user_id: int):
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
     
-    user = models.User.get_user(user_id)
+    try:
+        user = models.User.get_user(user_id)
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
     
     if user is None:
         return flask.jsonify({
@@ -175,7 +201,7 @@ def edit_user(user_id: int):
         }), 404
     
     if email is not None:
-        if not models.User.validate_email():
+        if not models.User.validate_email(email):
             return flask.jsonify({
                 'error': True,
                 'detail': 'Email is invalid',
@@ -184,7 +210,7 @@ def edit_user(user_id: int):
         user.email = email
         
     if nickname is not None:
-        if not models.User.validate_nickname():
+        if not models.User.validate_nickname(nickname):
             return flask.jsonify({
                 'error': True,
                 'detail': 'Nickname is invalid',
@@ -221,5 +247,10 @@ def delete_user(user_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'User not found',
+        }), 404
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
         }), 404
 

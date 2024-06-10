@@ -3,6 +3,7 @@ from passlib import context
 import sqlalchemy
 import api
 import typing
+import typing_extensions
 import re
 
 crypt_context = context.CryptContext(
@@ -36,7 +37,7 @@ class User(api.orm_base):
         unique=True, 
     )
     hashed_password: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255),
+        sqlalchemy.String(255), nullable=True,
     )
 
     def set_password(self, plain_password: str):
@@ -62,7 +63,7 @@ class User(api.orm_base):
         '''Verify current password with given. 
         Returns True if they are same.
         '''
-        return crypt_context.verify(self.hashed_password, password)
+        return crypt_context.verify(password, self.hashed_password, 'bcrypt')
 
     @staticmethod
     def validate_email(email: str) -> bool:
@@ -119,21 +120,30 @@ class User(api.orm_base):
         return True
 
     @staticmethod
-    def get_user(user_id: int) -> typing.Self|None:
+    def get_user(user_id: int) -> typing_extensions.Self|None:
         '''Returns user by id or None if it not found'''
         session = api.db.get_session()
         return session.get(User, user_id)
     
     @staticmethod
-    def get_users(from_id: int = 1, to_id: int = 1) -> list[typing.Self]:
+    def get_users(
+        from_id: int = 1, to_id: int = 1
+    ) -> list[typing_extensions.Self]:
         '''Returns users with ids from from_id to to_id'''
-        session = api.db.get_session()
-        return session.scalars(sqlalchemy.select(User).where(
-            (User.id >= from_id) & (User.id <= to_id)
-        )).all() 
+        try: 
+            session = api.db.get_session()
+            return session.scalars(sqlalchemy.select(User).where(
+                (User.id >= from_id) & (User.id <= to_id)
+            )).all()
+        except OverflowError:
+            raise OverflowError('Argument too big') 
         
     @staticmethod
-    def create_user(email: str, nickname: str, password: str) -> typing.Self:
+    def create_user(
+        email: str, 
+        nickname: str, 
+        password: str
+    ) -> typing_extensions.Self:
         '''Creates new user
         
         Args:
@@ -144,21 +154,22 @@ class User(api.orm_base):
         Returns:
             users.models.User: created user
         '''
-        # try:
-        if not User.validate_email(email):
-            raise ValueError('Invalid email')
-        if not User.validate_password(password):
-            raise ValueError('Invalid password')
-        if not User.validate_nickname(nickname):
-            raise ValueError('Invalid nickname')
-        session = api.db.get_session()
-        user = User(email=email, nickname=nickname)
-        session.add(user)
-        session.commit()
-        # user.set_password(password)
-        # except sqlalchemy.exc.IntegrityError:
-        #     session.rollback()
-        #     raise ValueError('Email or Nickname already used')
+        try:
+            if not User.validate_email(email):
+                raise ValueError('Invalid email')
+            if not User.validate_password(password):
+                raise ValueError('Invalid password')
+            if not User.validate_nickname(nickname):
+                raise ValueError('Invalid nickname')
+            session = api.db.get_session()
+            user = User(email=email, nickname=nickname)
+            session.add(user)
+            session.commit()
+            user.set_password(password)
+            return user
+        except sqlalchemy.exc.IntegrityError:
+            session.rollback()
+            raise ValueError('Email or Nickname already used')
         
     @staticmethod
     def delete_user(user_id: int) -> None:
