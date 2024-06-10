@@ -22,7 +22,7 @@ def get_question(question_id: int):
         return flask.jsonify({
             'error': True,
             'detail': f'Could not find the question with id {question_id}',
-        })
+        }), 404
     return flask.jsonify({
         'error': False,
         'question':
@@ -43,8 +43,22 @@ def get_questions():
             Default value is 20.
         page (:obj:`int`, optional)
     '''
+
     page_size = flask.request.args.get('page_size', 20, type=int)
+
+    if (page_size < 1 or page_size > 100):
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Invalid page size: { page_size }'
+        }), 400
+
     page = flask.request.args.get('page', 1, type=int)
+
+    if (page < 1):
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Invalid page: { page }',
+        }), 400
 
     return flask.jsonify({
         'error': False,
@@ -52,5 +66,7 @@ def get_questions():
             'id': question.id,
             'text': question.text,
             'comment': question.comment,
-        }]
-    })
+        } for question in models.User.get_users(
+            from_id=((page - 1) * page_size + 1), to_id=(page * page_size)
+        )]
+    }), 200
