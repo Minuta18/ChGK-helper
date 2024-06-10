@@ -25,7 +25,32 @@ def get_question(question_id: int):
         })
     return flask.jsonify({
         'error': False,
-        'id': question_id,
-        'text': question.text,
-        'comment': question.comment,
+        'question':
+            'id': question_id,
+            'text': question.text,
+            'comment': question.comment,
     }), 200
+
+@questions_router.route('/', methods=['GET'])
+def get_questions():
+    '''Gets multiple questions
+    
+    Gets multiple question from a specified page. A page is questions
+    from n + 1 to n + page size
+
+    Args:
+        page_size (:obj:`int`, optional): The number of questions in one page
+            Default value is 20.
+        page (:obj:`int`, optional)
+    '''
+    page_size = flask.request.args.get('page_size', 20, type=int)
+    page = flask.request.args.get('page', 1, type=int)
+
+    return flask.jsonify({
+        'error': False,
+        'questions': [{
+            'id': question.id,
+            'text': question.text,
+            'comment': question.comment,
+        }]
+    })

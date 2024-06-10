@@ -20,3 +20,45 @@ class Question(api.orm_base):
     comment: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String,
     )
+
+    @staticmethod
+    def get_question(question_id: int) -> typing.Self|None:
+        '''Returns question by id or None if user not found'''
+        session = api.db.get_session()
+        return session.get(question_id)
+    
+    @staticmethod
+    def get_questions(from_id: int = 1, to_id: int = 1) -> list[typing.Self]:
+        '''Returns questions with ids from from_id to to_id'''
+        session = api.db.get_session()
+        return session.scalars(sqlalchemy.select(Question).where(
+            (Question.id >= from_id) & (Question.id <= to_id)
+        )).all() 
+    
+    @staticmethod
+    def add_question(text: str, comment: str) -> typing.Self:
+        '''Adds a new question
+
+        Args:
+            text(str): The question's text
+            comment(str): A comment to the question. Optional
+
+        Returns:
+            questions.models.Question: created question
+        '''
+
+        session = api.db.get_session()
+        question = Question(text=text, comment=comment)
+        session.add(user)
+        session.commit()
+    
+    @staticmethod
+    def delete_question(question_id) -> typing.Self:
+        '''Deletes the question by given id'''
+
+        question = Question.get_question(question_id)
+        if question is None:
+            raise ValueError('Question not found')
+        session = api.db.get_session()
+        session.delete(question)
+        session.commit()
