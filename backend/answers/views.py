@@ -59,7 +59,14 @@ def get_answers():
 
 @answers_router.route('/api/v1/answer', methods=['POST'])
 def create_answer():
-    ''''''
+    '''Create answer.
+
+    Create new answer.
+
+    Args:
+        question_id (:obj:`int`): Id the question on with it answer is answering.
+        correct_answer (:obj:`str`): correct answer on question
+    '''
 
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
@@ -86,7 +93,13 @@ def create_answer():
 
 @answers_router.route('/api/v1/answer/<number>', methods=['PUT'])
 def update_answer(answer_id):
-    ''''''
+    '''Update existful answer
+
+
+    Args:
+        question_id (:obj:`int`): Id the question on with it answer is answering.
+        correct_answer (:obj:`str`): correct answer on question
+    '''
 
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
@@ -112,8 +125,13 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/api/v1/answer/<number>', methods=['DELETE'])
-def update_answer(answer_id):
-    ''''''
+def delete_answer(answer_id):
+    '''Delete existful answer
+
+
+    Args:
+       id (:obj:`int`): Id of deleting answer.
+    '''
 
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({

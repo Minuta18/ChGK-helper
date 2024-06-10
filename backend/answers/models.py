@@ -45,7 +45,7 @@ class Answer(api.orm_base):
 
     @staticmethod
     def create_answer(question_id: int, correct_answer: str) -> typing.Self:
-        ''''''
+        '''create new answer with question_ia and correct_answer'''
         session = api.db.get_session()
         answer = Answer(question_id=question_id, correct_answer=correct_answer)
         session.add(answer)
@@ -54,7 +54,7 @@ class Answer(api.orm_base):
 
     @staticmethod
     def delete_answer(answer_id: int) -> None:
-        ''''''
+        '''delete existful answer by id'''
         answer = Answer.get_answer(answer_id)
         if answer is None:
             raise ValueError('User not found')
@@ -63,7 +63,7 @@ class Answer(api.orm_base):
         session.commit()
 
     def update_answer(self, question_id: int, correct_answer: str):
-        ''''''
+        '''change question_id and correct_answer of choosen answer'''
         self.question_id = question_id
         self.correct_answer = correct_answer
         session = api.db.get_session()
