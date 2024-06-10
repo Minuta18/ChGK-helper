@@ -16,7 +16,7 @@ app.register_blueprint(api.swagger_router, url_prefix='/api/v1/docs')
 @app.errorhandler(exceptions.HTTPException)
 def handle_exception(error):
     '''Return JSON instead of HTML for HTTP errors.
-    
+
     Handles HTTP exceptions to return JSON instead of HTML.
 
     Args:

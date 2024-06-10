@@ -35,4 +35,3 @@ def get_swagger_json():
     response = flask.Response(content_type='application/json', status=200)
     response.set_data(swagger_file)
     return response
-    

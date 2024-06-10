@@ -37,8 +37,8 @@ class DB_connection(utils.Singleton):
 
         Destructor for DB_connection class.
         '''
-        
-        try: 
+
+        try:
             self._destroy_connection()
             self._session.close()
         except AttributeError:
@@ -90,7 +90,7 @@ class DB_connection(utils.Singleton):
     def drop_tables(self) -> None:
         '''Drops all tables'''
         self._declarative_base.metadata.drop_all(self._engine)
-            
+
     def get_session(self):
         '''Returns orm session'''
         return self._session
