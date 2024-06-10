@@ -31,6 +31,8 @@ def handle_exception(error):
     return response
 
 if __name__ == '__main__':
+    api.db.create_tables()
+
     print(app.url_map)
 
     app.run(

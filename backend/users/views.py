@@ -97,7 +97,7 @@ def create_user():
     except ValueError as e:
         return flask.jsonify({
             'error': True,
-            'message': e.message,
+            'message': str(e),
         }), 400
         
     return flask.jsonify({

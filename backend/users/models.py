@@ -25,8 +25,7 @@ class User(api.orm_base):
     __tablename__ = 'users'
     
     id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.BigInteger, primary_key=True, 
-        autoincrement=True, unique=True,
+        sqlalchemy.Integer, primary_key=True, autoincrement=True
     )
     email: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=False,
@@ -34,9 +33,10 @@ class User(api.orm_base):
     ) 
     nickname: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=False,
+        unique=True, 
     )
     hashed_password: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255), nullable=False,
+        sqlalchemy.String(255),
     )
 
     def set_password(self, plain_password: str):
@@ -97,7 +97,7 @@ class User(api.orm_base):
             bool: True if password is valid, False otherwise
         '''
         
-        if len(password) < 9 or len(password) > 255: return False
+        if len(password) < 8 or len(password) > 255: return False
         # TODO
         return True
     
@@ -122,7 +122,7 @@ class User(api.orm_base):
     def get_user(user_id: int) -> typing.Self|None:
         '''Returns user by id or None if it not found'''
         session = api.db.get_session()
-        return session.get(user_id)
+        return session.get(User, user_id)
     
     @staticmethod
     def get_users(from_id: int = 1, to_id: int = 1) -> list[typing.Self]:
@@ -144,21 +144,21 @@ class User(api.orm_base):
         Returns:
             users.models.User: created user
         '''
-        try:
-            if not User.validate_email(email):
-                raise ValueError('Invalid email')
-            if not User.validate_password(password):
-                raise ValueError('Invalid password')
-            if not User.validate_nickname(nickname):
-                raise ValueError('Invalid nickname')
-            session = api.db.get_session()
-            user = User(email=email, nickname=nickname)
-            user.set_password(password)
-            session.add(user)
-            session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            session.rollback()
-            raise ValueError('Email already used')
+        # try:
+        if not User.validate_email(email):
+            raise ValueError('Invalid email')
+        if not User.validate_password(password):
+            raise ValueError('Invalid password')
+        if not User.validate_nickname(nickname):
+            raise ValueError('Invalid nickname')
+        session = api.db.get_session()
+        user = User(email=email, nickname=nickname)
+        session.add(user)
+        session.commit()
+        # user.set_password(password)
+        # except sqlalchemy.exc.IntegrityError:
+        #     session.rollback()
+        #     raise ValueError('Email or Nickname already used')
         
     @staticmethod
     def delete_user(user_id: int) -> None:

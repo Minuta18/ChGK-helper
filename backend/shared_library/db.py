@@ -85,13 +85,11 @@ class DB_connection(utils.Singleton):
 
     def create_tables(self) -> None:
         '''Creates all tables'''
-        with self._engine.begin() as conn:
-            conn.run_sync(self._declarative_base.metadata.create_all)
+        self._declarative_base.metadata.create_all(self._engine)
 
     def drop_tables(self) -> None:
         '''Drops all tables'''
-        with self._engine.begin() as conn:
-            conn.run_sync(self._declarative_base.metadata.drop_all)
+        self._declarative_base.metadata.drop_all(self._engine)
             
     def get_session(self):
         '''Returns orm session'''

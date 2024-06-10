@@ -197,7 +197,7 @@
                 ],
                 "summary": "Edits user by given id",
                 "description": "Edits user by given id",
-                "operationId": "changeUserById",
+                "operationId": "changeUserById",             
                 "parameters": [
                     {
                         "name": "user_id",
@@ -207,6 +207,26 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "New email",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "john@email.com"
+                        }
+                    },
+                    {
+                        "name": "nickname",
+                        "in": "query",
+                        "description": "New nickname",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "Amogus"
                         }
                     }
                 ],
