@@ -1,4 +1,4 @@
-from models import models
+from questions import models
 from sqlalchemy import orm
 import sqlalchemy
 import api
