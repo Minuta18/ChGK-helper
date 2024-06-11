@@ -4,8 +4,13 @@
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
+head, body {
+    min-height: 100vh;
+    margin: 0px;
+}
+
+div#root {
+    height: 100vh;
+}
