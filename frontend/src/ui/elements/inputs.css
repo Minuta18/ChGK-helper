@@ -14,7 +14,7 @@
     border-radius: var(--default-border-radius);
     border: 4px solid var(--primary-color);
     transition-duration: var(--default-transition-duration);
-    padding-right: var(--default-padding);
+    padding-right: calc(var(--default-padding) * 2);
     padding-left: var(--default-padding);
     padding-top: 4px;
     padding-bottom: 4px;
@@ -37,4 +37,15 @@
     width: 16px;
     height: 16px;
     background-color: var(--primary-color);
+}
+
+.pass-icon {
+    position: absolute;
+    padding: 4px;
+    right: 20px;
+    transform: translateY(-100%);
+}
+
+.tdd24x {
+    width: 100%;
 }

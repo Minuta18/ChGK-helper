@@ -1,4 +1,5 @@
-import React from 'react';
+import { useState } from 'react';
+import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 
 import RequiredSymbol from '../typography/required_symbol';
 
@@ -31,15 +32,28 @@ export function PasswordInput(props) {
         required_symbol_ = <RequiredSymbol />;
     }
 
+    const [password, setPassword] = useState('');
+    const [visible, setVisible] = useState(false); 
+
     return (
         <>
-            <label htmlFor={ props.name } className='form-label'>
-                { props.children } { required_symbol_ }
-            </label>
-            <input 
-                type="password" name={ props.name } 
-                className='input-field' placeholder={ props.placeholder } 
-            />
+            <div className='tdd24x'>
+                <label htmlFor={ props.name } className='form-label'>
+                    { props.children } { required_symbol_ }
+                </label>
+                <input 
+                    type={ visible ? 'text' : 'password' } name={ props.name } 
+                    className='input-field' placeholder={ props.placeholder } 
+                    value={ password } id='password' 
+                    onChange={ (e) => setPassword(e.target.value) }
+                />
+                <div
+                    className='pass-icon' 
+                    onClick={ () => setVisible(!visible) }
+                >
+                    { visible ? <BsFillEyeFill /> : <BsFillEyeSlashFill /> }
+                </div>
+            </div>
         </>
     );
 }
