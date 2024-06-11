@@ -1,12 +1,13 @@
 import React from 'react';
 
 import Background from '../ui/containers/background';
+import Modal from '../ui/containers/modal';
 
 export default function MainPage() {
     return (
         <>
             <Background>
-                <h1>Hello world!</h1>
+                <Modal><span className='header-text'>Hello world</span></Modal>
             </Background>
         </>
     );
