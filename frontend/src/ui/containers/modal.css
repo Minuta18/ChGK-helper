@@ -6,7 +6,7 @@
     padding: var(--default-padding);
     background-color: var(--white);
     border-radius: var(--default-border-radius);
-    filter: drop-shadow(4px 4px 8px var(--secondary-darker));
+    filter: drop-shadow(4px 4px 8px var(--secondary-color-darker));
 }
 
 @media (max-width: 1400px) {
@@ -16,7 +16,7 @@
 }
 
 @media (max-width: 600px) {
-    .menu {
+    .modal {
         width: 100%;
         height: 100vh;
         margin: 0px;
