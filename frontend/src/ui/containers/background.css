@@ -1,0 +1,8 @@
+.background {
+    height: 100%;
+    background-color: #e0f0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

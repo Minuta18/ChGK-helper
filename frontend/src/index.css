@@ -1,0 +1,31 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+head, body {
+    min-height: 100vh;
+    margin: 0px;
+}
+
+div#root {
+    height: 100vh;
+}
+
+:root {
+    --white: #fff;
+    --black: #000;
+
+    --primary-color: #6495ed;
+    --primary-color-darker: #4169e1;
+    --secondary-color: #e0f0ff;
+    --secondary-color-darker: #b5c2ce;
+
+    --default-border-radius: 16px;
+    --default-padding: 16px;
+}
