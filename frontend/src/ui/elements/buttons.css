@@ -32,3 +32,13 @@
     background-color: #e0f0ff;
     transition-duration: 0.3s;
 }
+
+@media (max-width: 600px) {
+    .btn-primary {
+        filter: drop-shadow(4px 4px 8px var(--secondary-color-darker));
+    }
+
+    .btn-secondary {
+        filter: drop-shadow(4px 4px 8px var(--secondary-color-darker));
+    }
+}

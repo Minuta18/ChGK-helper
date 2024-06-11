@@ -1,0 +1,40 @@
+.form-label {
+    width: 100%;
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    color: #000;
+    font-size: 20px;
+    display: inline-block;
+}
+
+.input-field {
+    width: 100%;
+    min-height: 40px;
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    color: var(--black);
+    border-radius: var(--default-border-radius);
+    border: 4px solid var(--primary-color);
+    transition-duration: var(--default-transition-duration);
+    padding-right: var(--default-padding);
+    padding-left: var(--default-padding);
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 20px;
+    outline-width: 0px;
+}
+
+.input-field:focus {
+    border: 4px solid var(--primary-color-darker);
+    transition-duration: var(--default-transition-duration);
+}
+
+@media (max-width: 600px) {
+    .input-field {
+        filter: drop-shadow(4px 4px 8px var(--secondary-color-darker));
+    }
+}
+
+.input-checkbox {
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+}

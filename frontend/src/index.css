@@ -28,4 +28,5 @@ div#root {
 
     --default-border-radius: 16px;
     --default-padding: 16px;
+    --default-transition-duration: 0.3s;
 }
