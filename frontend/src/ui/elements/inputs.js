@@ -38,7 +38,9 @@ export function PasswordInput(props) {
     return (
         <>
             <div className='tdd24x'>
-                <label htmlFor={ props.name } className='form-label'>
+                <label 
+                    htmlFor={ props.name } className='form-label small-margin'
+                >
                     { props.children } { required_symbol_ }
                 </label>
                 <input 

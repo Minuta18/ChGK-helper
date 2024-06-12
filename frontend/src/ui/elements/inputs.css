@@ -49,3 +49,7 @@
 .tdd24x {
     width: 100%;
 }
+
+.small-margin {
+    margin-bottom: var(--default-padding);
+}

@@ -19,6 +19,7 @@ div#root {
 
 :root {
     --white: #fff;
+    --light-gray: #d0d0d0;
     --black: #000;
 
     --primary-color: #6495ed;
