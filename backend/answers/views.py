@@ -110,7 +110,7 @@ def update_answer(answer_id):
     correct_answer = flask.request.args.get('correct_answer', '')
 
     try:
-        answer = models.Answer.update_answer(question_id, correct_answer)
+        answer = models.Answer.get_answers(answer_id).update_answer(question_id, correct_answer)
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -125,7 +125,7 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/api/v1/answer/<number>', methods=['DELETE'])
-def delete_answer(answer_id):
+def delete_answer(answer_id: int):
     '''Delete existful answer
 
     Args:
@@ -151,7 +151,7 @@ def delete_answer(answer_id):
     }), 200
 
 @answers_router.route('/api/v1/questions/<question_id>/check/<answer>', methods=['GET'])
-def check_answer(question_id, answer):
+def check_answer(question_id: int, answer: str):
     '''Check answer
 
     Args:
