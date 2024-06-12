@@ -70,3 +70,10 @@ class Answer(api.orm_base):
         session.add(self)
         session.commit()
         return self
+
+    def check_answer(self, answer: str):
+        '''check what answer is correct or not'''
+        if self.correct_answer.lower.split() == answer.lower().split():
+            return True
+        else:
+            return False

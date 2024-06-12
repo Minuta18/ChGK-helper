@@ -3,10 +3,11 @@ from sqlalchemy import orm
 import sqlalchemy
 import api
 import flask
+import base64
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
-@answers_router.route('/answer/<number>', methods=['GET'])
+@answers_router.route('/<number>', methods=['GET'])
 def get_answer(answer_id: int):
     '''Gets answer by an id.
     
@@ -29,7 +30,7 @@ def get_answer(answer_id: int):
         'correct_answer': answer.correct_answer,
     }), 200
     
-@answers_router.route('/answer', methods=['GET'])
+@answers_router.route('/', methods=['GET'])
 def get_answers():
     '''Gets multiple answers.
     
@@ -56,8 +57,7 @@ def get_answers():
         } for answer in answers],
     }), 200
 
-
-@answers_router.route('/answer', methods=['POST'])
+@answers_router.route('/', methods=['POST'])
 def create_answer():
     '''Create answer.
 
@@ -91,10 +91,9 @@ def create_answer():
         'correct_answer': answer.correct_answer,
     }), 201
 
-@answers_router.route('/answer/<number>', methods=['PUT'])
+@answers_router.route('/<number>', methods=['PUT'])
 def update_answer(answer_id):
     '''Update existful answer
-
 
     Args:
         question_id (:obj:`int`): Id the question on with it answer is answering.
@@ -110,7 +109,7 @@ def update_answer(answer_id):
     correct_answer = flask.request.args.get('correct_answer', '')
 
     try:
-        answer = models.Answer.update_answer(question_id, correct_answer)
+        answer = models.Answer.get_answers(answer_id).update_answer(question_id, correct_answer)
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -124,10 +123,9 @@ def update_answer(answer_id):
         'correct_answer': answer.correct_answer,
     }), 200
 
-@answers_router.route('/answer/<number>', methods=['DELETE'])
-def delete_answer(answer_id):
+@answers_router.route('/<number>', methods=['DELETE'])
+def delete_answer(answer_id: int):
     '''Delete existful answer
-
 
     Args:
        id (:obj:`int`): Id of deleting answer.
@@ -150,3 +148,26 @@ def delete_answer(answer_id):
     return flask.jsonify({
         'error': False
     }), 200
+
+@answers_router.route('/<question_id>/check/<answer>', methods=['GET'])
+def check_answer(question_id: int, answer: str):
+    '''Check answer
+
+    Args:
+        question_id (:obj:`int`): Id of question.
+        answer (:obj:`str`): answer which user give us.
+    '''
+
+    session = api.db.get_session()
+    correct_answer = session.get(question_id)
+
+    if correct_answer.correct_answer == base64.decode(answer):
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': True
+        }), 200
+    else:
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': False
+        }), 200
