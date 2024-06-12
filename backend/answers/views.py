@@ -22,7 +22,7 @@ def get_answer(answer_id: int):
         return flask.jsonify({
             'error': True,
             'detail': f'Could not find answer with id { answer_id }',
-        })
+        }), 404
     return flask.jsonify({
         'error': False,
         'id': answer_id,
@@ -171,3 +171,27 @@ def check_answer(question_id: int, answer: str):
             'error': False,
             'answer_is_correct': False
         }), 200
+
+
+@answers_router.route('/<question_id>>', methods=['GET'])
+def get_answer_by_question(question_id: int):
+    '''Gets answer by an questuion_id.
+
+    Returns answer by given question_id (int). If user not found returns 404 error.
+
+    Args:
+        question_id(int): question\'s id
+    '''
+
+    answer = models.Answer.get_answer(question_id)
+    if answer is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find answer with id {question_id}',
+        }), 404
+    return flask.jsonify({
+        'error': False,
+        'id': answer.id,
+        'question_id': question_id,
+        'correct_answer': answer.correct_answer,
+    }), 200
