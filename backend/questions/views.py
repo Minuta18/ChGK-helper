@@ -1,5 +1,5 @@
 from questions import models
-from sqlalchemy import orm
+from sqlalchemy import orm, func
 import sqlalchemy
 import api
 import flask
@@ -164,3 +164,15 @@ def delete_question(question_id: int):
             'error': True,
             'detail': 'Question not found',
         }), 404
+
+@questions_router.route('/random', methods=['GET'])
+def random_question():
+    '''Give random question with id'''
+    session = api.db.get_session()
+    question = session.scalars(sqlalchemy.select(models.Answer)).where(func.random())
+    return flask.jsonify({
+        'error': False,
+        'id': question.id,
+        'text': question.text,
+        'comment': question.comment
+    }), 200
