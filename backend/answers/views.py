@@ -3,6 +3,7 @@ from sqlalchemy import orm
 import sqlalchemy
 import api
 import flask
+import base64
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
@@ -95,7 +96,6 @@ def create_answer():
 def update_answer(answer_id):
     '''Update existful answer
 
-
     Args:
         question_id (:obj:`int`): Id the question on with it answer is answering.
         correct_answer (:obj:`str`): correct answer on question
@@ -128,7 +128,6 @@ def update_answer(answer_id):
 def delete_answer(answer_id):
     '''Delete existful answer
 
-
     Args:
        id (:obj:`int`): Id of deleting answer.
     '''
@@ -150,3 +149,26 @@ def delete_answer(answer_id):
     return flask.jsonify({
         'error': False
     }), 200
+
+@answers_router.route('/api/v1/questions/<question_id>/check/<answer>', methods=['GET'])
+def check_answer(question_id, answer):
+    '''Check answer
+
+    Args:
+        question_id (:obj:`int`): Id of question.
+        answer (:obj:`str`): answer which user give us.
+    '''
+
+    session = api.db.get_session()
+    correct_answer = session.get(question_id)
+
+    if correct_answer.correct_answer == base64.decode(answer):
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': True
+        }), 200
+    else:
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': False
+        }), 200
