@@ -77,3 +77,9 @@ class Answer(api.orm_base):
             return True
         else:
             return False
+
+    @staticmethod
+    def get_answer_by_question(question_id: int) -> typing.Self|None:
+        '''Returns answer by question_id or None if it not found'''
+        session = api.db.get_session()
+        return session.get(question_id)
