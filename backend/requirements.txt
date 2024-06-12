@@ -1,0 +1,17 @@
+blinker==1.8.2
+click==8.1.7
+flake8==7.0.0
+Flask==3.0.3
+Flask-Cors==4.0.1
+flask-swagger-ui==4.11.1
+greenlet==3.0.3
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+mccabe==0.7.0
+passlib==1.7.4
+pycodestyle==2.11.1
+pyflakes==3.2.0
+SQLAlchemy==2.0.30
+typing_extensions==4.12.1
+Werkzeug==3.0.3
