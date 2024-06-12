@@ -57,7 +57,6 @@ def get_answers():
         } for answer in answers],
     }), 200
 
-
 @answers_router.route('/', methods=['POST'])
 def create_answer():
     '''Create answer.

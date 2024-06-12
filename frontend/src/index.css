@@ -2,19 +2,29 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    width: 100%;
+    min-width: 100vw;
+}
+
 body {
     margin: 0;
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     font-size: 20px;
+    width: 100%;
 }
 
 head, body {
-    min-height: 100vh;
+    min-height: 100%;
+    height: 100%;
     margin: 0px;
+    width: 100%;
 }
 
 div#root {
-    height: 100vh;
+    height: 100%;
+    width: 100%;
 }
 
 :root {
@@ -23,6 +33,7 @@ div#root {
     --black: #000;
 
     --primary-color: #6495ed;
+    --primary-color-lighter: #9abdfd;
     --primary-color-darker: #4169e1;
     --secondary-color: #e0f0ff;
     --secondary-color-darker: #b5c2ce;

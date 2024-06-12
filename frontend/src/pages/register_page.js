@@ -4,7 +4,7 @@ import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
 import { TextInput, PasswordInput } from '../ui/elements/inputs';
 import { 
-    LinkButtonPrimary, LinkButtonSecondary 
+    LinkButtonPrimary, LinkButtonSecondary, BackButton,
 } from '../ui/elements/buttons';
 
 import '../ui/elements/inputs.css';
@@ -15,6 +15,7 @@ export default function RegisterPage() {
         <>
             <Background>
                 <Modal>
+                    <BackButton />
                     <span className='header-text'>Регистрация</span>
                     <TextInput 
                         name='email' required={ true } 
@@ -26,7 +27,7 @@ export default function RegisterPage() {
                         name='nickname' required={ true } 
                         placeholder='ExampleNickname'
                     >
-                        Электронная почта
+                        Никнейм
                     </TextInput>
                     <PasswordInput 
                         name='password' required={ true }
@@ -48,7 +49,9 @@ export default function RegisterPage() {
                             class="link"
                         >условия пользования сервисом.</a>
                     </label>
-                    <LinkButtonPrimary>Вход</LinkButtonPrimary>
+                    <LinkButtonPrimary disabled={ false }>
+                        Регистрация
+                    </LinkButtonPrimary>
                     <LinkButtonSecondary href='/auth/login'>
                         У меня уже есть аккаунт
                     </LinkButtonSecondary>

@@ -1,3 +1,5 @@
+from werkzeug import exceptions
+import flask_cors
 import flask
 import users
 import os
@@ -8,6 +10,7 @@ import answers
 from werkzeug import exceptions
 
 app = flask.Flask('ChKG-helper')
+cors = flask_cors.CORS(app)
 
 app.register_blueprint(api.views.router, url_prefix='/api/v1')
 app.register_blueprint(questions.views.questions_router, url_prefix='/api/v1/questions')
