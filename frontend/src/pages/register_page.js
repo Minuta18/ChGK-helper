@@ -27,7 +27,7 @@ export default function RegisterPage() {
                         name='nickname' required={ true } 
                         placeholder='ExampleNickname'
                     >
-                        Электронная почта
+                        Никнейм
                     </TextInput>
                     <PasswordInput 
                         name='password' required={ true }
