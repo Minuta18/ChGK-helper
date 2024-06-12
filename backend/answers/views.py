@@ -7,7 +7,7 @@ import base64
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
-@answers_router.route('/api/v1/answer/<number>', methods=['GET'])
+@answers_router.route('/<number>', methods=['GET'])
 def get_answer(answer_id: int):
     '''Gets answer by an id.
     
@@ -30,7 +30,7 @@ def get_answer(answer_id: int):
         'correct_answer': answer.correct_answer,
     }), 200
     
-@answers_router.route('/api/v1/answer', methods=['GET'])
+@answers_router.route('/', methods=['GET'])
 def get_answers():
     '''Gets multiple answers.
     
@@ -58,7 +58,7 @@ def get_answers():
     }), 200
 
 
-@answers_router.route('/api/v1/answer', methods=['POST'])
+@answers_router.route('/', methods=['POST'])
 def create_answer():
     '''Create answer.
 
@@ -92,7 +92,7 @@ def create_answer():
         'correct_answer': answer.correct_answer,
     }), 201
 
-@answers_router.route('/api/v1/answer/<number>', methods=['PUT'])
+@answers_router.route('/<number>', methods=['PUT'])
 def update_answer(answer_id):
     '''Update existful answer
 
@@ -124,7 +124,7 @@ def update_answer(answer_id):
         'correct_answer': answer.correct_answer,
     }), 200
 
-@answers_router.route('/api/v1/answer/<number>', methods=['DELETE'])
+@answers_router.route('/<number>', methods=['DELETE'])
 def delete_answer(answer_id: int):
     '''Delete existful answer
 
@@ -150,7 +150,7 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
-@answers_router.route('/api/v1/questions/<question_id>/check/<answer>', methods=['GET'])
+@answers_router.route('/<question_id>/check/<answer>', methods=['GET'])
 def check_answer(question_id: int, answer: str):
     '''Check answer
 
