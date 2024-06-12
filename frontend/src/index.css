@@ -23,6 +23,7 @@ div#root {
     --black: #000;
 
     --primary-color: #6495ed;
+    --primary-color-lighter: #9abdfd;
     --primary-color-darker: #4169e1;
     --secondary-color: #e0f0ff;
     --secondary-color-darker: #b5c2ce;

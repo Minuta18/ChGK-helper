@@ -4,7 +4,7 @@ import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
 import { TextInput, PasswordInput } from '../ui/elements/inputs';
 import { 
-    LinkButtonPrimary, LinkButtonSecondary 
+    LinkButtonPrimary, LinkButtonSecondary, BackButton,
 } from '../ui/elements/buttons';
 
 export default function LoginPage() {
@@ -12,6 +12,7 @@ export default function LoginPage() {
         <>
             <Background>
                 <Modal>
+                    <BackButton />
                     <span className='header-text'>Вход</span>
                     <TextInput 
                         name='nickname' required={ true } 
