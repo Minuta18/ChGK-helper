@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, forwardRef } from 'react';
 import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 
 import RequiredSymbol from '../typography/required_symbol';
@@ -18,7 +18,7 @@ export function TextInput(props) {
                 { props.children } { required_symbol_ }
             </label>
             <input 
-                type="text" name={ props.name } 
+                type="text" name={ props.name }
                 className='input-field' placeholder={ props.placeholder } 
             />
         </>
@@ -60,25 +60,26 @@ export function PasswordInput(props) {
     );
 }
 
-export function DisabledTextInput(props) {
-    let required_symbol_ = <></>;
+export const DisabledTextInput = forwardRef(
+    function DisabledTextInput(props, ref) {
+        let required_symbol_ = <></>;
 
-    if (props.required) {
-        required_symbol_ = <RequiredSymbol />;
-    }
+        if (props.required) {
+            required_symbol_ = <RequiredSymbol />;
+        }
 
-    return (
-        <>
-            <label htmlFor={ props.name } className='form-label'>
-                { props.children } { required_symbol_ }
-            </label>
-            <input 
-                type="text" name={ props.name } disabled={ props.disabled }
-                className={ 
-                    props.disabled ? 'input-field input-blocked' : 
-                    'input-field'
-                } placeholder={ props.placeholder } 
-            />
-        </>
-    );
-}
+        return (
+            <>
+                <label htmlFor={ props.name } className='form-label'>
+                    { props.children } { required_symbol_ }
+                </label>
+                <input 
+                    type="text" name={ props.name } disabled={ props.disabled }
+                    className={ 
+                        props.disabled ? 'input-field input-blocked' : 
+                        'input-field'
+                    } placeholder={ props.placeholder } ref={ ref }
+                />
+            </>
+        );
+});

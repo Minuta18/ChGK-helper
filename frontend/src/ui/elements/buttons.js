@@ -44,7 +44,7 @@ export function ButtonPrimary(props) {
     }
 
     return (
-        <button className={ btnClassName }>
+        <button className={ btnClassName } onClick={ props.onClick }>
             { props.children }
         </button>
     );

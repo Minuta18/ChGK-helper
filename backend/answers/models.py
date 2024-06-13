@@ -21,10 +21,10 @@ class Answer(api.orm_base):
         autoincrement=True, unique=True,
     )
     question_id: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.BigInteger, unique=True,
+        sqlalchemy.Integer, unique=True,
     )
     correct_answer: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255), nullable=False,
+        sqlalchemy.Text, nullable=False,
     )
 
     @staticmethod
@@ -42,6 +42,7 @@ class Answer(api.orm_base):
         )).all()
 
     @staticmethod
+
     def create_answer(
         question_id: int, correct_answer: str
     ) -> typing_extensions.Self:

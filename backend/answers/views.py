@@ -83,7 +83,9 @@ def create_answer():
         }), 400
 
     try:
-        answer = models.Answer.create_answer(question_id, correct_answer)
+        answer = models.Answer.create_answer( 
+            question_id, correct_answer,
+        )
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -167,6 +169,12 @@ def check_answer(question_id: int):
         answer (:obj:`str`): answer which user give us.
     '''
 
+    if flask.request.headers.get('Content-Type') != 'application/json':
+        return flask.jsonify({
+            'error': True,
+            'message': 'Incorrect Content-Type header',
+        }), 400
+
     session = api.db.get_session()
     try:
         correct_answer = session.scalars(sqlalchemy.select(models.Answer).where(
@@ -178,7 +186,9 @@ def check_answer(question_id: int):
             'answer_is_correct': False,
         })
 
-    if correct_answer.correct_answer == flask.request.json.get('answer'):
+    answer = flask.request.json.get('answer', '')
+
+    if correct_answer.correct_answer == answer:
         return flask.jsonify({
             'error': False,
             'answer_is_correct': True

@@ -7,6 +7,10 @@ import LoginPage from './pages/login_page.js';
 import RegisterPage from './pages/register_page.js';
 import QuestionsPage from './pages/questions_page.js';
 import SettingsPage from './pages/settings.js';
+import Incorrect_answer from './pages/incorr_answer.js';
+import Correct_answer from './pages/corr_answer.js';
+import Statistics from './pages/statistics.js'
+
 
 import './index.css';
 import './ui/typography/fonts.css';
@@ -30,7 +34,14 @@ const router = createBrowserRouter([
     },
     {
         path: '/settings',
-        element: <SettingsPage/>
+        element: <SettingsPage/>,
+    },
+    {
+        path: '/play/stat',
+        element: <Statistics stats={[
+            '1',
+            '2'
+        ]}/>
     }
 ]);
 
