@@ -13,7 +13,7 @@ class Question(api.orm_base):
     __tablename__ = 'questions'
 
     id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.BigInteger, primary_key=True,
+        sqlalchemy.Integer, primary_key=True, autoincrement=True
     )
     text: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String, nullable=False,
@@ -54,6 +54,7 @@ class Question(api.orm_base):
         question = Question(text=text, comment=comment)
         session.add(question)
         session.commit()
+        return question
 
     @staticmethod
     def delete_question(question_id) -> typing_extensions.Self:
