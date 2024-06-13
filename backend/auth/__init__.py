@@ -10,5 +10,5 @@ def verify_token(token):
         user = models.Token.get_user_by_token(token)
     except ValueError:
         return None
-    
+
     return user

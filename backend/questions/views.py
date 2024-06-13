@@ -5,7 +5,7 @@ import api
 import flask
 import auth
 
-questions_router = flask.Blueprint('questions_urls', 'questions') 
+questions_router = flask.Blueprint('questions_urls', 'questions')
 
 @questions_router.route('/<int:question_id>', methods=['GET'])
 def get_question(question_id: int):
@@ -51,7 +51,7 @@ def get_questions():
     if (page_size < 1 or page_size > 100):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page size: { page_size }'
+            'detail': f'Invalid page size: {page_size}'
         }), 400
 
     page = flask.request.args.get('page', 1, type=int)
@@ -59,7 +59,7 @@ def get_questions():
     if (page < 1):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page: { page }',
+            'detail': f'Invalid page: {page}',
         }), 400
 
     return flask.jsonify({
@@ -86,7 +86,7 @@ def create_question():
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
@@ -97,7 +97,7 @@ def create_question():
             'error': True,
             'message': 'Incorrect Content-Type header',
         }), 400
-    
+
     text = flask.request.json.get('text', '')
     comment = flask.request.json.get('comment', '')
 
@@ -129,7 +129,7 @@ def edit_question(question_id: int):
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
@@ -175,12 +175,12 @@ def delete_question(question_id: int):
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
         }), 401
-    
+
     try:
         models.Question.delete_question(question_id)
         return flask.jsonify({
@@ -196,7 +196,7 @@ def delete_question(question_id: int):
 def random_question():
     '''Give random question with id'''
     session = api.db.get_session()
-    
+
     try:
         question = session.scalars(sqlalchemy.select(models.Question).order_by(
             func.random()

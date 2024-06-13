@@ -20,13 +20,14 @@ def create_token(user_nickname: str, user_password: str):
     '''
 
     user = users.models.User.get_user_by_nickname(user_nickname)
-    
-    if not users.models.User.verify_password(user, user.hashed_password, 'bcrypt'):
+
+    if not users.models.User.verify_password(
+            user, user.hashed_password, 'bcrypt'):
         flask.jsonify({
             'error': True,
             'detail': 'Incorrect password',
         }), 401
-    
+
     token = models.Token.create_token(user.id)
     return flask.jsonify({
         'error': False,
@@ -51,7 +52,7 @@ def delete_token(user_id: int):
             'error': True,
             'detail': 'User not found',
         }), 404
-    
+
 @auth_router.route('/<str:token')
 def get_user_by_token(token: str):
     '''Gets user by a given token.'''

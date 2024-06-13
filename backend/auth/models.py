@@ -33,13 +33,13 @@ class Token(api.orm_base):
     def create_token(user_id: int) -> typing_extensions.Self:
         session = api.db.get_session()
         token = Token(
-            given_id=user_id, 
+            given_id=user_id,
             token=secrets.token_urlsafe(150),
         )
         session.add(token)
         session.commit()
         return token
-    
+
     @staticmethod
     def delete_token(given_id: int) -> None:
         '''Deletes user's token by given id'''

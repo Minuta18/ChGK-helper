@@ -11,18 +11,18 @@ answers_router = flask.Blueprint('answers_urls', 'answers')
 @answers_router.route('/<number>', methods=['GET'])
 def get_answer(answer_id: int):
     '''Gets answer by an id.
-    
+
     Returns answer by given id (int). If user not found returns 404 error.
-    
+
     Args:
         answer_id(int): answer\'s id
     '''
-    
+
     answer = models.Answer.get_answer(answer_id)
     if answer is None:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find answer with id { answer_id }',
+            'detail': f'Could not find answer with id {answer_id}',
         }), 404
     return flask.jsonify({
         'error': False,
@@ -30,17 +30,18 @@ def get_answer(answer_id: int):
         'question_id': answer.question_id,
         'correct_answer': answer.correct_answer,
     }), 200
-    
+
 @answers_router.route('/', methods=['GET'])
 def get_answers():
     '''Gets multiple answers.
-    
+
     Gets multiple answers from a specified page. Page is answers
     from n + 1 to n + number_of_answers.
 
     Args:
         start_answer_id (:obj:`int`, optional): Page. Default value is 1.
-        number_of_answers (:obj:`int`, optional): The number of users in one page.
+        number_of_answers (:obj:`int`, optional): 
+        The number of users in one page.
             Default value is 20.
     '''
 
@@ -65,13 +66,14 @@ def create_answer():
     Create new answer.
 
     Args:
-        question_id (:obj:`int`): Id the question on with it answer is answering.
+        question_id (:obj:`int`): Id the question on with
+        it answer is answering.
         correct_answer (:obj:`str`): correct answer on question
     '''
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
@@ -86,7 +88,7 @@ def create_answer():
     correct_answer = flask.request.json.get('correct_answer', '')
 
     try:
-        answer = models.Answer.create_answer( 
+        answer = models.Answer.create_answer(
             question_id, correct_answer,
         )
     except ValueError as e:
@@ -107,13 +109,14 @@ def update_answer(answer_id):
     '''Update existful answer
 
     Args:
-        question_id (:obj:`int`): Id the question on with it answer is answering.
+        question_id (:obj:`int`): Id the question on with
+        it answer is answering.
         correct_answer (:obj:`str`): correct answer on question
     '''
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
@@ -128,7 +131,8 @@ def update_answer(answer_id):
     correct_answer = flask.request.args.get('correct_answer', '')
 
     try:
-        answer = models.Answer.get_answers(answer_id).update_answer(question_id, correct_answer)
+        answer = models.Answer.get_answers(answer_id).update_answer(
+            question_id, correct_answer)
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -152,7 +156,7 @@ def delete_answer(answer_id: int):
 
     if not auth.models.check_for_admin(
         auth.verify_token(auth.auth.current_user()).id
-        ):
+            ):
         return flask.jsonify({
             'error': True,
             'detail': 'Not enough permissions'
@@ -204,7 +208,8 @@ def check_answer(question_id: int, answer: str):
 def get_answer_by_question(question_id: int):
     '''Gets answer by an questuion_id.
 
-    Returns answer by given question_id (int). If user not found returns 404 error.
+    Returns answer by given question_id (int).
+    If user not found returns 404 error.
 
     Args:
         question_id(int): question\'s id
