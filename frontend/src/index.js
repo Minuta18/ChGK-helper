@@ -37,14 +37,6 @@ const router = createBrowserRouter([
         element: <SettingsPage/>,
     },
     {
-        path: '/play/incorr',
-        element: <Incorrect_answer/>,
-    },
-    {
-        path: '/play/corr',
-        element: <Correct_answer/>,
-    },
-    {
         path: '/play/stat',
         element: <Statistics stats={[
             '1',
