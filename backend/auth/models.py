@@ -65,3 +65,7 @@ class Token(api.orm_base):
         )
         return models.User.get_user(peremenaya.user_id)
 
+def check_for_admin(user):
+    if user.permission == 'admin':
+        return True
+    return False
