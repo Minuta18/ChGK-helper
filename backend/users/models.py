@@ -39,6 +39,15 @@ class User(api.orm_base):
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=True,
     )
+    time_for_reading: orm.Mapped[int] = orm.mapped_column(
+        sqlalchemy.Integer
+    )
+    time_for_solving: orm.Mapped[int] = orm.mapped_column(
+        sqlalchemy.Integer
+    )
+    time_for_typing: orm.Mapped[int] = orm.mapped_column(
+        sqlalchemy.Integer
+    )
 
     def set_password(self, plain_password: str):
         '''Set password and hashes it'''
@@ -182,3 +191,13 @@ class User(api.orm_base):
         session = api.db.get_session()
         session.delete(user)
         session.commit()
+
+    def update_user_settings(self, time_for_reading: int, time_for_solving: int, time_for_typing: int):
+        '''change question_id and correct_answer of choosen answer'''
+        self.time_for_reading = time_for_reading
+        self.time_for_solving = time_for_solving
+        self.time_for_typing = time_for_typing
+        session = api.db.get_session()
+        session.add(self)
+        session.commit()
+        return self
