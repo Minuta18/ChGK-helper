@@ -151,8 +151,8 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
-@answers_router.route('/<question_id>/check/<answer>', methods=['GET'])
-def check_answer(question_id: int, answer: str):
+@answers_router.route('/<question_id>/check/', methods=['POST'])
+def check_answer(question_id: int):
     '''Check answer
 
     Args:
@@ -160,10 +160,18 @@ def check_answer(question_id: int, answer: str):
         answer (:obj:`str`): answer which user give us.
     '''
 
+    if flask.request.headers.get('Content-Type') != 'application/json':
+        return flask.jsonify({
+            'error': True,
+            'message': 'Incorrect Content-Type header',
+        }), 400
+
     session = api.db.get_session()
     correct_answer = session.get(question_id)
 
-    if correct_answer.correct_answer == base64.decode(answer):
+    answer = flask.request.json.get('answer', '')
+
+    if correct_answer.correct_answer == answer:
         return flask.jsonify({
             'error': False,
             'answer_is_correct': True
