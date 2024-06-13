@@ -192,7 +192,7 @@ class User(api.orm_base):
         session.delete(user)
         session.commit()
 
-    def update_user_settings(self, time_for_reading: int, time_for_solving: int, time_for_typing: int):
+    def update_user_settings(self, time_for_reading: int = None, time_for_solving: int = None, time_for_typing: int = None):
         '''change question_id and correct_answer of choosen answer'''
         if time_for_reading != None:
             self.time_for_reading = time_for_reading
