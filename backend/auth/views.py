@@ -23,12 +23,32 @@ def create_token(user_nickname: str, user_password: str):
     
     if not users.models.User.verify_password(user, user.hashed_password, 'bcrypt'):
         flask.jsonify({
-            'error': True
-            'detail': 'Incorrect password'
-        })
+            'error': True,
+            'detail': 'Incorrect password',
+        }), 401
     
     token = models.Token.create_token(user.id)
     return flask.jsonify({
         'error': False,
         'token': token,
     }), 200
+
+@auth_router.route('/logout/<int:user_id>', methods=['DELETE'])
+def delete_token(user_id: int):
+    '''Deletes the user's token by given id.'''
+    try:
+        models.Token.delete_token(user_id)
+        return flask.jsonify({
+            'error': False
+        }), 200
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'User not found',
+        }), 404
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'User not found',
+        }), 404
+
