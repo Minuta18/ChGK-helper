@@ -169,12 +169,7 @@ def delete_question(question_id: int):
 def random_question():
     '''Give random question with id'''
     session = api.db.get_session()
-    # print(sqlalchemy.select(models.Question)
-    #     .order_by(func.random()))
-    question = session.scalars(
-        sqlalchemy.select(models.Question)
-        .order_by(func.random())
-    ).all()[0]
+    question = session.scalars(sqlalchemy.select(models.Question).order_by(func.random())).all()[0]
     return flask.jsonify({
         'error': False,
         'id': question.id,
