@@ -112,10 +112,7 @@ def update_answer(answer_id):
             'message': 'Incorrect Content-Type header',
         }), 400
     question_id = flask.request.args.get('question_id', None)
-    correct_answer = flask.request.args.get('correct_answer', None)
-
-    if correct_answer is not None:
-        correct_answer = base64.urlsafe_b64decode(correct_answer)
+    correct_answer = flask.request.json.get('correct_answer', None)
 
     try:
         answer = models.Answer.get_answer(answer_id).update_answer(
@@ -161,8 +158,8 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
-@answers_router.route('/<question_id>/check/<answer>', methods=['GET'])
-def check_answer(question_id: int, answer: str):
+@answers_router.route('/<question_id>/check', methods=['POST'])
+def check_answer(question_id: int):
     '''Check answer
 
     Args:
@@ -181,7 +178,7 @@ def check_answer(question_id: int, answer: str):
             'answer_is_correct': False,
         })
 
-    if correct_answer.correct_answer == base64.urlsafe_b64decode(answer):
+    if correct_answer.correct_answer == flask.request.json.get('answer'):
         return flask.jsonify({
             'error': False,
             'answer_is_correct': True

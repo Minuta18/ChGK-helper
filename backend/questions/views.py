@@ -117,8 +117,8 @@ def edit_question(question_id: int):
         comment (:obj:`str`, optional): New comment of the new question.
     '''
 
-    text = flask.request.args.get('text', None, type=str)
-    comment = flask.request.args.get('comment', None, type=str)
+    text = flask.request.json.get('text', None)
+    comment = flask.request.json.get('comment', None)
 
     question = models.Question.get_question(question_id)
 
