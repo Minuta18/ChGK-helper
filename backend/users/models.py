@@ -205,8 +205,9 @@ class User(api.orm_base):
         if not User.validate_nickname():
             raise ValueError('Invalid nickname')
         session = api.db.get_session
-        return session.scalars(sqlalchemy.select(User).where(User.nickname
-                                                    == user_nickname)).all()[0]
+        return session.scalars(
+            sqlalchemy.select(User
+                             ).where(User.nickname== user_nickname)).all()[0]
 
     def update_user_settings(self, time_for_reading: int = None, time_for_solving: int = None, time_for_typing: int = None):
         '''change question_id and correct_answer of choosen answer'''

@@ -4,6 +4,7 @@ import sqlalchemy
 import api
 import flask
 import base64
+import auth
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
@@ -68,6 +69,14 @@ def create_answer():
         correct_answer (:obj:`str`): correct answer on question
     '''
 
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
+
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
             'error': True,
@@ -102,6 +111,14 @@ def update_answer(answer_id):
         correct_answer (:obj:`str`): correct answer on question
     '''
 
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
+
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
             'error': True,
@@ -132,6 +149,14 @@ def delete_answer(answer_id: int):
     Args:
        id (:obj:`int`): Id of deleting answer.
     '''
+
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
 
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({

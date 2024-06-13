@@ -3,8 +3,9 @@ from sqlalchemy import orm, func
 import sqlalchemy
 import api
 import flask
+import auth
 
-questions_router = flask.Blueprint('questions_urls', 'questions')
+questions_router = flask.Blueprint('questions_urls', 'questions') 
 
 @questions_router.route('/<int:question_id>', methods=['GET'])
 def get_question(question_id: int):
@@ -83,11 +84,20 @@ def create_question():
         comment (str): Comment to the question
     '''
 
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
+
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
             'error': True,
             'message': 'Incorrect Content-Type header',
-        })
+        }), 400
+    
     text = flask.request.json.get('text', '')
     comment = flask.request.json.get('comment', '')
 
@@ -116,6 +126,14 @@ def edit_question(question_id: int):
         text (:obj:`str`, optional): New text of the question.
         comment (:obj:`str`, optional): New comment of the new question.
     '''
+
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
 
     text = flask.request.args.get('text', None, type=str)
     comment = flask.request.args.get('comment', None, type=str)
@@ -154,6 +172,15 @@ def edit_question(question_id: int):
 @questions_router.route('/<int:question_id>', methods=['DELETE'])
 def delete_question(question_id: int):
     '''Deletes question by given id'''
+
+    if not auth.models.check_for_admin(
+        auth.verify_token(auth.auth.current_user()).id
+        ):
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions'
+        }), 401
+    
     try:
         models.Question.delete_question(question_id)
         return flask.jsonify({
