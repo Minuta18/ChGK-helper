@@ -1,7 +1,7 @@
 from sqlalchemy import orm
 import sqlalchemy
 import api
-import typing
+import typing_extensions
 import passlib
 
 class Answer(api.orm_base):
@@ -28,13 +28,13 @@ class Answer(api.orm_base):
     )
 
     @staticmethod
-    def get_answer(answer_id: int) -> typing.Self|None:
+    def get_answer(answer_id: int) -> typing_extensions.Self|None:
         '''Returns answer by id or None if it not found'''
         session = api.db.get_session()
         return session.get(answer_id)
     
     @staticmethod
-    def get_answers(from_id: int, to_id: int) -> list[typing.Self]:
+    def get_answers(from_id: int, to_id: int) -> list[typing_extensions.Self]:
         '''Returns answers with ids from from_id to to_id'''
         session = api.db.get_session()
         return session.scalars(sqlalchemy.select(Answer).where(
@@ -42,7 +42,7 @@ class Answer(api.orm_base):
         )).all()
 
     @staticmethod
-    def create_answer(question_id: int, correct_answer: str) -> typing.Self:
+    def create_answer(question_id: int, correct_answer: str) -> typing_extensions.Self:
         '''create new answer with question_ia and correct_answer'''
         session = api.db.get_session()
         answer = Answer(question_id=question_id, correct_answer=correct_answer)
@@ -77,7 +77,7 @@ class Answer(api.orm_base):
             return False
 
     @staticmethod
-    def get_answer_by_question(question_id: int) -> typing.Self|None:
+    def get_answer_by_question(question_id: int) -> typing_extensions.Self|None:
         '''Returns answer by question_id or None if it not found'''
         session = api.db.get_session()
         return session.get(question_id)
