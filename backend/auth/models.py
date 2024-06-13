@@ -7,8 +7,6 @@ import sqlalchemy
 import api
 import typing_extensions
 
-models.User
-
 class Token(api.orm_base):
     '''Token model
 
@@ -67,5 +65,3 @@ class Token(api.orm_base):
         )
         return models.User.get_user(peremenaya.user_id)
 
-app = Flask(__name__)
-auth = HTTPTokenAuth(scheme='bearer')
