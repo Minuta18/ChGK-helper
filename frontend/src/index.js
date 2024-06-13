@@ -9,6 +9,7 @@ import QuestionsPage from './pages/questions_page.js';
 import SettingsPage from './pages/settings.js';
 import Incorrect_answer from './pages/incorr_answer.js';
 import Correct_answer from './pages/corr_answer.js';
+import Statistics from './pages/statistics.js'
 
 
 import './index.css';
@@ -42,6 +43,13 @@ const router = createBrowserRouter([
     {
         path: '/play/corr',
         element: <Correct_answer/>,
+    },
+    {
+        path: '/play/stat',
+        element: <Statistics stats={[
+            '1',
+            '2'
+        ]}/>
     }
 ]);
 
