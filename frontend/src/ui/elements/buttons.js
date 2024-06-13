@@ -35,3 +35,17 @@ export function BackButton() {
         }} />
     );
 }
+
+export function ButtonPrimary(props) {
+    let btnClassName = "button btn-primary";
+    
+    if (props.disabled) {
+        btnClassName = "button btn-primary blocked-primary";
+    }
+
+    return (
+        <button className={ btnClassName }>
+            { props.children }
+        </button>
+    );
+}

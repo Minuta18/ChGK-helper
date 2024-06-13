@@ -46,7 +46,7 @@ export function PasswordInput(props) {
                 <input 
                     type={ visible ? 'text' : 'password' } name={ props.name } 
                     className='input-field' placeholder={ props.placeholder } 
-                    value={ password } id='password' 
+                    value={ password } id={ props.name }
                     onChange={ (e) => setPassword(e.target.value) }
                 />
                 <div
@@ -56,6 +56,29 @@ export function PasswordInput(props) {
                     { visible ? <BsFillEyeFill /> : <BsFillEyeSlashFill /> }
                 </div>
             </div>
+        </>
+    );
+}
+
+export function DisabledTextInput(props) {
+    let required_symbol_ = <></>;
+
+    if (props.required) {
+        required_symbol_ = <RequiredSymbol />;
+    }
+
+    return (
+        <>
+            <label htmlFor={ props.name } className='form-label'>
+                { props.children } { required_symbol_ }
+            </label>
+            <input 
+                type="text" name={ props.name } disabled={ props.disabled }
+                className={ 
+                    props.disabled ? 'input-field input-blocked' : 
+                    'input-field'
+                } placeholder={ props.placeholder } 
+            />
         </>
     );
 }
