@@ -1,0 +1,24 @@
+.header-text {
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-size: 36px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.header-text-but-smaller {
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.timer-font {
+    font-weight: 800;
+    width: fit-content;
+}
+
+.timer-font-red {
+    font-weight: 800;
+    color: red;
+    width: fit-content;
+}

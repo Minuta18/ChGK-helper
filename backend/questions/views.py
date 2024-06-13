@@ -1,5 +1,5 @@
 from questions import models
-from sqlalchemy import orm
+from sqlalchemy import orm, func
 import sqlalchemy
 import api
 import flask
@@ -73,7 +73,7 @@ def get_questions():
     }), 200
 
 @questions_router.route('/', methods=['POST'])
-def create_user():
+def create_question():
     '''Creates new question.
 
     Creates new question.
@@ -89,10 +89,10 @@ def create_user():
             'message': 'Incorrect Content-Type header',
         })
     text = flask.request.json.get('text', '')
-    comment = flask.request.json.get('text', '')
+    comment = flask.request.json.get('comment', '')
 
     try:
-        question = models.Question.create_user(text, comment)
+        question = models.Question.add_question(text, comment)
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -106,7 +106,7 @@ def create_user():
         'comment': question.comment,
     }), 201
 
-@questions_router.route('/<int:user_id>', methods=['PUT'])
+@questions_router.route('/<int:question_id>', methods=['PUT'])
 def edit_question(question_id: int):
     '''Edits question by given id.
 
@@ -151,7 +151,7 @@ def edit_question(question_id: int):
             'detail': 'question already exists',
         }), 400
 
-@questions_router.route('/<int:user_id>', methods=['DELETE'])
+@questions_router.route('/<int:question_id>', methods=['DELETE'])
 def delete_question(question_id: int):
     '''Deletes question by given id'''
     try:
@@ -164,3 +164,24 @@ def delete_question(question_id: int):
             'error': True,
             'detail': 'Question not found',
         }), 404
+
+@questions_router.route('/random', methods=['GET'])
+def random_question():
+    '''Give random question with id'''
+    session = api.db.get_session()
+    
+    try:
+        question = session.scalars(sqlalchemy.select(models.Question).order_by(
+            func.random()
+        )).all()[0]
+    except IndexError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'No questions',
+        }), 404
+    return flask.jsonify({
+        'error': False,
+        'id': question.id,
+        'text': question.text,
+        'comment': question.comment
+    }), 200

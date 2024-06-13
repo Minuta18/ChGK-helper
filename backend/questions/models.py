@@ -13,7 +13,7 @@ class Question(api.orm_base):
     __tablename__ = 'questions'
 
     id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.BigInteger, primary_key=True,
+        sqlalchemy.Integer, primary_key=True, autoincrement=True
     )
     text: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String, nullable=False,
@@ -26,7 +26,7 @@ class Question(api.orm_base):
     def get_question(question_id: int) -> typing_extensions.Self | None:
         '''Returns question by id or None if user not found'''
         session = api.db.get_session()
-        return session.get(question_id)
+        return session.get(Question, question_id)
 
     @staticmethod
     def get_questions(
@@ -54,6 +54,7 @@ class Question(api.orm_base):
         question = Question(text=text, comment=comment)
         session.add(question)
         session.commit()
+        return question
 
     @staticmethod
     def delete_question(question_id) -> typing_extensions.Self:
