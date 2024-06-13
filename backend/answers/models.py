@@ -1,7 +1,7 @@
 from sqlalchemy import orm
 import sqlalchemy
 import api
-import typing
+import typing_extensions
 import passlib
 
 class Answer(api.orm_base):
@@ -17,7 +17,7 @@ class Answer(api.orm_base):
     __tablename__ = 'answers'
     
     id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.BigInteger, primary_key=True, 
+        sqlalchemy.Integer, primary_key=True, 
         autoincrement=True, unique=True,
     )
     question_id: orm.Mapped[str] = orm.mapped_column(
@@ -28,13 +28,13 @@ class Answer(api.orm_base):
     )
 
     @staticmethod
-    def get_answer(answer_id: int) -> typing.Self|None:
+    def get_answer(answer_id: int) -> typing_extensions.Self|None:
         '''Returns answer by id or None if it not found'''
         session = api.db.get_session()
-        return session.get(answer_id)
+        return session.get(Answer, answer_id)
     
     @staticmethod
-    def get_answers(from_id: int, to_id: int) -> list[typing.Self]:
+    def get_answers(from_id: int, to_id: int) -> list[typing_extensions.Self]:
         '''Returns answers with ids from from_id to to_id'''
         session = api.db.get_session()
         return session.scalars(sqlalchemy.select(Answer).where(
@@ -42,7 +42,9 @@ class Answer(api.orm_base):
         )).all()
 
     @staticmethod
-    def create_answer(question_id: int, correct_answer: str) -> typing.Self:
+    def create_answer(
+        question_id: int, correct_answer: str
+    ) -> typing_extensions.Self:
         '''create new answer with question_ia and correct_answer'''
         session = api.db.get_session()
         answer = Answer(question_id=question_id, correct_answer=correct_answer)
@@ -60,10 +62,12 @@ class Answer(api.orm_base):
         session.delete(answer)
         session.commit()
 
-    def update_answer(self, question_id: int, correct_answer: str):
+    def update_answer(self, question_id: int = None, correct_answer: str = None):
         '''change question_id and correct_answer of choosen answer'''
-        self.question_id = question_id
-        self.correct_answer = correct_answer
+        if question_id is not None:
+            self.question_id = question_id
+        if correct_answer is not None:
+            self.correct_answer = correct_answer
         session = api.db.get_session()
         session.add(self)
         session.commit()
@@ -77,7 +81,9 @@ class Answer(api.orm_base):
             return False
 
     @staticmethod
-    def get_answer_by_question(question_id: int) -> typing.Self|None:
+    def get_answer_by_question(
+        question_id: int
+    ) -> typing_extensions.Self|None:
         '''Returns answer by question_id or None if it not found'''
         session = api.db.get_session()
-        return session.get(question_id)
+        return session.get(Answer, question_id)

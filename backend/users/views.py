@@ -173,7 +173,7 @@ def change_password(user_id: int):
     }), 200
 
 @users_router.route('/<int:user_id>', methods=['PUT'])
-def edit_user(user_id: int):
+def edit_user_settings(user_id: int):
     '''Edits user by given id.
 
     Edits user by given id.
