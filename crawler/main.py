@@ -61,6 +61,8 @@ def parse_questions_page(page: str) -> list[Question]:
             question_.source,
             question_.author,
         ))
+
+        questions.append(question_)
     return questions
 
 def send_question_to_db(q: Question):
@@ -75,22 +77,32 @@ def send_question_to_db(q: Question):
     elif response.json().get('error', True):
         print(f'[Uploaded question] Error: {response.json().get('detail', '')}')
     else:
-        print(f'[Uploaded question] Successfully')
+        print(f'[Uploaded question] Success')
 
-    response2 = requests.post('http://127.0.0.0:5000/api/v1/answers/',
+    response2 = requests.post('http://127.0.0.1:5000/api/v1/answer/',
         headers={
             'Content-Type': 'application/json',
         }, json={
-            
+            'question_id': response.json().get('id', 0),
+            'correct_answer': q.answer,
         }
     )
+    if response2.status_code != 201:
+        print(f'[Uploaded answer] Error uploading answer: { response2.status_code }')
+    elif response2.json().get('error', True):
+        print(f'[Uploaded answer] Error uploading answer: { response2.json().get('detail', '') }')
+    else:
+        print(f'[Uploaded answer] Success')
 
 if __name__ == '__main__':
-    for i in range(1, 500):
-        page = get_links_page(i)
-        question_links = parse_page(page)
-        for link in question_links[:1]:
-            quest_page = get_questions_page(link)
-            questions = parse_questions_page(quest_page)
-            for q in questions:
-                send_question_to_db(q)
+    for i in range(1, 101):
+        try:
+            page = get_links_page(i)
+            question_links = parse_page(page)
+            for link in question_links[:1]:
+                quest_page = get_questions_page(link)
+                questions = parse_questions_page(quest_page)
+                for q in questions:
+                    send_question_to_db(q)
+        except Exception as e:
+            print(f'[Error] { e }')
