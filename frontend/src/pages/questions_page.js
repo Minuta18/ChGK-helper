@@ -1,19 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 
 import { Question } from '../ui/elements/question.js';
 import Background from '../ui/containers/background.js';
 import Modal from '../ui/containers/modal.js';
 import { BackButton } from '../ui/elements/buttons.js';
+import CorrectAnswer from './corr_answer.js';
+import IncorrectAnswer from './incorr_answer.js';
 
 import { baseUrl } from '../api/api.js';
 
-function QuestionPage(props) {
+export const QuestionPage = forwardRef(function QuestionPage(props, ref) {
     return (<>
         <Background>
             <Modal>
                 { props.loading ? <p>загрузка...</p> : <Question
                     tfr={ 5 } tfs={ 10 } tft={ 15 } num={ 1 } 
-                    ref={ props.ref } onExpired={ props.onExpired }
+                    ref={ ref } onExpired={ props.onExpired }
                     onClick={ props.onClick }
                 >
                     { props.question.text }
@@ -21,34 +23,68 @@ function QuestionPage(props) {
             </Modal>
         </Background>
     </>);
+});
+
+export function TIncorrectAnswer(props) {
+    const [loading, setLoading] = useState(true);
+    const [corrAns, setCorrAns] = useState({});
+
+    useEffect(() => {
+        const getAnswer = () => {
+            fetch(baseUrl + '/answer/get/' + props.question.id, {
+                method: 'GET',
+            }).then(response => response.json())
+                .then(json => setCorrAns(json))
+                .catch(error => console.error(error));
+            setLoading(false);
+        }
+
+        getAnswer();
+    }, []);
+
+    console.log(corrAns);
+
+    return (<>
+        { loading ? 
+            <span>Загрузка...</span> : 
+            <IncorrectAnswer answer={ corrAns.correct_answer } comment={ props.question.comment } />
+        }
+    </>);
 }
 
-function AnswerPage(props) {
+export function AnswerPage(props) {
     const [loading, setLoading] = useState(true);
     const [ansResult, setAnsResult] = useState({});
 
     useEffect(() => {
+        const checkAnswer = () => {
+            fetch(baseUrl + '/answer/' + props.question.id + '/check', {
+                method: 'POST',
+                body: JSON.stringify({
+                    answer: props.ans,
+                }),
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            }).then((response) => response.json())
+                .then((json) => setAnsResult(json))
+                .catch((error) => console.error(error));
+            setLoading(false);
+        }
+
         checkAnswer();
     }, []);
-
-    function checkAnswer() {
-        fetch(baseUrl + 'answers/' + props.question.id + '/check/', {
-            method: 'POST',
-            body: JSON.stringify({
-                answer: props.ans,
-            }),
-            headers: {
-                'Content-type': 'application/json',
-            }
-        }).then((response) => response.json())
-          .then((json) => setAnsResult(json));
-        setLoading(false);
-    }
 
     return (<>
         <Background>
             <Modal>
-                { ansResult.answer_is_correct }
+                { loading ?
+                    <span>Загрузка...</span> :
+                    ansResult.answer_is_correct ? 
+                        <CorrectAnswer comment={ props.question.comment } /> :
+                        <TIncorrectAnswer comment={ props.question.comment }
+                            question={ props.question } />
+                }
             </Modal>
         </Background>
     </>);
@@ -66,7 +102,8 @@ export default function QuestionsPage() {
     const getQuestion = () => {
         fetch(baseUrl + '/questions/random')
             .then((response) => response.json())
-            .then((json) => setQuestion(json));
+            .then((json) => setQuestion(json))
+            .catch((error) => console.error(error));
         setLoading(false);
     }
 

@@ -6,29 +6,21 @@ import {
     LinkButtonPrimary, LinkButtonSecondary, BackButton,
 } from '../ui/elements/buttons';
 
-export default function Correct_answer(props) {
+export default function IncorrectAnswer(props) {
     return (
         <>
-            <Background>
-                <Modal>
-                    <BackButton />
-                    <span className='header-text'>Ответ верный!</span>
-                    <span> Правильный ответ: { props.answer } </span>
-                    <span> Комментарий: { props.comment } </span>
-                    <LinkButtonPrimary disabled={ false }>
-                        Далее
-                    </LinkButtonPrimary>
-
-                    <LinkButtonSecondary disabled={ false }>
-                        Отмена
-                    </LinkButtonSecondary>
-
-                    <LinkButtonSecondary disabled={ false }>
-                        Нет мой ответ верный
-                    </LinkButtonSecondary>
-                    
-                </Modal>
-            </Background>
+            <span className='header-text'>Ответ не верный</span>
+            <span> { props.answer } </span>
+            <span> { props.comment } </span>
+            <LinkButtonPrimary disabled={ false }>
+                Далее
+            </LinkButtonPrimary>
+            <LinkButtonSecondary disabled={ false }>
+                Отмена
+            </LinkButtonSecondary>
+            <LinkButtonSecondary disabled={ false }>
+                Нет мой ответ верный
+            </LinkButtonSecondary>
         </>
     );
 }
