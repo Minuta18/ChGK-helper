@@ -17,14 +17,14 @@ class Answer(api.orm_base):
     __tablename__ = 'answers'
     
     id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.BigInteger, primary_key=True, 
+        sqlalchemy.Integer, primary_key=True, 
         autoincrement=True, unique=True,
     )
     question_id: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.BigInteger, unique=True,
+        sqlalchemy.Integer, unique=True,
     )
     correct_answer: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255), nullable=False,
+        sqlalchemy.Text, nullable=False,
     )
 
     @staticmethod

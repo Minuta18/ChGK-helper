@@ -77,7 +77,9 @@ def create_answer():
     correct_answer = flask.request.json.get('correct_answer', '')
 
     try:
-        answer = models.Answer.create_user(question_id, correct_answer)
+        answer = models.Answer.create_answer( 
+            question_id, correct_answer,
+        )
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -173,7 +175,7 @@ def check_answer(question_id: int, answer: str):
         }), 200
 
 
-@answers_router.route('/<question_id>>', methods=['GET'])
+@answers_router.route('/get/<question_id>', methods=['GET'])
 def get_answer_by_question(question_id: int):
     '''Gets answer by an questuion_id.
 

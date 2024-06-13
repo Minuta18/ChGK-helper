@@ -169,7 +169,16 @@ def delete_question(question_id: int):
 def random_question():
     '''Give random question with id'''
     session = api.db.get_session()
-    question = session.scalars(sqlalchemy.select(models.Question).order_by(func.random())).all()[0]
+    
+    try:
+        question = session.scalars(sqlalchemy.select(models.Question).order_by(
+            func.random()
+        )).all()[0]
+    except IndexError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'No questions',
+        }), 404
     return flask.jsonify({
         'error': False,
         'id': question.id,
