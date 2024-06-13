@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 
 import Timer from './timer.js';
 import { DisabledTextInput } from './inputs.js';
@@ -6,7 +6,7 @@ import { ButtonPrimary } from './buttons.js';
 
 import './question.css';
 
-export function Question(props) {
+export const Question = forwardRef(function Question(props, ref) {
     const [currTime, setCurrTime] = useState(1);
     const [disabled, setDisabled] = useState(true);
     
@@ -22,17 +22,18 @@ export function Question(props) {
                 () => { setCurrTime(3); setDisabled(false);
             }}/>}
             {(currTime === 3) && <Timer initialTime={ props.tft } 
-            onExpired={() => {}} />}
+            onExpired={() => { props.onExpired() }} />}
         </div>
         <p className='full-width'>{ props.children }</p>
         <DisabledTextInput 
             name='answer' required={ true }
             placeholder='Ваш ответ' disabled={ disabled } 
+            ref={ ref }
         >
             Ответ
         </DisabledTextInput>
-        <ButtonPrimary disabled={ disabled }>
+        <ButtonPrimary disabled={ disabled } onClick={ props.onClick }>
             Проверить
         </ButtonPrimary>
     </>);
-}
+});
