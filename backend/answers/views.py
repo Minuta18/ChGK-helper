@@ -7,7 +7,7 @@ import base64
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
-@answers_router.route('/<number>', methods=['GET'])
+@answers_router.route('/<answer_id>', methods=['GET'])
 def get_answer(answer_id: int):
     '''Gets answer by an id.
     
@@ -73,8 +73,14 @@ def create_answer():
             'error': True,
             'message': 'Incorrect Content-Type header',
         }), 400
-    question_id = flask.request.json.get('question_id', '')
-    correct_answer = flask.request.json.get('correct_answer', '')
+    question_id = flask.request.json.get('question_id', None)
+    correct_answer = flask.request.json.get('correct_answer', None)
+
+    if question_id is None or correct_answer is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Programmer invalid',  
+        }), 400
 
     try:
         answer = models.Answer.create_answer( 
@@ -93,7 +99,7 @@ def create_answer():
         'correct_answer': answer.correct_answer,
     }), 201
 
-@answers_router.route('/<number>', methods=['PUT'])
+@answers_router.route('/<answer_id>', methods=['PUT'])
 def update_answer(answer_id):
     '''Update existful answer
 
@@ -107,11 +113,14 @@ def update_answer(answer_id):
             'error': True,
             'message': 'Incorrect Content-Type header',
         }), 400
-    question_id = flask.request.args.get('question_id', '')
-    correct_answer = flask.request.args.get('correct_answer', '')
+    question_id = flask.request.args.get('question_id', None)
+    correct_answer = flask.request.json.get('correct_answer', None)
 
     try:
-        answer = models.Answer.get_answers(answer_id).update_answer(question_id, correct_answer)
+        answer = models.Answer.get_answer(answer_id).update_answer(
+            question_id, 
+            correct_answer
+        )
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -151,7 +160,7 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
-@answers_router.route('/<question_id>/check/', methods=['POST'])
+@answers_router.route('/<question_id>/check', methods=['POST'])
 def check_answer(question_id: int):
     '''Check answer
 
@@ -167,7 +176,15 @@ def check_answer(question_id: int):
         }), 400
 
     session = api.db.get_session()
-    correct_answer = session.get(question_id)
+    try:
+        correct_answer = session.scalars(sqlalchemy.select(models.Answer).where(
+            models.Answer.question_id == question_id
+        )).all()[0]
+    except IndexError:
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': False,
+        })
 
     answer = flask.request.json.get('answer', '')
 
