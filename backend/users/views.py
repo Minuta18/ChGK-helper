@@ -286,7 +286,7 @@ def get_time_settings(user_id: int):
     }), 200
 
 @users_router.route('/settings/<int:user_id>', methods=['PUT'])
-def edit_user(user_id: int):
+def edit_user_sttings(user_id: int):
     '''Edits user settings by given id.
 
     Edits user by given id.

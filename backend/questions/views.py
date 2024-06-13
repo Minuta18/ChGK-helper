@@ -73,7 +73,7 @@ def get_questions():
     }), 200
 
 @questions_router.route('/', methods=['POST'])
-def create_user():
+def create_questions():
     '''Creates new question.
 
     Creates new question.
@@ -89,7 +89,7 @@ def create_user():
             'message': 'Incorrect Content-Type header',
         })
     text = flask.request.json.get('text', '')
-    comment = flask.request.json.get('text', '')
+    comment = flask.request.json.get('comment', '')
 
     try:
         question = models.Question.create_user(text, comment)
