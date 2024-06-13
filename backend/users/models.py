@@ -5,12 +5,17 @@ import api
 import typing
 import typing_extensions
 import re
+import enum
 
 crypt_context = context.CryptContext(
     schemes=['bcrypt'], deprecated='auto',
 )
 
 EMAIL_REGEX = api.load_regex('users/email.re')
+
+class UserPermissions(enum.Enum):
+    DEFAULT = 0
+    ADMIN = 1
 
 class User(api.orm_base):
     '''User model
@@ -38,6 +43,13 @@ class User(api.orm_base):
     )
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=True,
+    )
+    token: orm.Mapped[str] = orm.mapped_column(
+        sqlalchemy.String(255), nullable=False,
+        unique=True,
+    )
+    permission: orm.Mapped[UserPermissions] = orm.mapped_column(
+        nullable=False
     )
 
     def set_password(self, plain_password: str):
@@ -182,3 +194,11 @@ class User(api.orm_base):
         session = api.db.get_session()
         session.delete(user)
         session.commit()
+
+    @staticmethod
+    def get_user_by_nickname(user_nickname: str):
+        if not User.validate_nickname():
+            raise ValueError('Invalid nickname')
+        session = api.db.get_session
+        return session.scalars(sqlalchemy.select(User).where(User.nickname
+                                                    == user_nickname)).all()[0]
