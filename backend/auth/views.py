@@ -51,4 +51,19 @@ def delete_token(user_id: int):
             'error': True,
             'detail': 'User not found',
         }), 404
+    
+@auth_router.route('/<str:token')
+def get_user_by_token(token: str):
+    '''Gets user by a given token.'''
 
+    try:
+        user = models.Token.get_user_by_token(token)
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Token not used for any user'
+        }), 404
+
+    return flask.jsonify({
+        'error': False,
+    }), 200

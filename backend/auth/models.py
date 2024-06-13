@@ -56,5 +56,16 @@ class Token(api.orm_base):
         for i in to_delete:
             session.delete(i)
 
+    @staticmethod
+    def get_user_by_token(token: str) -> typing_extensions.Self:
+        '''Gets a user by a given token'''
+        session = api.db.get_session()
+        peremenaya = session.scalars(sqlalchemy.select(
+            Token
+            ).where(
+                Token.token == token)
+        )
+        return models.User.get_user(peremenaya.user_id)
+
 app = Flask(__name__)
 auth = HTTPTokenAuth(scheme='bearer')

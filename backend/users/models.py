@@ -44,10 +44,6 @@ class User(api.orm_base):
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=True,
     )
-    token: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255), nullable=False,
-        unique=True,
-    )
     permission: orm.Mapped[UserPermissions] = orm.mapped_column(
         nullable=False
     )
