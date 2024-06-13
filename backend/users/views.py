@@ -3,6 +3,7 @@ from sqlalchemy import orm
 import sqlalchemy
 import api
 import flask
+import auth
 
 users_router = flask.Blueprint('users_urls', 'users')
 
@@ -183,6 +184,12 @@ def edit_user(user_id: int):
         nickname (:obj:`str`, optional): New nickname of the new user.
     '''
 
+    if auth.verify_token(auth.auth.current_user()).id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Can\'t edit data of another user'
+        }), 401
+
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
 
@@ -238,6 +245,13 @@ def edit_user(user_id: int):
 @users_router.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id: int):
     '''Deletes user by given id'''
+
+    if auth.verify_token(auth.auth.current_user()).id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Can\'t edit data of another user'
+        }), 401
+
     try:
         models.User.delete_user(user_id)
         return flask.jsonify({
