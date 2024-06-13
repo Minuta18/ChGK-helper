@@ -253,3 +253,72 @@ def delete_user(user_id: int):
             'error': True,
             'detail': f'Could not find user with id { user_id }',
         }), 404
+
+@users_router.route('/<int:user_id>', methods=['GET'])
+def get_time_settings(user_id: int):
+    '''Gets time settings by an id.
+
+    Returns 3 time settings by given id (int). If user not found returns 404 error.
+
+    Args:
+        user_id(int): user\'s id
+    '''
+
+    try:
+        user = models.User.get_user(user_id)
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
+    return flask.jsonify({
+        'error': False,
+        'user': {
+            'time_for_reading': user.time_for_reading,
+            'time_for_solving': user.time_for_solving,
+            'time_for_typing': user.time_for_typing,
+        }
+    }), 200
+
+@users_router.route('/settings/<int:user_id>', methods=['PUT'])
+def edit_user(user_id: int):
+    '''Edits user settings by given id.
+
+    Edits user by given id.
+
+    Args:
+        time_for_reading (:obj:`int`, optional): New time for reading setting of the user.
+        time_for_solving (:obj:`int`, optional): New time for solving setting of the user.
+        time_for_typing (:obj:`int`, optional): New time for typing setting of the user.
+    '''
+
+    time_for_reading = flask.request.args.get('time_for_reading', None, type=int)
+    time_for_solving = flask.request.args.get('time_for_solving', None, type=int)
+    time_for_typing = flask.request.args.get('time_for_typing', None, type=int)
+
+    try:
+        user = models.User.get_user(user_id)
+    except OverflowError:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }',
+        }), 404
+
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': f'Could not find user with id { user_id }'
+        }), 404
+
+    user.update_user_settings(time_for_reading, time_for_solving, time_for_typing)
+    return flask.jsonify({
+        'error': False,
+        'time_for_reading': user.time_for_reading,
+        'time_for_solving': user.time_for_solving,
+        'time_for_typing': user.time_for_typing,
+    }), 200
