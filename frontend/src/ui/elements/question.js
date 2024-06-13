@@ -6,14 +6,10 @@ import { ButtonPrimary } from './buttons.js';
 
 import './question.css';
 
-import * as api from '../../backend-lib/questions.js';
-
 export function Question(props) {
     const [currTime, setCurrTime] = useState(1);
     const [disabled, setDisabled] = useState(true);
     
-    let question = new api.Question(1);
-
     return (<>
         <div className='question__header'>
             <span className='header-text-but-smaller'>
