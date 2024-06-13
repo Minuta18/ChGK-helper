@@ -8,6 +8,7 @@
     width: 100%;
     min-height: 40px;
     transition-duration: 0.3s;
+    font-size: 20px;
 }
 
 .btn-primary {

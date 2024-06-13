@@ -36,7 +36,7 @@ export default function RegisterPage() {
                         Пароль
                     </PasswordInput>
                     <PasswordInput 
-                        name='password' required={ true }
+                        name='password2' required={ true }
                         placeholder='1234'
                     >
                         Подтверждение пароля
