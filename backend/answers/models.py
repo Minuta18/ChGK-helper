@@ -4,8 +4,6 @@ import api
 import typing
 import passlib
 
-context = passlib.context()
-
 class Answer(api.orm_base):
     '''User model
     
