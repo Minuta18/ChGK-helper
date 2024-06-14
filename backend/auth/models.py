@@ -62,7 +62,7 @@ class Token(api.orm_base):
             Token
             ).where(
                 Token.token == token)
-        )
+        ).all()[0]
         return models.User.get_user(peremenaya.user_id)
 
 def check_for_admin(user):
