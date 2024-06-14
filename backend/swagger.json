@@ -1,0 +1,740 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "ChGK-Helper API documentation",
+        "version": "0.1.0",
+        "description": "https://github.com/Minuta18/ChGK-helper",
+        "contact": {
+            "email": "ig.samsonov10@yandex.ru"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://github.com/Minuta18/ChGK-helper/blob/main/LICENSE"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:5000/api/v1"
+        }
+    ],
+    "tags": [
+        {
+            "name": "api",
+            "description": "Check server availability"
+        },
+        {
+            "name": "users",
+            "description": "Users management"
+        },
+        {
+            "name": "questions",
+            "description": "questions management"
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "api"
+                ],
+                "summary": "Health-check endpoint",
+                "description": "Returns the current status of the server (usually it's \"running\")",
+                "operationId": "health_check",
+                "responses": {
+                    "200": {
+                        "description": "Server is working",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/health_check"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Gets multiple users by given page",
+                "description": "Gets multiple users from a specified page. Page is users from n + 1 to n + page_size.",
+                "operationId": "get_user_by_page",
+                "parameters": [
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "description": "Count of users in one page",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_user_by_page"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Creates new user",
+                "description": "Creates new user",
+                "operationId": "create_user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/create_user"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/create_user_response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Gets users by given id",
+                "description": "Returns user by given id (int). If user not found returns 404 error.",
+                "operationId": "get_user_by_id",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "ID of user to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_user_by_id"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Edits user by given id",
+                "description": "Edits user by given id",
+                "operationId": "changeUserById",             
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Id of user to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "New email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "john@email.com"
+                        }
+                    },
+                    {
+                        "name": "nickname",
+                        "in": "query",
+                        "description": "New nickname",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_user_by_id"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Deletes user by given id",
+                "description": "Deletes user by given id",
+                "operationId": "deleteUserById",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Id of user to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/change_password"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/change_password": {
+            "put": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Changes password of a user by an id.",
+                "description": "Changes password of a user by an id. Needs old password.",
+                "operationId": "change_password",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Id of user to change password",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/change_password"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password successfully changed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ok_response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Password is incorrect",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/questions": {
+            "get": {
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Gets multiple questions by a given page",
+                "description": "Gets multiple questions from a specified page. A page is questions from n + 1 to n + page_size.",
+                "operationId": "get_question_by_page",
+                "parameters": [
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "description": "Count of questions in one page",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_question_by_page"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/questions/{question_id}": {
+        "get": {
+            "tags": [
+                "question"
+            ],
+            "summary": "Gets question by given id",
+            "description": "Returns question by given id (int). If question not found returns 404 error.",
+            "operationId": "get_question_by_id",
+            "parameters": [
+                {
+                    "name": "question_id",
+                    "in": "path",
+                    "description": "ID of question to return",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successful operation",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/get_question_by_id"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Question not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+            "put": {
+                "tags": [
+                    "question"
+                ],
+                "summary": "Edits question by given id",
+                "description": "Edits question by given id",
+                "operationId": "changeQuestionById",             
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "path",
+                        "description": "Id of question to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "text",
+                        "in": "query",
+                        "description": "New text",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Было 2 козла. Сколько?"
+                        }
+                    },
+                    {
+                        "name": "comment",
+                        "in": "query",
+                        "description": "New comment",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Автор - стеапин"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_question_by_id"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Question not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Deletes question by given id",
+                "description": "Deletes question by given id",
+                "operationId": "deleteQuestionById",
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "path",
+                        "description": "Id of question to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/change_password"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Question not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    "components": {
+        "schemas": {
+            "health_check": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "working",
+                            "not working"
+                        ],
+                        "example": "working"
+                    }   
+                }
+            },
+            "get_user_by_page": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/user"
+                        }
+                    }
+                }
+            },
+            "user": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@email.com"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "Proger"
+                    }
+                }
+            },
+            "get_user_by_id": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "user": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/user"
+                    }
+                }
+            },
+            "error": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "true"
+                    },
+                    "detail": {
+                        "type": "string",
+                        "example": "Error description"
+                    }
+                }
+            },
+            "create_user": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "john@email.com"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "Proger"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "1234"
+                    }
+                }
+            },
+            "create_user_response": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@email.com"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "Proger"
+                    }
+                }
+            },
+            "ok_response": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    }
+                }
+            },
+            "change_password": {
+                "type": "object",
+                "properties": {
+                    "old_password": {
+                        "type": "string",
+                        "example": "12345"
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "example": "12345678"
+                    }
+                }
+            }
+        }
+    }
+}

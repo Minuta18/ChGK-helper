@@ -1,0 +1,16 @@
+.question__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.input-blocked {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.full-width {
+    width: 100%;
+    text-align: start;
+}

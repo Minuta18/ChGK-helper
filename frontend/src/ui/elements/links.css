@@ -1,0 +1,12 @@
+.link {
+    color: var(--primary-color);
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-size: 20;
+    transition-duration: 0.3s;
+    text-decoration: underline;;
+}
+
+.link:hover {
+    color: var(--primary-color-darker);
+    transition-duration: 0.3s;
+}
