@@ -5,12 +5,17 @@ import api
 import typing
 import typing_extensions
 import re
+import enum
 
 crypt_context = context.CryptContext(
     schemes=['bcrypt'], deprecated='auto',
 )
 
 EMAIL_REGEX = api.load_regex('users/email.re')
+
+class UserPermissions(enum.Enum):
+    DEFAULT = 0
+    ADMIN = 1
 
 class User(api.orm_base):
     '''User model
@@ -38,6 +43,9 @@ class User(api.orm_base):
     )
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=True,
+    )
+    permission: orm.Mapped[UserPermissions] = orm.mapped_column(
+        nullable=False
     )
     time_for_reading: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer
@@ -192,13 +200,24 @@ class User(api.orm_base):
         session.delete(user)
         session.commit()
 
-    def update_user_settings(self, time_for_reading: int = None, time_for_solving: int = None, time_for_typing: int = None):
+    @staticmethod
+    def get_user_by_nickname(user_nickname: str):
+        if not User.validate_nickname():
+            raise ValueError('Invalid nickname')
+        session = api.db.get_session
+        return session.scalars(
+            sqlalchemy.select(User
+                              ).where(User.nickname == user_nickname)).all()[0]
+
+    def update_user_settings(self, time_for_reading: int = None,
+                             time_for_solving: int = None,
+                             time_for_typing: int = None):
         '''change question_id and correct_answer of choosen answer'''
-        if time_for_reading != None:
+        if time_for_reading is not None:
             self.time_for_reading = time_for_reading
-        if time_for_solving != None:
+        if time_for_solving is not None:
             self.time_for_solving = time_for_solving
-        if time_for_typing != None:
+        if time_for_typing is not None:
             self.time_for_typing = time_for_typing
         session = api.db.get_session()
         session.add(self)
