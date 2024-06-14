@@ -1,4 +1,4 @@
-import { useState, useRef, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
 import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 
 import RequiredSymbol from '../typography/required_symbol';

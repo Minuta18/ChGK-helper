@@ -12,7 +12,9 @@ export function LinkButtonPrimary(props) {
     }
 
     return (
-        <a href={ props.href } className={ btnClassName }>
+        <a href={ props.href } className={ btnClassName }
+            onClick={ props.onClick }
+        >
             { props.children }
         </a>
     );
@@ -20,7 +22,9 @@ export function LinkButtonPrimary(props) {
 
 export function LinkButtonSecondary(props) {
     return (
-        <a href={ props.href } className="button btn-secondary">
+        <a href={ props.href } className="button btn-secondary"
+            onClick={ props.onClick }
+        >
             { props.children }
         </a>
     );
@@ -49,3 +53,18 @@ export function ButtonPrimary(props) {
         </button>
     );
 }
+
+export function ButtonSecondary(props) {
+    let btnClassName = "button btn-secondary";
+    
+    if (props.disabled) {
+        btnClassName = "button btn-secondary blocked-secondary";
+    }
+
+    return (
+        <button className={ btnClassName } onClick={ props.onClick }>
+            { props.children }
+        </button>
+    );
+}
+

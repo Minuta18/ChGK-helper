@@ -2,7 +2,7 @@ import React from 'react';
 
 import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
-import { TextInput, PasswordInput } from '../ui/elements/inputs';
+import { TextInput } from '../ui/elements/inputs';
 import { 
     LinkButtonPrimary, LinkButtonSecondary, BackButton,
 } from '../ui/elements/buttons';

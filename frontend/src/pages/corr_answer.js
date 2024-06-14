@@ -1,9 +1,7 @@
 import React from 'react';
 
-import Background from '../ui/containers/background';
-import Modal from '../ui/containers/modal';
 import { 
-    LinkButtonPrimary, LinkButtonSecondary, BackButton,
+    LinkButtonPrimary, LinkButtonSecondary,
 } from '../ui/elements/buttons';
 
 export default function CorrectAnswer(props) {
@@ -13,10 +11,10 @@ export default function CorrectAnswer(props) {
             <span className='full-width'>
                 { props.comment } 
             </span>
-            <LinkButtonPrimary disabled={ false }>
+            <LinkButtonPrimary onClick={ props.onClick }>
                 Далее
             </LinkButtonPrimary>
-            <LinkButtonSecondary disabled={ false }>
+            <LinkButtonSecondary onClick={ props.onEnd }>
                 Отмена
             </LinkButtonSecondary>
         </>

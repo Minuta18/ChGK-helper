@@ -7,16 +7,21 @@ import {
 } from '../ui/elements/buttons';
 
 export default function Statistics(props) {
-
+    console.log(props)
     return (
         <>
             <Background>
                 <Modal>
-                    <BackButton />
                     <span className='header-text'>Статистика</span>
-                    { props.stats.map(() => 
-                        <span> Ваш ответ:{props.stats.answer} Верный ответ:{props.stats.corr_sanswer} </span>
+                    { props.stats.map(q => 
+                        <span> #{q.num}: { q.solve ?
+                            <span className='green-font'>Решён</span> : 
+                            <span className='red-font'>Не решён</span>
+                        } </span>
                     ) }
+                    <LinkButtonPrimary href='/home'>
+                        На главную
+                    </LinkButtonPrimary>
                 </Modal>
             </Background>
         </>
