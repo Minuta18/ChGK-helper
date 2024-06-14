@@ -75,7 +75,7 @@ def send_question_to_db(q: Question):
     if response.status_code != 201:
         print(f'[Uploaded question] Error: {response.status_code}')
     elif response.json().get('error', True):
-        print(f'[Uploaded question] Error: {response.json().get('detail', '')}')
+        print(f'[Uploaded question] Error: {response.json().get("detail", "")}')
     else:
         print(f'[Uploaded question] Success')
 
@@ -90,7 +90,7 @@ def send_question_to_db(q: Question):
     if response2.status_code != 201:
         print(f'[Uploaded answer] Error uploading answer: { response2.status_code }')
     elif response2.json().get('error', True):
-        print(f'[Uploaded answer] Error uploading answer: { response2.json().get('detail', '') }')
+        print(f'[Uploaded answer] Error uploading answer: { response2.json().get("detail", "") }')
     else:
         print(f'[Uploaded answer] Success')
 
