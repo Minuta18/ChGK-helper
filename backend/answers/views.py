@@ -60,6 +60,7 @@ def get_answers():
     }), 200
 
 @answers_router.route('/', methods=['POST'])
+@auth.login_required(role='admin')
 def create_answer():
     '''Create answer.
 
@@ -71,19 +72,6 @@ def create_answer():
         correct_answer (:obj:`str`): correct answer on question
     '''
 
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        }), 400
     question_id = flask.request.json.get('question_id', None)
     correct_answer = flask.request.json.get('correct_answer', None)
 
@@ -111,6 +99,7 @@ def create_answer():
     }), 201
 
 @answers_router.route('/<answer_id>', methods=['PUT'])
+@auth.login_required(role='admin')
 def update_answer(answer_id):
     '''Update existful answer
 
@@ -120,19 +109,6 @@ def update_answer(answer_id):
         correct_answer (:obj:`str`): correct answer on question
     '''
 
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        }), 400
     question_id = flask.request.args.get('question_id', None)
     correct_answer = flask.request.json.get('correct_answer', None)
 
@@ -155,26 +131,13 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/<number>', methods=['DELETE'])
+@auth.login_required(role='admin')
 def delete_answer(answer_id: int):
     '''Delete existful answer
 
     Args:
        id (:obj:`int`): Id of deleting answer.
     '''
-
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        }), 400
 
     try:
         answer = models.Answer.delete_answer(answer_id)

@@ -58,14 +58,12 @@ class Token(api.orm_base):
     def get_user_by_token(token: str) -> typing_extensions.Self:
         '''Gets a user by a given token'''
         session = api.db.get_session()
-        peremenaya = session.scalars(sqlalchemy.select(
-            Token
-            ).where(
-                Token.token == token)
-        ).all()[0]
+        try:
+            peremenaya = session.scalars(sqlalchemy.select(
+                    Token
+                ).where(Token.token == token)
+            ).all()[0]
+        except IndexError:
+            return None
         return models.User.get_user(peremenaya.user_id)
-
-def check_for_admin(user):
-    if user.permission == 'admin':
-        return True
-    return False
+    

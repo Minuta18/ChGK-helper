@@ -17,6 +17,9 @@ class UserPermissions(enum.Enum):
     DEFAULT = 0
     ADMIN = 1
 
+def user_permissions_to_string(user_permissions: UserPermissions):
+    return 'admin' if user_permissions == UserPermissions.ADMIN else 'default'
+
 class User(api.orm_base):
     '''User model
 
@@ -227,3 +230,18 @@ class User(api.orm_base):
         session.add(self)
         session.commit()
         return self
+
+    def check_for_admin(self):
+        if self.permission == UserPermissions.ADMIN:
+            return True
+        return False
+
+    def check_permissions(self, permission: str|UserPermissions) -> bool:
+        '''Returns True if user has enough permissions'''
+        perms = permission
+        if type(permission) is UserPermissions:
+            perms = user_permissions_to_string(permission)
+        our_perms = user_permissions_to_string(self.permission)
+        if our_perms == 'admin': return True
+        if perms == 'default' and our_perms == 'default': return True
+        return False
