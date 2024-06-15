@@ -184,11 +184,17 @@ def edit_user_settings(user_id: int):
         nickname (:obj:`str`, optional): New nickname of the new user.
     '''
 
-    if auth.verify_token(auth.auth.current_user()).id != user_id:
+    user = auth.verify_token(flask.request.headers.get('Authorization', ''))
+    if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Can\'t edit data of another user'
+            'detail': 'Incorrect token'
         }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        })
 
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
@@ -246,11 +252,17 @@ def edit_user_settings(user_id: int):
 def delete_user(user_id: int):
     '''Deletes user by given id'''
 
-    if auth.verify_token(auth.auth.current_user()).id != user_id:
+    user = auth.verify_token(flask.request.headers.get('Authorization', ''))
+    if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Can\'t edit data of another user'
+            'detail': 'Incorrect token'
         }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        })
 
     try:
         models.User.delete_user(user_id)
@@ -314,6 +326,18 @@ def edit_user_sttings(user_id: int):
         time_for_typing (:obj:`int`, optional):
         New time for typing setting of the user.
     '''
+
+    user = auth.verify_token(flask.request.headers.get('Authorization', ''))
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        })
 
     time_for_reading = flask.request.args.get('time_for_reading',
                                               None, type=int)

@@ -1,9 +1,6 @@
 from auth import models
 from sqlalchemy import orm
-import sqlalchemy
-import api
 import flask
-import secrets
 import users
 
 auth_router = flask.Blueprint('auth_urls', 'auth')
@@ -35,8 +32,8 @@ def create_token(user_nickname: str, user_password: str):
     }), 200
 
 @auth_router.route('/logout/<int:user_id>', methods=['DELETE'])
-def delete_token(user_id: int):
-    '''Deletes the user's token by given id.'''
+def delete_tokens(user_id: int):
+    '''Deletes the users' token by given id.'''
     try:
         models.Token.delete_token(user_id)
         return flask.jsonify({
@@ -52,19 +49,3 @@ def delete_token(user_id: int):
             'error': True,
             'detail': 'User not found',
         }), 404
-
-@auth_router.route('/<str:token')
-def get_user_by_token(token: str):
-    '''Gets user by a given token.'''
-
-    try:
-        user = models.Token.get_user_by_token(token)
-    except ValueError:
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Token not used for any user'
-        }), 404
-
-    return flask.jsonify({
-        'error': False,
-    }), 200
