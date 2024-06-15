@@ -51,13 +51,13 @@ class User(api.orm_base):
         nullable=False
     )
     time_for_reading: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
     time_for_solving: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
     time_for_typing: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
 
     def set_password(self, plain_password: str):
@@ -184,7 +184,11 @@ class User(api.orm_base):
             if not User.validate_nickname(nickname):
                 raise ValueError('Invalid nickname')
             session = api.db.get_session()
-            user = User(email=email, nickname=nickname)
+            user = User(
+                email=email,
+                nickname=nickname,
+                permission=UserPermissions.DEFAULT
+            )
             session.add(user)
             session.commit()
             user.set_password(password)

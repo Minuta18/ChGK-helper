@@ -136,6 +136,12 @@ def change_password(user_id: int):
             'error': True,
             'message': 'Incorrect Content-Type header',
         })
+        
+    if auth.verify_token(auth.auth.current_user()).id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Can\'t edit data of another user'
+        }), 401
 
     password = flask.request.json.get('old_password', '')
     new_password = flask.request.json.get('new_password', '')
@@ -290,6 +296,11 @@ def get_time_settings(user_id: int):
     Args:
         user_id(int): user\'s id
     '''
+    if auth.verify_token(auth.auth.current_user()).id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Can\'t view data of another user'
+        }), 401
 
     try:
         user = models.User.get_user(user_id)
@@ -326,6 +337,12 @@ def edit_user_sttings(user_id: int):
         time_for_typing (:obj:`int`, optional):
         New time for typing setting of the user.
     '''
+    
+    if auth.verify_token(auth.auth.current_user()).id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Can\'t edit data of another user'
+        }), 401
 
     user = auth.verify_token(flask.request.headers.get('Authorization', ''))
     if user is None:
