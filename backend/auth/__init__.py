@@ -1,4 +1,5 @@
 from auth import models
+from auth import views
 import users
 import flask
 import functools

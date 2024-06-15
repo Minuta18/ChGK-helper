@@ -35,7 +35,7 @@ def create_token():
     token = models.Token.create_token(user.id)
     return flask.jsonify({
         'error': False,
-        'token': token,
+        'token': token.token,
     }), 200
 
 @auth_router.route('/logout/<int:user_id>', methods=['DELETE'])

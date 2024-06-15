@@ -100,7 +100,7 @@ def create_user():
         return flask.jsonify({
             'error': True,
             'message': 'Incorrect Content-Type header',
-        })
+        }), 400
     email = flask.request.json.get('email', '')
     nickname = flask.request.json.get('nickname', '')
     password = flask.request.json.get('password', '')
@@ -110,7 +110,7 @@ def create_user():
     except ValueError as e:
         return flask.jsonify({
             'error': True,
-            'message': str(e),
+            'message': repr(e),
         }), 400
 
     return flask.jsonify({
@@ -137,10 +137,16 @@ def change_password(user_id: int):
             'message': 'Incorrect Content-Type header',
         })
         
-    if auth.verify_token(auth.auth.current_user()).id != user_id:
+    user = auth.verify_token(flask.request.headers.get('Authorization', ''))
+    if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Can\'t edit data of another user'
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
         }), 401
 
     password = flask.request.json.get('old_password', '')
@@ -200,10 +206,12 @@ def edit_user_settings(user_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'Access denied'
-        })
+        }), 401
 
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
+
+    print(email)
 
     try:
         user = models.User.get_user(user_id)
@@ -268,7 +276,7 @@ def delete_user(user_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'Access denied'
-        })
+        }), 401
 
     try:
         models.User.delete_user(user_id)
@@ -354,7 +362,7 @@ def edit_user_sttings(user_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'Access denied'
-        })
+        }), 401
 
     time_for_reading = flask.request.args.get('time_for_reading',
                                               None, type=int)
