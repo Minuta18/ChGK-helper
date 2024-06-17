@@ -212,9 +212,17 @@ class User(api.orm_base):
         if not User.validate_nickname(user_nickname):
             raise ValueError('Invalid nickname')
         session = api.db.get_session()
-        return session.scalars(
-            sqlalchemy.select(User
-                    ).where(User.nickname == user_nickname)).all()[0]
+        try:
+            return session.scalars(
+                sqlalchemy.select(User
+                        ).where(User.nickname == user_nickname)).all()[0]
+        except IndexError:
+            try: 
+                return session.scalars(
+                    sqlalchemy.select(User
+                        ).where(User.email == user_nickname)).all()[0]
+            except IndexError:
+                return None
 
     def update_user_settings(self, time_for_reading: int = None,
                              time_for_solving: int = None,
