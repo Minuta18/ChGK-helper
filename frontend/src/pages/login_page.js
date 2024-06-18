@@ -64,7 +64,7 @@ export default function LoginPage() {
                             () => { setValidPassword(false) },
                             () => { setValidNickname(false) },
                             () => { setNoErrors(false) },
-                            () => { navigate('/home', { replace: true }) },
+                            () => { navigate('/', { replace: true }) },
                         );
                     }}>Вход</ButtonPrimary>
                     <LinkButtonSecondary href='/auth/register'>

@@ -19,7 +19,7 @@ export default function Statistics(props) {
                             <span className='red-font'>Не решён</span>
                         } </span>
                     ) }
-                    <LinkButtonPrimary href='/home'>
+                    <LinkButtonPrimary href='/'>
                         На главную
                     </LinkButtonPrimary>
                 </Modal>

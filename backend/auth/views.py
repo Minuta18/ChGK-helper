@@ -56,3 +56,18 @@ def delete_tokens(user_id: int):
             'error': True,
             'detail': 'User not found',
         }), 404
+    
+@auth_router.route('/check', methods=['GET', ])
+def check_token():
+    token = flask.request.headers.get('Authorization', '')
+    user = models.Token.get_user_by_token(token)
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token',
+        }), 401
+    else:
+        return flask.jsonify({
+            'error': False,
+            'detail': 'Token is valid',
+        }), 200

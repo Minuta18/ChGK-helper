@@ -157,7 +157,7 @@ export default function RegisterPage() {
                                         // will be in huuuge ass
                                         () => {}, () => {}, () => {}, () => {}
                                     );
-                                    navigate('/home', { replace: true });
+                                    navigate('/', { replace: true });
                                 } else if (statusCode === 400) {
                                     if (responseBody.message === 'Invalid email') {
                                         changeValidFields('validEmail', false);
