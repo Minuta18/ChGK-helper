@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
@@ -19,6 +20,7 @@ export default function LoginPage() {
     const [validNickname, setValidNickname] = useState(true);
     const [validPassword, setValidPassword] = useState(true);
     const [noErrors, setNoErrors] = useState(true);
+    const navigate = useNavigate();
 
     return (
         <>
@@ -62,7 +64,7 @@ export default function LoginPage() {
                             () => { setValidPassword(false) },
                             () => { setValidNickname(false) },
                             () => { setNoErrors(false) },
-                            () => { redirect('/home') },
+                            () => { navigate('/home', { replace: true }) },
                         );
                     }}>Вход</ButtonPrimary>
                     <LinkButtonSecondary href='/auth/register'>

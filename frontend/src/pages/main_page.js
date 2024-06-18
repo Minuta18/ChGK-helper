@@ -19,7 +19,7 @@ export default function MainPage() {
                     <LinkButtonPrimary href='/auth/register'>
                         Регистрация
                     </LinkButtonPrimary>
-                    <LinkButtonSecondary href='/play'>
+                    <LinkButtonSecondary href='/game'>
                         Играть без регистрации
                     </LinkButtonSecondary>
                 </Modal>
