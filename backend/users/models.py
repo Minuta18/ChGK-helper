@@ -136,7 +136,7 @@ class User(api.orm_base):
         Returns:
             bool: True if nickname is valid, False otherwise
         '''
-        if len(nickname) < 1 or len(nickname) > 255:
+        if len(nickname) < 3 or len(nickname) > 255:
             return False
         # TODO
         return True

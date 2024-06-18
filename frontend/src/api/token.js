@@ -1,4 +1,4 @@
-import * as api from './api';
+import * as api from './base_url.js';
 
 export class AuthToken {
     constructor(token) {
@@ -18,7 +18,7 @@ export class AuthToken {
         username, password, onInvalidPassword, onInvalidUser, onError,
         onOkay,
     ) {
-        const response = await fetch(api.baseUrl + '/auth/login', {
+        const response = await fetch(api.constructApiUrl('/auth/login'), {
             method: 'POST',
             body: JSON.stringify({
                 user_nickname: username,
