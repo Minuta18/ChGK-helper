@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
@@ -21,6 +22,7 @@ export default function LoginPage() {
     const [validPassword, setValidPassword] = useState(true);
     const [noErrors, setNoErrors] = useState(true);
     const navigate = useNavigate();
+    const [cookie, setCookie, removeCookie] = useCookies(['auth-token']);
 
     return (
         <>
@@ -64,7 +66,13 @@ export default function LoginPage() {
                             () => { setValidPassword(false) },
                             () => { setValidNickname(false) },
                             () => { setNoErrors(false) },
-                            () => { navigate('/', { replace: true }) },
+                            () => { 
+                                setCookie('auth-token', token.getToken(), { 
+                                    path: '/' 
+                                });
+                                console.log(cookie['auth-token'], token.getToken());
+                                navigate('/', { replace: true }) 
+                            },
                         );
                     }}>Вход</ButtonPrimary>
                     <LinkButtonSecondary href='/auth/register'>

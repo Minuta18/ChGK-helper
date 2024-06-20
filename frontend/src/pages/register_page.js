@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 import Background from '../ui/containers/background';
 import Modal from '../ui/containers/modal';
@@ -57,6 +58,7 @@ export default function RegisterPage() {
     }
 
     const [checkboxInputed, setCheckboxInputed] = useState(false);
+    const [cookie, setCookie, removeCookie] = useCookies(['auth-token']);
 
     return (
         <>
@@ -157,6 +159,7 @@ export default function RegisterPage() {
                                         // will be in huuuge ass
                                         () => {}, () => {}, () => {}, () => {}
                                     );
+                                    setCookie(token.getToken());
                                     navigate('/', { replace: true });
                                 } else if (statusCode === 400) {
                                     if (responseBody.message === 'Invalid email') {
