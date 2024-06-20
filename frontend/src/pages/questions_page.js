@@ -7,7 +7,7 @@ import CorrectAnswer from './corr_answer.js';
 import IncorrectAnswer from './incorr_answer.js';
 import Statistics from './statistics.js';
 
-import { baseUrl } from '../api/api.js';
+import * as api from '../api/api.js'
 
 export const QuestionPage = forwardRef(function QuestionPage(props, ref) {
     return (<>
@@ -31,7 +31,8 @@ export function TIncorrectAnswer(props) {
 
     useEffect(() => {
         const getAnswer = () => {
-            fetch(baseUrl + '/answer/get/' + props.question.id, {
+            fetch(
+                api.urls.constructApiUrl('/answer/get/' + props.question.id), {
                 method: 'GET',
             }).then(response => response.json())
                 .then(json => setCorrAns(json))
@@ -59,7 +60,10 @@ export function AnswerPage(props) {
 
     useEffect(() => {
         const checkAnswer = () => {
-            fetch(baseUrl + '/answer/' + props.question.id + '/check', {
+            fetch(
+                api.urls.constructApiUrl(
+                    '/answer/' + props.question.id + '/check'
+                ), {
                 method: 'POST',
                 body: JSON.stringify({
                     answer: props.ans,
@@ -99,7 +103,7 @@ export function AnswerPage(props) {
 }
 
 const fetchQuestion = (setQuestion, setLoading) => {
-    fetch(baseUrl + '/questions/random')
+    fetch(api.urls.constructApiUrl('/questions/random'))
         .then((response) => response.json())
         .then((json) => setQuestion(json))
         .catch((error) => console.error(error));

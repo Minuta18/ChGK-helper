@@ -24,6 +24,7 @@
         margin: 0px;
         border-radius: 0px;
         background-image: url("../../assets/background.svg");
+        background-size: cover;
         align-items: center;
         justify-content: center;
         padding: var(--default-padding);

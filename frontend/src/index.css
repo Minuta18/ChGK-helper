@@ -37,6 +37,7 @@ div#root {
     --primary-color-darker: #4169e1;
     --secondary-color: #e0f0ff;
     --secondary-color-darker: #b5c2ce;
+    --error-color: rgb(194, 1, 1);
 
     --default-border-radius: 16px;
     --default-padding: 16px;

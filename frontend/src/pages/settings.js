@@ -45,7 +45,7 @@ export default function SettingsPage() {
 
 
                     <LinkButtonPrimary>Сохранить</LinkButtonPrimary>
-                    <LinkButtonSecondary href='/play'>
+                    <LinkButtonSecondary href='/game'>
                         Отмена
                     </LinkButtonSecondary>
                 </Modal>
