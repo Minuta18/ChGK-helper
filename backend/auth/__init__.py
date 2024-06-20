@@ -4,7 +4,7 @@ import users
 import flask
 import functools
 
-def verify_token(token: models.Token) -> users.models.User:
+def verify_token(token: str) -> users.models.User:
     '''Returns user by given token'''
     user = models.Token.get_user_by_token(token)
     return user
@@ -20,7 +20,7 @@ def login_required(role: str='user'):
         @functools.wraps(func)
         def decorated_func(*args, **kwargs):
             token = flask.request.headers.get('Authorization', '')
-            user = verify_token(token)
+            user = verify_token(token.removeprefix('Bearer '))
             if user is None:
                 return flask.jsonify({
                     'error': True,
