@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useRef, useCallback } from 'react';
 import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 
 import RequiredSymbol from '../typography/required_symbol';
@@ -19,8 +19,35 @@ export const TextInput = forwardRef(
                     { props.children } { required_symbol_ }
                 </label>
                 <input 
-                    type="text" name={ props.name } ref={ ref }
-                    className='input-field' placeholder={ props.placeholder } 
+                    type="text" name={ props.name } ref={ ref } 
+                    defaultValue={ props.defValue } className='input-field' 
+                    placeholder={ props.placeholder } 
+                />
+            </>
+        );
+});
+
+export const IntInput = forwardRef(
+    function IntInput(props, ref) {
+        let required_symbol_ = <></>;
+
+        console.log('!', props.defValue);
+
+        if (props.required) {
+            required_symbol_ = <RequiredSymbol />;
+        }
+
+        return (
+            <>
+                <label htmlFor={ props.name } className='form-label'>
+                    { props.children } { required_symbol_ }
+                </label>
+                {/* random key is used to force re-render of defaultValue */}
+                <input 
+                    type="number" name={ props.name } ref={ ref } 
+                    defaultValue={ props.defValue } className='input-field' 
+                    placeholder={ props.placeholder } 
+                    key={"OKAYG_" + (10000 + Math.random() * (1000000 - 10000))}
                 />
             </>
         );
@@ -51,7 +78,7 @@ export const PasswordInput = forwardRef(
                         name={ props.name } ref={ ref }
                         className='input-field' 
                         placeholder={ props.placeholder } 
-                        value={ password } id={ props.name }
+                        defaultValue={ password } id={ props.name }
                         onChange={ (e) => setPassword(e.target.value) }
                     />
                     <div

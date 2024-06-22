@@ -79,3 +79,27 @@
         height: calc(var(--default-border-radius) * 4);
     }
 }
+
+.settings-button {
+    position: absolute;
+    top: 24px;
+    right: 16px;
+    cursor: pointer;
+    border-radius: var(--default-border-radius);
+    background-color: transparent;
+    transition-duration: var(--default-transition-duration);
+    width: calc(var(--default-border-radius) * 2);
+    height: calc(var(--default-border-radius) * 2);
+}
+
+.settings-button:hover {
+    transition-duration: 0.3s;
+    background-color: var(--light-gray);
+}
+
+@media (max-width: 600px) {
+    .settings-button {
+        width: calc(var(--default-border-radius) * 4);
+        height: calc(var(--default-border-radius) * 4);
+    }
+}

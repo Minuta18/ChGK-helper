@@ -65,5 +65,7 @@ class Token(api.orm_base):
             ).all()[0]
         except IndexError:
             return None
-        return models.User.get_user(peremenaya.user_id)
-    
+        try:
+            return models.User.get_user(peremenaya.user_id)
+        except AttributeError:
+            return None

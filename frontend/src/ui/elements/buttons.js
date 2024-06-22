@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsArrowLeftShort } from 'react-icons/bs';
+import { BsArrowLeftShort, BsGear } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
 import './buttons.css';
@@ -36,6 +36,16 @@ export function BackButton() {
     return (
         <BsArrowLeftShort className='back-button' onClick={() => {
             navigate(-1);
+        }} />
+    );
+}
+
+export function SettingsButton() {
+    let navigate = useNavigate();
+
+    return (
+        <BsGear className='settings-button' onClick={() => {
+            navigate('/settings');
         }} />
     );
 }

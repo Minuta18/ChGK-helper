@@ -9,7 +9,6 @@ import {
     ButtonPrimary, LinkButtonSecondary, BackButton,
 } from '../ui/elements/buttons';
 import { ErrorLabel } from '../ui/elements/labels';
-import { redirect } from "react-router-dom";
 
 import * as api from '../api/token';
 
@@ -70,7 +69,9 @@ export default function LoginPage() {
                                 setCookie('auth-token', token.getToken(), { 
                                     path: '/' 
                                 });
-                                console.log(cookie['auth-token'], token.getToken());
+                                console.log(
+                                    cookie['auth-token'], token.getToken()
+                                );
                                 navigate('/', { replace: true }) 
                             },
                         );

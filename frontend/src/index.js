@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
 
 import MainPage from './pages/main_page.js';
 import LoginPage from './pages/login_page.js';
 import RegisterPage from './pages/register_page.js';
 import { MoreQuestionsPage, QuestionsPage } from './pages/questions_page.js';
 import SettingsPage from './pages/settings.js';
-import { CookiesProvider } from 'react-cookie';
 
 import './index.css';
 import './ui/typography/fonts.css';

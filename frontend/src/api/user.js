@@ -10,13 +10,35 @@ export async function createUser(nickname, email, password, responseHandler) {
                 password: password,
             }),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
         });
         const body = await response.json();
         const status = response.status;
         // console.log(status, body);
         return [status, body];
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getUserId(token, onUnauthorizedCallback) {
+    try {
+        const response = await fetch(
+            api.constructApiUrl('/users/self'), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+        })
+        if (response.status !== 200) {
+            onUnauthorizedCallback();
+        } else {
+            const body = await response.json();
+            console.log('Result: ' + body.id);
+            return body.id;
+        }
     } catch (err) {
         console.error(err);
     }

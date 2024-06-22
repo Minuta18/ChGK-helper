@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, forwardRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Question } from '../ui/elements/question.js';
 import Background from '../ui/containers/background.js';
@@ -14,7 +15,8 @@ export const QuestionPage = forwardRef(function QuestionPage(props, ref) {
         <Background>
             <Modal>
                 { props.loading ? <p>загрузка...</p> : <Question
-                    tfr={ 5 } tfs={ 10 } tft={ 15 } num={ props.num } 
+                    tfr={ props.tfr } tfs={ props.tfs } 
+                    tft={ props.tft } num={ props.num } 
                     ref={ ref } onExpired={ props.onExpired }
                     onClick={ props.onClick }
                 >
@@ -120,6 +122,7 @@ export function QuestionsPage(props) {
                 ref={ ref } onClick={ props.setSol }
                 onExpired={ props.setSol }
                 num={ props.num }
+                tfr={ props.tfr } tfs={ props.tfs } tft={ props.tft }
             />
         );
     } else {
@@ -134,6 +137,9 @@ export function QuestionsPage(props) {
 }
 
 export function MoreQuestionsPage() {
+    const [isLoading, isInvalidToken, token] = api.tokens.useToken();
+    const navigate = useNavigate();
+
     const [solves, setSolves] = useState([]);
     const [solved, setSolved] = useState(false);
     const [num, setNum] = useState(1);
@@ -155,10 +161,51 @@ export function MoreQuestionsPage() {
         setNum(num + 1); 
     }
 
+    const [tfr, setTmr] = useState(0);
+    const [tfs, setTms] = useState(0);
+    const [tft, setTmt] = useState(0);
+    const [mainUserId, setMainUserId] = useState(0);
+    const [isLoadingFetch, setLoadingFetch] = useState(true);
+
+    useEffect(() => {
+        const fetchSettings_ = async (
+            userId,
+        ) => {
+            let settings = new api.settings.Settings();
+            settings.fetchSettings(
+                userId, token, () => {
+                    navigate('/auth/login', { replace: true });
+            }).then(([gtfr, gtfs, gtft]) => {
+                setTmr(gtfr); setTms(gtfs); setTmt(gtft);
+            });
+        };
+        
+        api.users.getUserId(token, () => {
+            navigate('/auth/login', { replace: true });
+        }).then(
+            (gottenUserId) => { 
+                setMainUserId(gottenUserId);
+                console.log('Fetched user id: ', gottenUserId);
+                fetchSettings_(gottenUserId).then(() => {
+                    setLoadingFetch(false); 
+                });
+            }
+        );
+    }, []);
+
+    console.log(tfr, tfs, tft);
+
     if (!end) {
-        return (<>
+        return (isLoadingFetch || isLoading) ? (
+                <Background>
+                    <Modal>
+                        <p>Загрузка...</p>
+                    </Modal>
+                </Background>
+            ) : (<>
             <QuestionsPage solved={ solved } setSolved={ setSolved }
                 setSol={() => { setSolved(true); }} loading={ loading }
+                tfr={ tfr } tfs={ tfs } tft={ tft }
                 onCorCont={() => { 
                     handleSolved();
                     addSolves({ num: num, solve: true });
