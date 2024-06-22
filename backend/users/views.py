@@ -38,12 +38,12 @@ def get_user(user_id: int):
         }
     }), 200
 
-@users_router.route('/self', methods=['GET'])
+@users_router.route('/self', methods=['GET', ])
 def get_user_by_token():
     token = flask.request.headers.get('Authorization', '')
-    user = auth.verify_token(token.removeprefix('Bearer '))
+    user = auth.models.Token.get_user_by_token(token.removeprefix('Bearer '))
     if user is None:
-        print(token)
+        # print(token, token.removeprefix('Bearer '), sep='\n')
         return flask.jsonify({
             'error': True,
             'detail': 'Incorrect token',
@@ -54,7 +54,7 @@ def get_user_by_token():
             'id': user.id,
             'email': user.email,
             'nickname': user.nickname,
-        })
+        }), 200
 
 @users_router.route('/', methods=['GET'])
 def get_users():

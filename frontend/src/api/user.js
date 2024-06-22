@@ -33,7 +33,9 @@ export async function getUserId(token, onUnauthorizedCallback) {
                 },
         })
         if (response.status !== 200) {
-            onUnauthorizedCallback();
+            // onUnauthorizedCallback();
+            // alert('Unauthorized: ' + token);
+            return null;
         } else {
             const body = await response.json();
             console.log('Result: ' + body.id);
@@ -41,5 +43,6 @@ export async function getUserId(token, onUnauthorizedCallback) {
         }
     } catch (err) {
         console.error(err);
+        alert('Error: ' + err);
     }
 }

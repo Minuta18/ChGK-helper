@@ -39,9 +39,9 @@ export default function MainPage() {
                                 <LinkButtonPrimary href='/game'>
                                     Случайные вопросы
                                 </LinkButtonPrimary>
-                                <LinkButtonPrimary href='/game'>
+                                {/* <LinkButtonPrimary href='/game'>
                                     Архив вопросов
-                                </LinkButtonPrimary>
+                                </LinkButtonPrimary> */}
                             </>
                     }
                 </Modal>

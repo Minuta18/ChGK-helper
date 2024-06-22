@@ -18,7 +18,7 @@ export const QuestionPage = forwardRef(function QuestionPage(props, ref) {
                     tfr={ props.tfr } tfs={ props.tfs } 
                     tft={ props.tft } num={ props.num } 
                     ref={ ref } onExpired={ props.onExpired }
-                    onClick={ props.onClick }
+                    onClick={ props.onClick } onSkip={ props.onSkip }
                 >
                     { props.question.text }
                 </Question> }
@@ -121,7 +121,7 @@ export function QuestionsPage(props) {
                 loading={ props.loading } question={ props.question }
                 ref={ ref } onClick={ props.setSol }
                 onExpired={ props.setSol }
-                num={ props.num }
+                num={ props.num } onSkip={ props.onSkip }
                 tfr={ props.tfr } tfs={ props.tfs } tft={ props.tft }
             />
         );
@@ -177,7 +177,7 @@ export function MoreQuestionsPage() {
                     navigate('/auth/login', { replace: true });
             }).then(([gtfr, gtfs, gtft]) => {
                 setTmr(gtfr); setTms(gtfs); setTmt(gtft);
-            });
+            }).catch((err) => {});
         };
         
         api.users.getUserId(token, () => {
@@ -208,23 +208,28 @@ export function MoreQuestionsPage() {
                 tfr={ tfr } tfs={ tfs } tft={ tft }
                 onCorCont={() => { 
                     handleSolved();
-                    addSolves({ num: num, solve: true });
+                    addSolves({ num: num, solve: 'solved' });
                     fetchQuestion(setQuestion, setLoading);
                 }} num={ num } question={ question }
                 onCorEnd={() => {
                     handleSolved();
-                    addSolves({ num: num, solve: true });
+                    addSolves({ num: num, solve: 'solved' });
                     setEnd(true);
                 }}
                 onIncCont={() => { 
                     handleSolved(); 
-                    addSolves({ num: num, solve: false });
+                    addSolves({ num: num, solve: 'not solved' });
                     fetchQuestion(setQuestion, setLoading);
                 }}
                 onIncEnd={() => {
                     handleSolved();
-                    addSolves({ num: num, solve: false });
+                    addSolves({ num: num, solve: 'not solved' });
                     setEnd(true);
+                }}
+                onSkip={() => {
+                    handleSolved();
+                    addSolves({ num: num, solve: 'skipped' });
+                    fetchQuestion(setQuestion, setLoading);
                 }}
             />
         </>);

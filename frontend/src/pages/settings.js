@@ -31,7 +31,7 @@ export default function SettingsPage() {
             await api.settings.updateSettings(
                 userId, token, 
                 () => { navigate('/login', { replace: true, }) },
-                () => { setError(true); },
+                () => {  },
                 timeForReading, timeForSolving, timeForTyping
             );
     };
@@ -49,76 +49,82 @@ export default function SettingsPage() {
             });
         };
         
-        api.users.getUserId(token, () => {
-            navigate('/auth/login', { replace: true });
-        }).then(
+            api.users.getUserId(token, () => {
+                navigate('/auth/login', { replace: true });
+            }).then(
             (gottenUserId) => { 
+                setMainUserId(gottenUserId);
+                console.log('Fetched user id: ', gottenUserId);
                 if (gottenUserId !== undefined) {
-                    setMainUserId(gottenUserId);
-                    console.log('Fetched user id: ', gottenUserId);
                     fetchSettings_(gottenUserId).then(() => {
                         setLoadingFetch(false); 
                     });
                 }
             }
-        );
+            );
     }, []);
 
     return (
         <>
             <Background>
                 <Modal>
-                    { isLoading || isLoadingFetch ? <p>Загрузка</p> :
-                        <>
-                            <BackButton />
-                            <span className='header-text'>Настройки</span>
-                            
-                            <IntInput
-                                name='reading_time' required={ true }
-                                placeholder='0'
-                                type='number' 
-                                defValue={ tfr }
-                                min='0' ref={ readingRef }
-                            >
-                                Время на чтение
-                            </IntInput>
-                            <IntInput 
-                                name='solving_time' required={ true }
-                                placeholder='0'
-                                type='number' 
-                                defValue={ tfs }
-                                min='0' ref={ solvingRef }
-                            >
-                                Время на решение
-                            </IntInput>
+                    { error ? 
+                        <span className='red-font'>
+                            Произошла не предвиденная ошибка. Попробуйте 
+                            перезагрузить страницу.
+                        </span> :
+                            (isLoading || isLoadingFetch ? <p>Загрузка</p> :
+                            <>
+                                <BackButton />
+                                <span className='header-text'>Настройки</span>
+                                
+                                <IntInput
+                                    name='reading_time' required={ true }
+                                    placeholder='0'
+                                    type='number' 
+                                    defValue={ tfr }
+                                    min='0' ref={ readingRef }
+                                >
+                                    Время на чтение
+                                </IntInput>
+                                <IntInput 
+                                    name='solving_time' required={ true }
+                                    placeholder='0'
+                                    type='number' 
+                                    defValue={ tfs }
+                                    min='0' ref={ solvingRef }
+                                >
+                                    Время на решение
+                                </IntInput>
 
-                            <IntInput 
-                                name='typing_time' required={ true }
-                                placeholder='0'
-                                type='number' 
-                                defValue={ tft }
-                                min='0' ref={ typingRef }
-                            >
-                                Время на ввод ответа
-                            </IntInput>
+                                <IntInput 
+                                    name='typing_time' required={ true }
+                                    placeholder='0'
+                                    type='number' 
+                                    defValue={ tft }
+                                    min='0' ref={ typingRef }
+                                >
+                                    Время на ввод ответа
+                                </IntInput>
 
-                            <ButtonPrimary 
-                                onClick={
-                                    async () => {
-                                        localUpdateSettings(
-                                            mainUserId,
-                                            readingRef.current.value,
-                                            solvingRef.current.value,
-                                            typingRef.current.value,
-                                        ).then(() => {
-                                            setTmr(readingRef.current.value); 
-                                            setTms(solvingRef.current.value); 
-                                            setTmt(typingRef.current.value);
-                                        });
+                                <ButtonPrimary 
+                                    onClick={
+                                        async () => {
+                                            localUpdateSettings(
+                                                mainUserId,
+                                                readingRef.current.value,
+                                                solvingRef.current.value,
+                                                typingRef.current.value,
+                                            ).then(() => {
+                                                setTmr(readingRef.current.value); 
+                                                setTms(solvingRef.current.value); 
+                                                setTmt(typingRef.current.value);
+                                            });
+                                        }
                                     }
-                                }
-                            >Сохранить</ButtonPrimary>
-                        </>
+                                >Сохранить</ButtonPrimary>
+                            </>
+                        )
                     }
                 </Modal>
             </Background>

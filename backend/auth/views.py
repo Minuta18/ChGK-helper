@@ -2,6 +2,7 @@ from auth import models
 from sqlalchemy import orm
 import flask
 import users
+import auth
 
 auth_router = flask.Blueprint('auth_urls', 'auth')
 
@@ -60,7 +61,7 @@ def delete_tokens(user_id: int):
 @auth_router.route('/check', methods=['GET', ])
 def check_token():
     token = flask.request.headers.get('Authorization', '')
-    user = models.Token.get_user_by_token(token.removeprefix('Bearer '))
+    user = auth.models.Token.get_user_by_token(token.removeprefix('Bearer '))
     if user is None:
         return flask.jsonify({
             'error': True,

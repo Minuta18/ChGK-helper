@@ -69,7 +69,7 @@ def send_question_to_db(q: Question):
     response = requests.post('http://127.0.0.1:5000/api/v1/questions/', 
         headers={
             'Content-Type': 'application/json',
-            'Authorization': 'kvpJxJi-Pp-kFWnew40kkFgmJU3AUQFshmwQA86nFB9xsCTiybHFI2g8_ayjV7njMKB6_-Ln8eE-sCWp8irHlskkchM_g5Nydrt_7MJTeCj0cIQikg3IAv4OzoT75kmlB7FgCHOfp6K26jElhbMr-OvQ4KiSOfTfdIbjsv8ebQWZPL2-eUuB0G2zzjo7V5CBTDhjoTJz',
+            'Authorization': '5HanMEv0vIbnz9mSXpAnMlIxKlPnoGxYiAdr9UsAQNyc1yZFMpTt3QWsLGL8saX0nG--eRGxrBhnn5YLmJr9eY4Q526YjDx-RvMyqY1RMTnomRii-1y3WrJwruguNOYuBKAKAbVq1ZLaMq7F8LVx_FV-UYOSJwqnkIDhVpcYyjwYd9SGsLcctO_5wkew-Z_nqPbKqktB',
     }, json={
         'text': q.text,
         'comment': q.comment,
@@ -84,7 +84,7 @@ def send_question_to_db(q: Question):
     response2 = requests.post('http://127.0.0.1:5000/api/v1/answer/',
         headers={
             'Content-Type': 'application/json',
-            'Authorization': 'kvpJxJi-Pp-kFWnew40kkFgmJU3AUQFshmwQA86nFB9xsCTiybHFI2g8_ayjV7njMKB6_-Ln8eE-sCWp8irHlskkchM_g5Nydrt_7MJTeCj0cIQikg3IAv4OzoT75kmlB7FgCHOfp6K26jElhbMr-OvQ4KiSOfTfdIbjsv8ebQWZPL2-eUuB0G2zzjo7V5CBTDhjoTJz',
+            'Authorization': '5HanMEv0vIbnz9mSXpAnMlIxKlPnoGxYiAdr9UsAQNyc1yZFMpTt3QWsLGL8saX0nG--eRGxrBhnn5YLmJr9eY4Q526YjDx-RvMyqY1RMTnomRii-1y3WrJwruguNOYuBKAKAbVq1ZLaMq7F8LVx_FV-UYOSJwqnkIDhVpcYyjwYd9SGsLcctO_5wkew-Z_nqPbKqktB',
         }, json={
             'question_id': response.json().get('id', 0),
             'correct_answer': q.answer,

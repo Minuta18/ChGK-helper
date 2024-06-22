@@ -59,13 +59,20 @@ class Token(api.orm_base):
         '''Gets a user by a given token'''
         session = api.db.get_session()
         try:
-            peremenaya = session.scalars(sqlalchemy.select(
+            result = session.scalars(sqlalchemy.select(
                     Token
                 ).where(Token.token == token)
-            ).all()[0]
+            ).all()
+            # print([token_.token for token_ in session.scalars(
+            #     sqlalchemy.select(Token).where(Token.id == Token.id)
+            # ).all() if token_.token == token])
+            print(result)
+            if result[0] is None: return models.User.get_user(
+                result[1].user_id
+            )
+            return models.User.get_user(result[0].user_id)
         except IndexError:
             return None
-        try:
-            return models.User.get_user(peremenaya.user_id)
-        except AttributeError:
+        except sqlalchemy.exc.InterfaceError as e:
+            print(e)
             return None

@@ -145,6 +145,7 @@ class User(api.orm_base):
     def get_user(user_id: int) -> typing_extensions.Self | None:
         '''Returns user by id or None if it not found'''
         session = api.db.get_session()
+        # print('!', user_id, session.get(User, user_id))
         return session.get(User, user_id)
 
     @staticmethod
