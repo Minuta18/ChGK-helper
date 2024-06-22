@@ -136,7 +136,7 @@ class User(api.orm_base):
         Returns:
             bool: True if nickname is valid, False otherwise
         '''
-        if len(nickname) < 1 or len(nickname) > 255:
+        if len(nickname) < 3 or len(nickname) > 255:
             return False
         # TODO
         return True
@@ -145,6 +145,7 @@ class User(api.orm_base):
     def get_user(user_id: int) -> typing_extensions.Self | None:
         '''Returns user by id or None if it not found'''
         session = api.db.get_session()
+        # print('!', user_id, session.get(User, user_id))
         return session.get(User, user_id)
 
     @staticmethod
@@ -209,12 +210,20 @@ class User(api.orm_base):
 
     @staticmethod
     def get_user_by_nickname(user_nickname: str):
-        if not User.validate_nickname():
+        if not User.validate_nickname(user_nickname):
             raise ValueError('Invalid nickname')
-        session = api.db.get_session
-        return session.scalars(
-            sqlalchemy.select(User
-                              ).where(User.nickname == user_nickname)).all()[0]
+        session = api.db.get_session()
+        try:
+            return session.scalars(
+                sqlalchemy.select(User
+                        ).where(User.nickname == user_nickname)).all()[0]
+        except IndexError:
+            try: 
+                return session.scalars(
+                    sqlalchemy.select(User
+                        ).where(User.email == user_nickname)).all()[0]
+            except IndexError:
+                return None
 
     def update_user_settings(self, time_for_reading: int = None,
                              time_for_solving: int = None,

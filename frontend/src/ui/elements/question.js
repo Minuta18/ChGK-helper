@@ -2,7 +2,7 @@ import { useState, forwardRef } from 'react';
 
 import Timer from './timer.js';
 import { DisabledTextInput } from './inputs.js';
-import { ButtonPrimary } from './buttons.js';
+import { ButtonPrimary, ButtonSecondary } from './buttons.js';
 
 import './question.css';
 
@@ -35,5 +35,8 @@ export const Question = forwardRef(function Question(props, ref) {
         <ButtonPrimary disabled={ disabled } onClick={ props.onClick }>
             Проверить
         </ButtonPrimary>
+        <ButtonSecondary onClick={() => { props.onSkip(); setCurrTime(1); }}>
+            Пропустить
+        </ButtonSecondary>
     </>);
 });

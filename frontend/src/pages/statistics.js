@@ -13,13 +13,22 @@ export default function Statistics(props) {
             <Background>
                 <Modal>
                     <span className='header-text'>Статистика</span>
-                    { props.stats.map(q => 
-                        <span> #{q.num}: { q.solve ?
-                            <span className='green-font'>Решён</span> : 
-                            <span className='red-font'>Не решён</span>
-                        } </span>
-                    ) }
-                    <LinkButtonPrimary href='/home'>
+                    <div className='height-limit'>
+                        { props.stats.map(q => 
+                            <div> #{q.num}: 
+                                { q.solve === 'solved' ? 
+                                (<span className='green-font'>Решён</span>) :
+                                <></>}
+                                { q.solve === 'not solved' ? 
+                                (<span className='red-font'>Не решён</span>) :
+                                <></>}
+                                { q.solve === 'skipped' ? 
+                                (<span>Пропущен</span>) :
+                                <></>}
+                            </div>
+                        ) }
+                    </div>
+                    <LinkButtonPrimary href='/'>
                         На главную
                     </LinkButtonPrimary>
                 </Modal>
