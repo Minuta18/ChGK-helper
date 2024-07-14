@@ -151,6 +151,9 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
+def remove_rubbish(answer: str) -> str:
+    return answer.replace('.', '').replace(',', '').lower().split()
+
 @answers_router.route('/<question_id>/check', methods=['POST'])
 def check_answer(question_id: int):
     '''Check answer
@@ -178,6 +181,11 @@ def check_answer(question_id: int):
         })
 
     answer = flask.request.json.get('answer', '')
+
+    # print(
+    #     'correct_answer \t' + remove_rubbish(correct_answer.correct_answer), 
+    #     'answer \t' + remove_rubbish(answer),
+    # )
 
     if correct_answer.correct_answer == answer:
         return flask.jsonify({
