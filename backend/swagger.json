@@ -423,7 +423,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/get_question_by_page"
+                                    "$ref": "#/components/schemas/health_check"
                                 }
                             }
                         }
@@ -485,121 +485,121 @@
                 }
             }
         },
-            "put": {
-                "tags": [
-                    "question"
-                ],
-                "summary": "Edits question by given id",
-                "description": "Edits question by given id",
-                "operationId": "changeQuestionById",             
-                "parameters": [
-                    {
-                        "name": "question_id",
-                        "in": "path",
-                        "description": "Id of question to return",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "text",
-                        "in": "query",
-                        "description": "New text",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "Было 2 козла. Сколько?"
-                        }
-                    },
-                    {
-                        "name": "comment",
-                        "in": "query",
-                        "description": "New comment",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "Автор - стеапин"
-                        }
+        "put": {
+            "tags": [
+                "question"
+            ],
+            "summary": "Edits question by given id",
+            "description": "Edits question by given id",
+            "operationId": "changeQuestionById",             
+            "parameters": [
+                {
+                    "name": "question_id",
+                    "in": "path",
+                    "description": "Id of question to return",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int64"
                     }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/get_question_by_id"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid arguments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/error"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Question not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/error"
-                                }
-                            }
-                        }
+                },
+                {
+                    "name": "text",
+                    "in": "query",
+                    "description": "New text",
+                    "required": false,
+                    "schema": {
+                        "type": "string",
+                        "example": "Было 2 козла. Сколько?"
+                    }
+                },
+                {
+                    "name": "comment",
+                    "in": "query",
+                    "description": "New comment",
+                    "required": false,
+                    "schema": {
+                        "type": "string",
+                        "example": "Автор - стеапин"
                     }
                 }
-            },
-            "delete": {
-                "tags": [
-                    "questions"
-                ],
-                "summary": "Deletes question by given id",
-                "description": "Deletes question by given id",
-                "operationId": "deleteQuestionById",
-                "parameters": [
-                    {
-                        "name": "question_id",
-                        "in": "path",
-                        "description": "Id of question to return",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/change_password"
-                                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successful operation",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/get_question_by_id"
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Question not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/error"
-                                }
+                    }
+                },
+                "400": {
+                    "description": "Invalid arguments",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/error"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Question not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/error"
                             }
                         }
                     }
                 }
             }
         },
+        "delete": {
+            "tags": [
+                "questions"
+            ],
+            "summary": "Deletes question by given id",
+            "description": "Deletes question by given id",
+            "operationId": "deleteQuestionById",
+            "parameters": [
+                {
+                    "name": "question_id",
+                    "in": "path",
+                    "description": "Id of question to return",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successful operation",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/change_password"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Question not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/error"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
     "components": {
         "schemas": {
             "health_check": {
@@ -732,6 +732,64 @@
                     "new_password": {
                         "type": "string",
                         "example": "12345678"
+                    }
+                }
+            },
+            "get_question_by_page": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "questions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/question"
+                        }
+                    }
+                }
+            },
+            "question": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "text": {
+                        "type": "string",
+                        "example": "Было 2 козла. Сколько?"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Автор - стеапин"
+                    }
+                }
+            },
+            "get_question_by_id": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "question": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/question"
+                    }
+                }
+            },
+            "delete_question": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "question": {
+                        "type": "object"
                     }
                 }
             }
