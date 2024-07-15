@@ -1,28 +1,22 @@
 import React from 'react';
 
-import Background from '../ui/containers/background';
-import Modal from '../ui/containers/modal';
 import { 
-    LinkButtonPrimary, LinkButtonSecondary, BackButton,
+    LinkButtonPrimary, LinkButtonSecondary,
 } from '../ui/elements/buttons';
 
-export default function Correct_answer(props) {
+export default function CorrectAnswer(props) {
     return (
         <>
-            <Background>
-                <Modal>
-                    <BackButton />
-                    <span className='header-text'>Ответ верный!</span>
-                    <span> Комментарий: { props.comment } </span>
-                    <LinkButtonPrimary disabled={ false }>
-                        Далее
-                    </LinkButtonPrimary>
-                    <LinkButtonSecondary disabled={ false }>
-                        Отмена
-                    </LinkButtonSecondary>
-                    
-                </Modal>
-            </Background>
+            <span className='header-text'>Ответ верный</span>
+            <span className='full-width'>
+                { props.comment } 
+            </span>
+            <LinkButtonPrimary onClick={ props.onClick }>
+                Далее
+            </LinkButtonPrimary>
+            <LinkButtonSecondary onClick={ props.onEnd }>
+                Отмена
+            </LinkButtonSecondary>
         </>
     );
 }

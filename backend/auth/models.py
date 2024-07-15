@@ -33,7 +33,7 @@ class Token(api.orm_base):
     def create_token(user_id: int) -> typing_extensions.Self:
         session = api.db.get_session()
         token = Token(
-            given_id=user_id,
+            user_id=user_id,
             token=secrets.token_urlsafe(150),
         )
         session.add(token)
@@ -58,14 +58,21 @@ class Token(api.orm_base):
     def get_user_by_token(token: str) -> typing_extensions.Self:
         '''Gets a user by a given token'''
         session = api.db.get_session()
-        peremenaya = session.scalars(sqlalchemy.select(
-            Token
-            ).where(
-                Token.token == token)
-        )
-        return models.User.get_user(peremenaya.user_id)
-
-def check_for_admin(user):
-    if user.permission == 'admin':
-        return True
-    return False
+        try:
+            result = session.scalars(sqlalchemy.select(
+                    Token
+                ).where(Token.token == token)
+            ).all()
+            # print([token_.token for token_ in session.scalars(
+            #     sqlalchemy.select(Token).where(Token.id == Token.id)
+            # ).all() if token_.token == token])
+            print(result)
+            if result[0] is None: return models.User.get_user(
+                result[1].user_id
+            )
+            return models.User.get_user(result[0].user_id)
+        except IndexError:
+            return None
+        except sqlalchemy.exc.InterfaceError as e:
+            print(e)
+            return None

@@ -67,7 +67,9 @@ def parse_questions_page(page: str) -> list[Question]:
 
 def send_question_to_db(q: Question):
     response = requests.post('http://127.0.0.1:5000/api/v1/questions/', 
-        headers={'Content-Type': 'application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': '5HanMEv0vIbnz9mSXpAnMlIxKlPnoGxYiAdr9UsAQNyc1yZFMpTt3QWsLGL8saX0nG--eRGxrBhnn5YLmJr9eY4Q526YjDx-RvMyqY1RMTnomRii-1y3WrJwruguNOYuBKAKAbVq1ZLaMq7F8LVx_FV-UYOSJwqnkIDhVpcYyjwYd9SGsLcctO_5wkew-Z_nqPbKqktB',
     }, json={
         'text': q.text,
         'comment': q.comment,
@@ -75,13 +77,14 @@ def send_question_to_db(q: Question):
     if response.status_code != 201:
         print(f'[Uploaded question] Error: {response.status_code}')
     elif response.json().get('error', True):
-        print(f'[Uploaded question] Error: {response.json().get('detail', '')}')
+        print(f'[Uploaded question] Error: {response.json().get("detail", "")}')
     else:
         print(f'[Uploaded question] Success')
 
     response2 = requests.post('http://127.0.0.1:5000/api/v1/answer/',
         headers={
             'Content-Type': 'application/json',
+            'Authorization': '5HanMEv0vIbnz9mSXpAnMlIxKlPnoGxYiAdr9UsAQNyc1yZFMpTt3QWsLGL8saX0nG--eRGxrBhnn5YLmJr9eY4Q526YjDx-RvMyqY1RMTnomRii-1y3WrJwruguNOYuBKAKAbVq1ZLaMq7F8LVx_FV-UYOSJwqnkIDhVpcYyjwYd9SGsLcctO_5wkew-Z_nqPbKqktB',
         }, json={
             'question_id': response.json().get('id', 0),
             'correct_answer': q.answer,
@@ -90,7 +93,7 @@ def send_question_to_db(q: Question):
     if response2.status_code != 201:
         print(f'[Uploaded answer] Error uploading answer: { response2.status_code }')
     elif response2.json().get('error', True):
-        print(f'[Uploaded answer] Error uploading answer: { response2.json().get('detail', '') }')
+        print(f'[Uploaded answer] Error uploading answer: { response2.json().get("detail", "") }')
     else:
         print(f'[Uploaded answer] Success')
 

@@ -74,6 +74,7 @@ def get_questions():
     }), 200
 
 @questions_router.route('/', methods=['POST'])
+@auth.login_required(role='admin')
 def create_question():
     '''Creates new question.
 
@@ -83,14 +84,6 @@ def create_question():
         text (str): Text of the new question
         comment (str): Comment to the question
     '''
-
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
 
     if flask.request.headers.get('Content-Type') != 'application/json':
         return flask.jsonify({
@@ -117,6 +110,7 @@ def create_question():
     }), 201
 
 @questions_router.route('/<int:question_id>', methods=['PUT'])
+@auth.login_required(role='admin')
 def edit_question(question_id: int):
     '''Edits question by given id.
 
@@ -126,14 +120,6 @@ def edit_question(question_id: int):
         text (:obj:`str`, optional): New text of the question.
         comment (:obj:`str`, optional): New comment of the new question.
     '''
-
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
 
     text = flask.request.args.get('text', None, type=str)
     comment = flask.request.args.get('comment', None, type=str)
@@ -170,17 +156,9 @@ def edit_question(question_id: int):
         }), 400
 
 @questions_router.route('/<int:question_id>', methods=['DELETE'])
+@auth.login_required(role='admin')
 def delete_question(question_id: int):
     '''Deletes question by given id'''
-
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
     try:
         models.Question.delete_question(question_id)
         return flask.jsonify({

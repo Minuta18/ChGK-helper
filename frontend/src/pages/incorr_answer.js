@@ -1,34 +1,26 @@
 import React from 'react';
 
-import Background from '../ui/containers/background';
-import Modal from '../ui/containers/modal';
 import { 
-    LinkButtonPrimary, LinkButtonSecondary, BackButton,
+    ButtonPrimary, ButtonSecondary,
 } from '../ui/elements/buttons';
 
-export default function Correct_answer(props) {
+export default function IncorrectAnswer(props) {
+    console.log(props);    
     return (
         <>
-            <Background>
-                <Modal>
-                    <BackButton />
-                    <span className='header-text'>Ответ верный!</span>
-                    <span> Правильный ответ: { props.answer } </span>
-                    <span> Комментарий: { props.comment } </span>
-                    <LinkButtonPrimary disabled={ false }>
-                        Далее
-                    </LinkButtonPrimary>
-
-                    <LinkButtonSecondary disabled={ false }>
-                        Отмена
-                    </LinkButtonSecondary>
-
-                    <LinkButtonSecondary disabled={ false }>
-                        Нет мой ответ верный
-                    </LinkButtonSecondary>
-                    
-                </Modal>
-            </Background>
+            <span className='header-text'>Ответ не верный</span>
+            <span> { props.answer } </span>
+            <span> { props.comment } </span>
+            
+            <ButtonPrimary disabled={ false } onClick={ props.onGo }>
+                Далее
+            </ButtonPrimary>
+            <ButtonSecondary disabled={ false } onClick={ props.onEnd }>
+                На главную
+            </ButtonSecondary>
+            <ButtonSecondary disabled={ false } onClick={ props.onGo2 }>
+                Учитывать мой ответ как верный
+            </ButtonSecondary>
         </>
     );
 }

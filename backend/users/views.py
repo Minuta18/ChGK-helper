@@ -38,6 +38,24 @@ def get_user(user_id: int):
         }
     }), 200
 
+@users_router.route('/self', methods=['GET', ])
+def get_user_by_token():
+    token = flask.request.headers.get('Authorization', '')
+    user = auth.models.Token.get_user_by_token(token.removeprefix('Bearer '))
+    if user is None:
+        # print(token, token.removeprefix('Bearer '), sep='\n')
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token',
+        }), 401
+    else:
+        return flask.jsonify({
+            'error': False,
+            'id': user.id,
+            'email': user.email,
+            'nickname': user.nickname,
+        }), 200
+
 @users_router.route('/', methods=['GET'])
 def get_users():
     '''Gets multiple users.
@@ -100,7 +118,7 @@ def create_user():
         return flask.jsonify({
             'error': True,
             'message': 'Incorrect Content-Type header',
-        })
+        }), 400
     email = flask.request.json.get('email', '')
     nickname = flask.request.json.get('nickname', '')
     password = flask.request.json.get('password', '')
@@ -136,6 +154,20 @@ def change_password(user_id: int):
             'error': True,
             'message': 'Incorrect Content-Type header',
         })
+        
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
 
     password = flask.request.json.get('old_password', '')
     new_password = flask.request.json.get('new_password', '')
@@ -184,14 +216,24 @@ def edit_user(user_id: int):
         nickname (:obj:`str`, optional): New nickname of the new user.
     '''
 
-    if auth.verify_token(auth.auth.current_user()).id != user_id:
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Can\'t edit data of another user'
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
         }), 401
 
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
+
+    print(email)
 
     try:
         user = models.User.get_user(user_id)
@@ -246,10 +288,20 @@ def edit_user(user_id: int):
 def delete_user(user_id: int):
     '''Deletes user by given id'''
 
-    if auth.verify_token(auth.auth.current_user()).id != user_id:
+    user = auth.verify_token(
+        flask.request.headers.get(
+            'Authorization', ''
+        ).removeprefix('Bearer ')
+    )
+    if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Can\'t edit data of another user'
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
         }), 401
 
     try:
@@ -268,7 +320,7 @@ def delete_user(user_id: int):
             'detail': f'Could not find user with id {user_id}',
         }), 404
 
-@users_router.route('/<int:user_id>', methods=['GET'])
+@users_router.route('/settings/<int:user_id>', methods=['GET'])
 def get_time_settings(user_id: int):
     '''Gets time settings by an id.
 
@@ -278,6 +330,20 @@ def get_time_settings(user_id: int):
     Args:
         user_id(int): user\'s id
     '''
+    try:
+        if auth.verify_token(
+            flask.request.headers.get(
+                'Authorization', ''
+            ).removeprefix('Bearer ')).id != user_id:
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Can\'t view data of another user'
+            }), 401
+    except AttributeError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token',
+        }), 401
 
     try:
         user = models.User.get_user(user_id)
@@ -301,7 +367,7 @@ def get_time_settings(user_id: int):
     }), 200
 
 @users_router.route('/settings/<int:user_id>', methods=['PUT'])
-def edit_user_sttings(user_id: int):
+def edit_user_settings(user_id: int):
     '''Edits user settings by given id.
 
     Edits user by given id.
@@ -315,12 +381,29 @@ def edit_user_sttings(user_id: int):
         New time for typing setting of the user.
     '''
 
-    time_for_reading = flask.request.args.get('time_for_reading',
-                                              None, type=int)
-    time_for_solving = flask.request.args.get('time_for_solving',
-                                              None, type=int)
-    time_for_typing = flask.request.args.get('time_for_typing',
-                                             None, type=int)
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
+
+    try:
+        time_for_reading = flask.request.json.get('time_for_reading', None)
+        time_for_solving = flask.request.json.get('time_for_solving', None)
+        time_for_typing = flask.request.json.get('time_for_typing', None)
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Only integer values are allowed',
+        }), 400
 
     try:
         user = models.User.get_user(user_id)

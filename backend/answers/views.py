@@ -8,7 +8,7 @@ import auth
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
-@answers_router.route('/<number>', methods=['GET'])
+@answers_router.route('/<answer_id>', methods=['GET'])
 def get_answer(answer_id: int):
     '''Gets answer by an id.
 
@@ -60,6 +60,7 @@ def get_answers():
     }), 200
 
 @answers_router.route('/', methods=['POST'])
+@auth.login_required(role='admin')
 def create_answer():
     '''Create answer.
 
@@ -71,21 +72,14 @@ def create_answer():
         correct_answer (:obj:`str`): correct answer on question
     '''
 
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
+    question_id = flask.request.json.get('question_id', None)
+    correct_answer = flask.request.json.get('correct_answer', None)
 
-    if flask.request.headers.get('Content-Type') != 'application/json':
+    if question_id is None or correct_answer is None:
         return flask.jsonify({
             'error': True,
-            'message': 'Incorrect Content-Type header',
+            'detail': 'Programmer invalid',  
         }), 400
-    question_id = flask.request.json.get('question_id', '')
-    correct_answer = flask.request.json.get('correct_answer', '')
 
     try:
         answer = models.Answer.create_answer(
@@ -104,7 +98,8 @@ def create_answer():
         'correct_answer': answer.correct_answer,
     }), 201
 
-@answers_router.route('/<number>', methods=['PUT'])
+@answers_router.route('/<answer_id>', methods=['PUT'])
+@auth.login_required(role='admin')
 def update_answer(answer_id):
     '''Update existful answer
 
@@ -114,25 +109,14 @@ def update_answer(answer_id):
         correct_answer (:obj:`str`): correct answer on question
     '''
 
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        }), 400
-    question_id = flask.request.args.get('question_id', '')
-    correct_answer = flask.request.args.get('correct_answer', '')
+    question_id = flask.request.args.get('question_id', None)
+    correct_answer = flask.request.json.get('correct_answer', None)
 
     try:
-        answer = models.Answer.get_answers(answer_id).update_answer(
-            question_id, correct_answer)
+        answer = models.Answer.get_answer(answer_id).update_answer(
+            question_id, 
+            correct_answer
+        )
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -147,26 +131,13 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/<number>', methods=['DELETE'])
+@auth.login_required(role='admin')
 def delete_answer(answer_id: int):
     '''Delete existful answer
 
     Args:
        id (:obj:`int`): Id of deleting answer.
     '''
-
-    if not auth.models.check_for_admin(
-        auth.verify_token(auth.auth.current_user()).id
-            ):
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Not enough permissions'
-        }), 401
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        }), 400
 
     try:
         answer = models.Answer.delete_answer(answer_id)
@@ -180,8 +151,11 @@ def delete_answer(answer_id: int):
         'error': False
     }), 200
 
-@answers_router.route('/<question_id>/check/<answer>', methods=['GET'])
-def check_answer(question_id: int, answer: str):
+def remove_rubbish(answer: str) -> str:
+    return answer.replace('.', '').replace(',', '').lower().split()
+
+@answers_router.route('/<question_id>/check', methods=['POST'])
+def check_answer(question_id: int):
     '''Check answer
 
     Args:
@@ -189,10 +163,31 @@ def check_answer(question_id: int, answer: str):
         answer (:obj:`str`): answer which user give us.
     '''
 
-    session = api.db.get_session()
-    correct_answer = session.get(question_id)
+    if flask.request.headers.get('Content-Type') != 'application/json':
+        return flask.jsonify({
+            'error': True,
+            'message': 'Incorrect Content-Type header',
+        }), 400
 
-    if correct_answer.correct_answer == base64.decode(answer):
+    session = api.db.get_session()
+    try:
+        correct_answer = session.scalars(sqlalchemy.select(models.Answer).where(
+            models.Answer.question_id == question_id
+        )).all()[0]
+    except IndexError:
+        return flask.jsonify({
+            'error': False,
+            'answer_is_correct': False,
+        })
+
+    answer = flask.request.json.get('answer', '')
+
+    # print(
+    #     'correct_answer \t' + remove_rubbish(correct_answer.correct_answer), 
+    #     'answer \t' + remove_rubbish(answer),
+    # )
+
+    if correct_answer.correct_answer == answer:
         return flask.jsonify({
             'error': False,
             'answer_is_correct': True

@@ -7,16 +7,30 @@ import {
 } from '../ui/elements/buttons';
 
 export default function Statistics(props) {
-
+    console.log(props)
     return (
         <>
             <Background>
                 <Modal>
-                    <BackButton />
                     <span className='header-text'>Статистика</span>
-                    { props.stats.map(() => 
-                        <span> Ваш ответ:{props.stats.answer} Верный ответ:{props.stats.corr_sanswer} </span>
-                    ) }
+                    <div className='height-limit'>
+                        { props.stats.map(q => 
+                            <div> #{q.num}: 
+                                { q.solve === 'solved' ? 
+                                (<span className='green-font'>Решён</span>) :
+                                <></>}
+                                { q.solve === 'not solved' ? 
+                                (<span className='red-font'>Не решён</span>) :
+                                <></>}
+                                { q.solve === 'skipped' ? 
+                                (<span>Пропущен</span>) :
+                                <></>}
+                            </div>
+                        ) }
+                    </div>
+                    <LinkButtonPrimary href='/'>
+                        На главную
+                    </LinkButtonPrimary>
                 </Modal>
             </Background>
         </>

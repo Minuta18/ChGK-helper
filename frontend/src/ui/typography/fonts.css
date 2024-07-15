@@ -22,3 +22,11 @@
     color: red;
     width: fit-content;
 }
+
+.green-font {
+    color: rgb(28, 198, 28);
+}
+
+.red-font {
+    color: rgb(194, 1, 1);
+}

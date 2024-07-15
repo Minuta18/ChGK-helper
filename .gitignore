@@ -34,3 +34,6 @@ package-lock.json
 
 sus.html
 crawler.log
+
+.venv
+node_modules

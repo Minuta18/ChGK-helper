@@ -17,6 +17,9 @@ class UserPermissions(enum.Enum):
     DEFAULT = 0
     ADMIN = 1
 
+def user_permissions_to_string(user_permissions: UserPermissions):
+    return 'admin' if user_permissions == UserPermissions.ADMIN else 'default'
+
 class User(api.orm_base):
     '''User model
 
@@ -48,13 +51,13 @@ class User(api.orm_base):
         nullable=False
     )
     time_for_reading: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
     time_for_solving: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
     time_for_typing: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer
+        sqlalchemy.Integer, nullable=False, default=20
     )
 
     def set_password(self, plain_password: str):
@@ -133,7 +136,7 @@ class User(api.orm_base):
         Returns:
             bool: True if nickname is valid, False otherwise
         '''
-        if len(nickname) < 1 or len(nickname) > 255:
+        if len(nickname) < 3 or len(nickname) > 255:
             return False
         # TODO
         return True
@@ -142,6 +145,7 @@ class User(api.orm_base):
     def get_user(user_id: int) -> typing_extensions.Self | None:
         '''Returns user by id or None if it not found'''
         session = api.db.get_session()
+        # print('!', user_id, session.get(User, user_id))
         return session.get(User, user_id)
 
     @staticmethod
@@ -181,7 +185,11 @@ class User(api.orm_base):
             if not User.validate_nickname(nickname):
                 raise ValueError('Invalid nickname')
             session = api.db.get_session()
-            user = User(email=email, nickname=nickname)
+            user = User(
+                email=email,
+                nickname=nickname,
+                permission=UserPermissions.DEFAULT
+            )
             session.add(user)
             session.commit()
             user.set_password(password)
@@ -202,12 +210,20 @@ class User(api.orm_base):
 
     @staticmethod
     def get_user_by_nickname(user_nickname: str):
-        if not User.validate_nickname():
+        if not User.validate_nickname(user_nickname):
             raise ValueError('Invalid nickname')
-        session = api.db.get_session
-        return session.scalars(
-            sqlalchemy.select(User
-                              ).where(User.nickname == user_nickname)).all()[0]
+        session = api.db.get_session()
+        try:
+            return session.scalars(
+                sqlalchemy.select(User
+                        ).where(User.nickname == user_nickname)).all()[0]
+        except IndexError:
+            try: 
+                return session.scalars(
+                    sqlalchemy.select(User
+                        ).where(User.email == user_nickname)).all()[0]
+            except IndexError:
+                return None
 
     def update_user_settings(self, time_for_reading: int = None,
                              time_for_solving: int = None,
@@ -223,3 +239,18 @@ class User(api.orm_base):
         session.add(self)
         session.commit()
         return self
+
+    def check_for_admin(self):
+        if self.permission == UserPermissions.ADMIN:
+            return True
+        return False
+
+    def check_permissions(self, permission: str|UserPermissions) -> bool:
+        '''Returns True if user has enough permissions'''
+        perms = permission
+        if type(permission) is UserPermissions:
+            perms = user_permissions_to_string(permission)
+        our_perms = user_permissions_to_string(self.permission)
+        if our_perms == 'admin': return True
+        if perms == 'default' and our_perms == 'default': return True
+        return False
