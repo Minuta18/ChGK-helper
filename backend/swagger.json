@@ -439,6 +439,46 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Creates new question",
+                "description": "Creates new question with text and a comment. Returns error 400 if arguments are invalid. Admin-only",
+                "operationId": "create_question",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/create_question"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Question created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/create_question_response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/questions/{question_id}": {
@@ -792,6 +832,41 @@
                     "question": {
                         "type": "object",
                         "$ref": "#/components/schemas/question"
+                    }
+                }
+            },
+            "create_question": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "example": "Было 2 козла. Сколько?"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "автор - стеапин"
+                    }
+                }
+            },
+            "create_question_response": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "false"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": "1"
+                    },
+                    "text": {
+                        "type": "string",
+                        "example": "Было 2 козла. Сколько?"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "автор - стеапин"
                     }
                 }
             }
