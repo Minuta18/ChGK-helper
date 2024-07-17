@@ -489,17 +489,18 @@
                     "questions"
                 ],
                 "summary": "Edits question by given id",
-                "description": "Edits question by given id",
+                "description": "Edits question by given id (int). If not given valid arguments returns 400 error, if not found returns 404 error",
                 "operationId": "changeQuestionById",             
                 "parameters": [
                     {
                         "name": "question_id",
                         "in": "path",
-                        "description": "Id of question to return",
+                        "description": "Id of question to update",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "format": "int64",
+                            "example": "1"
                         }
                     },
                     {
@@ -561,13 +562,13 @@
                     "questions"
                 ],
                 "summary": "Deletes question by given id",
-                "description": "Deletes question by given id",
+                "description": "Deletes question by given id (int). If question not found returns 404 error",
                 "operationId": "deleteQuestionById",
                 "parameters": [
                     {
                         "name": "question_id",
                         "in": "path",
-                        "description": "Id of question to return",
+                        "description": "Id of question to delete",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -789,7 +790,8 @@
                         "example": "false"
                     },
                     "question": {
-                        "type": "object"
+                        "type": "object",
+                        "$ref": "#/components/schemas/question"
                     }
                 }
             }
