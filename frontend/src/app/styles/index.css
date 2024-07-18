@@ -1,0 +1,36 @@
+html {
+    min-height: 100%;
+    margin: 0px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-height: 100%;
+    margin: 0px;
+}
+
+body > #root {
+    min-height: 100vh;
+    margin: 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+:root {
+    --white: #fff;
+    --light-gray: #d0d0d0;
+    --black: #000;
+
+    --primary-color: #6495ed;
+    --primary-color-lighter: #9abdfd;
+    --primary-color-darker: #4169e1;
+    --secondary-color: #e0f0ff;
+    --secondary-color-darker: #b5c2ce;
+    --error-color: rgb(194, 1, 1);
+
+    --default-border-radius: 16px;
+    --default-padding: 16px;
+    --default-transition-duration: 0.3s;
+}

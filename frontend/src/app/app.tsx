@@ -8,6 +8,8 @@ import { Provider } from 'react-redux'
 import { IndexPage } from "../pages/index/index";
 import store from "./store";
 
+import './styles/index.css';
+
 export const router = createBrowserRouter([
     {
         path: "/",
