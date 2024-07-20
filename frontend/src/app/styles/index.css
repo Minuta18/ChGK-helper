@@ -1,3 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+.pt-sans-regular {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.pt-sans-bold {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.pt-sans-regular-italic {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.pt-sans-bold-italic {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+}
+
+:root {
+    --white: #fff;
+    --background-color: #eee;
+    --black: #0e0e0e;
+
+    --primary-color: #6495ED;
+
+    --default-border-radius: 16px;
+    --default-padding: 16px;
+    --default-transition-duration: 0.3s;
+}
+
 html {
     min-height: 100%;
     margin: 0px;
@@ -8,6 +46,10 @@ html {
 body {
     min-height: 100%;
     margin: 0px;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--black);
 }
 
 body > #root {
@@ -16,21 +58,9 @@ body > #root {
     width: 100%;
     display: flex;
     flex-direction: column;
+    background-color: var(--background-color);
 }
 
-:root {
-    --white: #fff;
-    --light-gray: #d0d0d0;
-    --black: #000;
-
-    --primary-color: #6495ed;
-    --primary-color-lighter: #9abdfd;
-    --primary-color-darker: #4169e1;
-    --secondary-color: #e0f0ff;
-    --secondary-color-darker: #b5c2ce;
-    --error-color: rgb(194, 1, 1);
-
-    --default-border-radius: 16px;
-    --default-padding: 16px;
-    --default-transition-duration: 0.3s;
+* {
+    box-sizing: border-box;
 }
