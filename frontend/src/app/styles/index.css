@@ -31,6 +31,11 @@
 
     --primary-color: #6495ED;
 
+    --red: #FD151B;
+    --yellow: #FFB30F;
+    --green: #26C485;
+    --dark-blue: #01295F;
+
     --default-border-radius: 16px;
     --default-padding: 16px;
     --default-transition-duration: 0.3s;
@@ -61,6 +66,22 @@ body > #root {
     background-color: var(--background-color);
 }
 
+a {
+    text-decoration: none;
+    color: var(--black);
+}
+
 * {
     box-sizing: border-box;
+}
+
+svg {
+    vertical-align: top;
+    line-height: 20px;
+    font-size: 20px;
+    align-items: center;
+}
+
+.danger-text {
+    color: var(--red);
 }

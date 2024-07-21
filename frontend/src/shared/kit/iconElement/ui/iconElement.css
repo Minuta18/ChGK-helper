@@ -1,0 +1,13 @@
+.icon-element {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.icon-element__icon {
+    display: flex;
+    height: 36px;
+    width: 40px;
+    align-items: center;
+    justify-content: center;
+}
