@@ -30,6 +30,7 @@
     --black: #0e0e0e;
 
     --primary-color: #6495ED;
+    --primary-color-darker: #3d72d3;
 
     --red: #FD151B;
     --yellow: #FFB30F;
@@ -54,6 +55,7 @@ body {
     font-family: "PT Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
+    font-size: 20px;
     color: var(--black);
 }
 
@@ -84,6 +86,28 @@ svg {
     align-items: center;
 }
 
+.link {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 .danger-text {
     color: var(--red);
+}
+
+.vertical-line {
+    height: 5px;
+    width: 100%;
+    display: block;
+    background-color: var(--background-color);
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+footer {
+    width: 100%;
+}
+
+header {
+    width: 100%;
 }

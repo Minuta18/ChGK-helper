@@ -1,17 +1,19 @@
 import React from "react";
 
-interface HeaderProps {
+import "./heading.css";
+
+interface HeadingProps {
     underlined?: boolean;
     children?: React.ReactNode[] | React.ReactNode;
 }
 
-export function Header({ underlined = true, children }: HeaderProps) {
+export function Heading({ underlined = true, children }: HeadingProps) {
     return (
         <div className={ 
             underlined ? "heading-text underlined-text" :
             "heading-text" 
         }>
-            { children}
+            { children }
         </div>
     );
 }

@@ -1,0 +1,30 @@
+.footer {
+    position: relative;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: white;
+    width: 100%;
+    bottom: 0;
+    clear: both;
+
+    box-shadow: inset 0px 6px 10px 0px rgba(0,0,0,0.2);
+    -webkit-box-shadow: inset 0px 10px 5px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: inset 0px 6px 10px 0px rgba(0,0,0,0.2);
+}
+
+.footer__inner {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+}
+
+.footer__column {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    width: 50%;
+}

@@ -14,7 +14,11 @@ export function HoverDropdown(props: HoverDropdownProps) {
             <div className="dropdown__content">
                 <div className="dropdown__list">
                     { props.children.map((child) => {
-                        return <div className="dropdown__item">{ child }</div>
+                        return <div className="dropdown__item" key={ 
+                            crypto.randomUUID() 
+                        }>
+                            { child }
+                        </div>
                     }) }
                 </div>
             </div>

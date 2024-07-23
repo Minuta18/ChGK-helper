@@ -1,6 +1,7 @@
 .dropdown__list {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
 .dropdown {
@@ -18,6 +19,8 @@
     -webkit-box-shadow: 0px 10px 5px 0px rgba(0,0,0,0.2);
     -moz-box-shadow: 0px 6px 10px 0px rgba(0,0,0,0.2);
     z-index: 5;
+    padding: 4px;
+    border-radius: 16px;;
 }
   
 .dropdown:hover .dropdown__content {display: block;}
@@ -31,6 +34,7 @@
     padding-top: 4px;
     padding-bottom: 4px;
     background-color: var(--white);
+    border-radius: 16px;
 }
 
 .dropdown__item:hover {

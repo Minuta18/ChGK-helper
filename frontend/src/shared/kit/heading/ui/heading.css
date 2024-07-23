@@ -1,8 +1,11 @@
 .heading-text {
-    font-size: 32;
+    font-size: 32px;
     font-family: "PT Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
+    color: var(--black);
+    display: block;
+    margin-bottom: 8px;
 }
 
 .underlined-text {
