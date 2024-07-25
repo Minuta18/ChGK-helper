@@ -2,6 +2,8 @@ import * as React from "react";
 
 import "./hoverDropdown.css";
 
+import * as useWindowDimensions from "../../../hooks/useWindowDimensions";
+
 interface HoverDropdownProps {
     mainElement: React.ReactNode,
     children: React.ReactNode[],
@@ -9,10 +11,14 @@ interface HoverDropdownProps {
 
 export function HoverDropdown(props: HoverDropdownProps) {
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
+    const [windowWidth, windowHeight] =  
+        useWindowDimensions.useWindowDimensions();
 
     return (<>
         <div className="dropdown" onClick={() => {
-            setIsOpen(!isOpen);
+            if (windowWidth <= 600) {
+                setIsOpen(!isOpen);
+            }
         }}>
             { props.mainElement }
             <div className={isOpen ? 
