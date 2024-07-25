@@ -23,7 +23,15 @@
     border-radius: 16px;;
 }
   
-.dropdown:hover .dropdown__content {display: block;}
+@media screen and (min-width: 600px) {
+    .dropdown:hover .dropdown__content {
+        display: block;
+    }
+}
+
+.dropdown__open {
+    display: block;
+}
 
 .dropdown__item {
     display: block;

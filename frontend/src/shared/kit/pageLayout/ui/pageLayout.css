@@ -17,7 +17,7 @@
 .page__content {
     display: flex;
     flex-direction: row;
-    width: 50%;
+    width: var(--useful-width);
 
     margin-top: 80px;
 }
@@ -32,4 +32,18 @@
     display: block;
     width: 70%;
     padding: 16px;
+}
+
+@media screen and (max-width: 900px) {
+    .page__content {
+        flex-direction: column;
+    }
+
+    .page__aside {
+        width: 100%;
+    }
+
+    .page__mainContent {
+        width: 100%;
+    }
 }

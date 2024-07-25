@@ -17,7 +17,7 @@
 .footer__inner {
     display: flex;
     flex-direction: row;
-    width: 50%;
+    width: var(--useful-width);
 }
 
 .footer__column {
@@ -27,4 +27,5 @@
     gap: 16px;
     padding: 16px;
     width: 50%;
+    overflow-wrap: anywhere;
 }

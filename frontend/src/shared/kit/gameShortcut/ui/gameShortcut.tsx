@@ -32,10 +32,8 @@ export function GameShortcut(props: GameShortcutsProps) {
                 <div className="game-shortcut__first-part">
                     <div className="game-shortcut__title">
                         <b>{ props.title }</b>
-                        { props.tags?.map((tag) => {
-                            return <div key={ 
-                                crypto.randomUUID() 
-                            }>
+                        { props.tags?.map((tag, ind) => {
+                            return <div key={ ind }>
                                 { tag }
                             </div>
                         }) }

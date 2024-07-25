@@ -13,7 +13,7 @@
 }
 
 .header__inner {
-    width: 50%;
+    width: var(--useful-width);
     height: 100%;
 
     display: flex;
@@ -82,3 +82,4 @@
     display: block;
     width: fit-content;
 }
+

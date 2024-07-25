@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { MdOutlineSettings } from "react-icons/md";
 import { MdExitToApp } from "react-icons/md";
+import { FaBars } from "react-icons/fa6";
 
 import './header.css';
 
@@ -23,6 +24,17 @@ export function Header() {
                     </div>
                 </div>
                 <div className="header__right">
+                    <span className="header__element hide-on-pc">
+                        <HoverDropdown mainElement={ 
+                            <FaBars 
+                                color="var(--background-color)" 
+                                size={ 40 }
+                            /> 
+                        }>
+                            <Link to="/">Главная</Link>
+                            <Link to="/play">Играть</Link>
+                        </HoverDropdown>
+                    </span>
                     <span className="header__element">
                         <HoverDropdown mainElement={ <Avatar /> }>
                             <IconElement icon={
@@ -44,12 +56,12 @@ export function Header() {
                             </IconElement>
                         </HoverDropdown>
                     </span>
-                    <span className="header__element">
+                    <span className="header__element hide-on-phones">
                         <HeaderLink to="/play">
                             Играть
                         </HeaderLink>
                     </span>
-                    <span className="header__element">
+                    <span className="header__element hide-on-phones">
                         <HeaderLink to="/">
                             Главная
                         </HeaderLink>

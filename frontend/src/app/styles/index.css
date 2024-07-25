@@ -40,6 +40,20 @@
     --default-border-radius: 16px;
     --default-padding: 16px;
     --default-transition-duration: 0.3s;
+
+    --useful-width: 50%;
+}
+
+@media screen and (max-width: 1600px) {
+    :root {
+        --useful-width: 70%;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    :root {
+        --useful-width: 100%;
+    }
 }
 
 html {
@@ -110,4 +124,16 @@ footer {
 
 header {
     width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+    .hide-on-phones {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 601px) {
+    .hide-on-pc {
+        display: none !important;
+    }
 }
