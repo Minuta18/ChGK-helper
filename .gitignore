@@ -39,3 +39,5 @@ crawler.log
 
 .venv
 node_modules
+
+.pytest_cache

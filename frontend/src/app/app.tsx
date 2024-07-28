@@ -6,7 +6,8 @@ import {
 import { Provider } from "react-redux"
 
 import { IndexPage } from "../pages/index/index";
-import { SignUpPage } from "../pages/signUp";
+import { SignUpPage } from "../pages/signUp/index";
+import { SignInPage } from "../pages/signIn/index";
 import store from "./store";
 
 import "./styles/index.css";
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
     {
         path: "/auth/sign-up",
         element: <SignUpPage />,
+    },
+    {
+        path: "/auth/sign-in",
+        element: <SignInPage />,
     }
 ]);
 
