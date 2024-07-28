@@ -27,6 +27,10 @@
             "description": "Users management"
         },
         {
+            "name": "answer",
+            "description": "Answers management"
+        },
+        {
             "name": "questions",
             "description": "questions management"
         }
@@ -201,7 +205,7 @@
                 ],
                 "summary": "Edits user by given id",
                 "description": "Edits user by given id",
-                "operationId": "changeUserById",             
+                "operationId": "changeUserById",
                 "parameters": [
                     {
                         "name": "user_id",
@@ -372,6 +376,317 @@
                     },
                     "404": {
                         "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/answer/{answer_id}": {
+            "get": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Get answer by given id",
+                "description": "Returns answer by given id (int). If answer not found returns 404 error.",
+                "operationId": "get_answer_by_id",
+                "parameters": [
+                    {
+                        "name": "answer_id",
+                        "in": "path",
+                        "description": "ID of answer to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_answer_by_id"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "asnwer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Edit answer by given id",
+                "description": "Edit answer by given id",
+                "operationId": "changeAnswerById",
+                "parameters": [
+                    {
+                        "name": "answer_id",
+                        "in": "path",
+                        "description": "Id of user to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/update_answer"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_answer_by_id"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid arguments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Deletes answer by given id",
+                "description": "Deletes answer by given id",
+                "operationId": "deleteAnswerById",
+                "parameters": [
+                    {
+                        "name": "answer_id",
+                        "in": "path",
+                        "description": "Id of answer to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/change_password"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Answer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/answer": {
+            "get": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Get answers by given start_answer_id to start_given_id + number_of_answers",
+                "description": "Get answers by given start_answer_id to start_given_id + number_of_answers",
+                "operationId": "get_answers_by_id",
+                "parameters": [
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/get_answers"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/get_answers_by_id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Create answers by given question_id and correct_answer",
+                "description": "Create answers by given question_id and correct_answer",
+                "operationId": "create_answer",
+                "parameters": [
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/create_answer"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/create_answer_return"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/answer/<question_id>/check/<answer>": {
+            "put": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Check answer by question id and answer.",
+                "description": "Check answer by question id and answer.",
+                "operationId": "check_answer",
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "path",
+                        "description": "Id of question to check answer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "answer",
+                        "in": "path",
+                        "description": "Answer to check",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/change_password"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Answer checked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/check_asnwer_response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/answer/{question_id}": {
+            "get": {
+                "tags": [
+                    "answer"
+                ],
+                "summary": "Get answer by given question id",
+                "description": "Get answer by given question id",
+                "operationId": "get_answer_by_question_id",
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "path",
+                        "description": "ID of question which answer to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/create_answer_return"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "asnwer not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -773,6 +1088,87 @@
                     "new_password": {
                         "type": "string",
                         "example": "12345678"
+                    }
+                }
+            },
+            "update_answer": {
+                "type": "object",
+                "properties": {
+                    "question_id": {
+                        "type": "integer",
+                        "example": "12345"
+                    },
+                    "correct_answer": {
+                        "type": "string",
+                        "example": "cat"
+                    }
+                }
+            },
+            "get_answer_by_id": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "False"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "example": "12645"
+                    },
+                    "question_id": {
+                        "type": "integer",
+                        "example": "12345"
+                    },
+                    "correct_answer": {
+                        "type": "string",
+                        "example": "cat"
+                    }
+                }
+            },
+            "create_answer": {
+                "type": "object",
+                "properties": {
+                    "question_id": {
+                        "type": "integer",
+                        "example": "12345"
+                    },
+                    "correct_answer": {
+                        "type": "string",
+                        "example": "cat"
+                    }
+                }
+            },
+            "create_answer_return": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "False"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "example": "12645"
+                    },
+                    "question_id": {
+                        "type": "integer",
+                        "example": "12345"
+                    },
+                    "correct_answer": {
+                        "type": "string",
+                        "example": "cat"
+                    }
+                }
+            },
+            "check_asnwer_response": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "boolean",
+                        "example": "False"
+                    },
+                    "answer_is_correct": {
+                        "type": "boolean",
+                        "example": "True"
                     }
                 }
             },
