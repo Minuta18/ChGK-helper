@@ -31,3 +31,9 @@ yarn-debug.log*
 yarn-error.log*
 
 package-lock.json
+
+sus.html
+crawler.log
+
+.venv
+node_modules

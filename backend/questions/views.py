@@ -3,6 +3,7 @@ from sqlalchemy import orm, func
 import sqlalchemy
 import api
 import flask
+import auth
 
 questions_router = flask.Blueprint('questions_urls', 'questions')
 
@@ -50,7 +51,7 @@ def get_questions():
     if (page_size < 1 or page_size > 100):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page size: { page_size }'
+            'detail': f'Invalid page size: {page_size}'
         }), 400
 
     page = flask.request.args.get('page', 1, type=int)
@@ -58,7 +59,7 @@ def get_questions():
     if (page < 1):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page: { page }',
+            'detail': f'Invalid page: {page}',
         }), 400
 
     return flask.jsonify({
@@ -73,6 +74,7 @@ def get_questions():
     }), 200
 
 @questions_router.route('/', methods=['POST'])
+@auth.login_required(role='admin')
 def create_question():
     '''Creates new question.
 
@@ -87,7 +89,8 @@ def create_question():
         return flask.jsonify({
             'error': True,
             'message': 'Incorrect Content-Type header',
-        })
+        }), 400
+
     text = flask.request.json.get('text', '')
     comment = flask.request.json.get('comment', '')
 
@@ -107,6 +110,7 @@ def create_question():
     }), 201
 
 @questions_router.route('/<int:question_id>', methods=['PUT'])
+@auth.login_required(role='admin')
 def edit_question(question_id: int):
     '''Edits question by given id.
 
@@ -152,6 +156,7 @@ def edit_question(question_id: int):
         }), 400
 
 @questions_router.route('/<int:question_id>', methods=['DELETE'])
+@auth.login_required(role='admin')
 def delete_question(question_id: int):
     '''Deletes question by given id'''
     try:
@@ -169,7 +174,16 @@ def delete_question(question_id: int):
 def random_question():
     '''Give random question with id'''
     session = api.db.get_session()
-    question = session.scalars(sqlalchemy.select(models.Question).order_by(func.random())).all()[0]
+
+    try:
+        question = session.scalars(sqlalchemy.select(models.Question).order_by(
+            func.random()
+        )).all()[0]
+    except IndexError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'No questions',
+        }), 404
     return flask.jsonify({
         'error': False,
         'id': question.id,

@@ -3,6 +3,7 @@ from sqlalchemy import orm
 import sqlalchemy
 import api
 import flask
+import auth
 
 users_router = flask.Blueprint('users_urls', 'users')
 
@@ -21,12 +22,12 @@ def get_user(user_id: int):
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
     if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
     return flask.jsonify({
         'error': False,
@@ -36,6 +37,24 @@ def get_user(user_id: int):
             'nickname': user.nickname,
         }
     }), 200
+
+@users_router.route('/self', methods=['GET', ])
+def get_user_by_token():
+    token = flask.request.headers.get('Authorization', '')
+    user = auth.models.Token.get_user_by_token(token.removeprefix('Bearer '))
+    if user is None:
+        # print(token, token.removeprefix('Bearer '), sep='\n')
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token',
+        }), 401
+    else:
+        return flask.jsonify({
+            'error': False,
+            'id': user.id,
+            'email': user.email,
+            'nickname': user.nickname,
+        }), 200
 
 @users_router.route('/', methods=['GET'])
 def get_users():
@@ -55,7 +74,7 @@ def get_users():
     if (page_size < 1 or page_size > 100):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page size: { page_size }'
+            'detail': f'Invalid page size: {page_size}'
         }), 400
 
     page = flask.request.args.get('page', 1, type=int)
@@ -63,7 +82,7 @@ def get_users():
     if (page < 1):
         return flask.jsonify({
             'error': True,
-            'detail': f'Invalid page: { page }',
+            'detail': f'Invalid page: {page}',
         }), 400
 
     try:
@@ -99,7 +118,7 @@ def create_user():
         return flask.jsonify({
             'error': True,
             'message': 'Incorrect Content-Type header',
-        })
+        }), 400
     email = flask.request.json.get('email', '')
     nickname = flask.request.json.get('nickname', '')
     password = flask.request.json.get('password', '')
@@ -135,6 +154,20 @@ def change_password(user_id: int):
             'error': True,
             'message': 'Incorrect Content-Type header',
         })
+        
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
 
     password = flask.request.json.get('old_password', '')
     new_password = flask.request.json.get('new_password', '')
@@ -144,7 +177,7 @@ def change_password(user_id: int):
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
 
     if user is None:
@@ -183,15 +216,31 @@ def edit_user(user_id: int):
         nickname (:obj:`str`, optional): New nickname of the new user.
     '''
 
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
+
     email = flask.request.args.get('email', None, type=str)
     nickname = flask.request.args.get('nickname', None, type=str)
+
+    print(email)
 
     try:
         user = models.User.get_user(user_id)
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
 
     if user is None:
@@ -238,6 +287,23 @@ def edit_user(user_id: int):
 @users_router.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id: int):
     '''Deletes user by given id'''
+
+    user = auth.verify_token(
+        flask.request.headers.get(
+            'Authorization', ''
+        ).removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
+
     try:
         models.User.delete_user(user_id)
         return flask.jsonify({
@@ -251,30 +317,45 @@ def delete_user(user_id: int):
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
 
-@users_router.route('/<int:user_id>', methods=['GET'])
+@users_router.route('/settings/<int:user_id>', methods=['GET'])
 def get_time_settings(user_id: int):
     '''Gets time settings by an id.
 
-    Returns 3 time settings by given id (int). If user not found returns 404 error.
+    Returns 3 time settings by given id (int).
+    If user not found returns 404 error.
 
     Args:
         user_id(int): user\'s id
     '''
+    try:
+        if auth.verify_token(
+            flask.request.headers.get(
+                'Authorization', ''
+            ).removeprefix('Bearer ')).id != user_id:
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Can\'t view data of another user'
+            }), 401
+    except AttributeError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token',
+        }), 401
 
     try:
         user = models.User.get_user(user_id)
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
     if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
     return flask.jsonify({
         'error': False,
@@ -286,36 +367,61 @@ def get_time_settings(user_id: int):
     }), 200
 
 @users_router.route('/settings/<int:user_id>', methods=['PUT'])
-def edit_user_sttings(user_id: int):
+def edit_user_settings(user_id: int):
     '''Edits user settings by given id.
 
     Edits user by given id.
 
     Args:
-        time_for_reading (:obj:`int`, optional): New time for reading setting of the user.
-        time_for_solving (:obj:`int`, optional): New time for solving setting of the user.
-        time_for_typing (:obj:`int`, optional): New time for typing setting of the user.
+        time_for_reading (:obj:`int`, optional):
+        New time for reading setting of the user.
+        time_for_solving (:obj:`int`, optional):
+        New time for solving setting of the user.
+        time_for_typing (:obj:`int`, optional):
+        New time for typing setting of the user.
     '''
 
-    time_for_reading = flask.request.args.get('time_for_reading', None, type=int)
-    time_for_solving = flask.request.args.get('time_for_solving', None, type=int)
-    time_for_typing = flask.request.args.get('time_for_typing', None, type=int)
+    user = auth.verify_token(
+        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
+    )
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Incorrect token'
+        }), 401
+    elif user.id != user_id:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Access denied'
+        }), 401
+
+    try:
+        time_for_reading = flask.request.json.get('time_for_reading', None)
+        time_for_solving = flask.request.json.get('time_for_solving', None)
+        time_for_typing = flask.request.json.get('time_for_typing', None)
+    except ValueError:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Only integer values are allowed',
+        }), 400
 
     try:
         user = models.User.get_user(user_id)
     except OverflowError:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }',
+            'detail': f'Could not find user with id {user_id}',
         }), 404
 
     if user is None:
         return flask.jsonify({
             'error': True,
-            'detail': f'Could not find user with id { user_id }'
+            'detail': f'Could not find user with id {user_id}'
         }), 404
 
-    user.update_user_settings(time_for_reading, time_for_solving, time_for_typing)
+    user.update_user_settings(time_for_reading,
+                              time_for_solving,
+                              time_for_typing)
     return flask.jsonify({
         'error': False,
         'time_for_reading': user.time_for_reading,

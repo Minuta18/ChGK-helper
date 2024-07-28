@@ -1,0 +1,7 @@
+.hidden-label {
+    display: none;
+}
+
+.error-label {
+    color: var(--error-color);
+}

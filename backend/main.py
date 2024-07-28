@@ -1,4 +1,3 @@
-from werkzeug import exceptions
 import flask_cors
 import flask
 import users
@@ -7,16 +6,24 @@ import api
 import json
 import questions
 import answers
+import auth
 from werkzeug import exceptions
 
 app = flask.Flask('ChKG-helper')
 cors = flask_cors.CORS(app)
 
 app.register_blueprint(api.views.router, url_prefix='/api/v1')
-app.register_blueprint(questions.views.questions_router, url_prefix='/api/v1/questions')
+app.register_blueprint(
+    questions.views.questions_router, url_prefix='/api/v1/questions'
+)
 app.register_blueprint(users.views.users_router, url_prefix='/api/v1/users')
 app.register_blueprint(api.swagger_router, url_prefix='/api/v1/docs')
-app.register_blueprint(answers.views.answers_router, url_prefix='/api/v1/answer')
+app.register_blueprint(
+    answers.views.answers_router, url_prefix='/api/v1/answer'
+)
+app.register_blueprint(auth.views.auth_router, url_prefix='/api/v1/auth')
+
+app.url_map.strict_slashes = False
 
 @app.errorhandler(exceptions.HTTPException)
 def handle_exception(error):
