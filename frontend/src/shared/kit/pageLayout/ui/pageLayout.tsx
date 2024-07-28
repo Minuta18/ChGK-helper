@@ -7,6 +7,7 @@ interface PageLayoutProps {
     aside?: React.ReactNode;
     mainContent?: React.ReactNode;
     footer?: React.ReactNode;
+    form?: React.ReactNode;
 }
 
 export function PageLayout(props: PageLayoutProps) {
@@ -16,12 +17,21 @@ export function PageLayout(props: PageLayoutProps) {
                 { props.header }
             </header>
             <div className="page__content">
-                <aside className="page__aside">
-                    { props.aside }
-                </aside>
-                <div className="page__mainContent">
-                    { props.mainContent }
-                </div>
+                { props.aside !== undefined ?
+                    <aside className="page__aside">
+                        { props.aside }
+                    </aside> : <div></div>
+                }
+                { props.mainContent !== undefined ?
+                    <div className="page__mainContent">
+                        { props.mainContent }
+                    </div> : <div></div>
+                }
+                { props.form !== undefined ?
+                    <div className="page__form">
+                        { props.form }
+                    </div> : <div></div>
+                }
             </div>
             <footer>
                 { props.footer }

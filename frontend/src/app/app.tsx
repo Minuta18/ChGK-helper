@@ -6,6 +6,7 @@ import {
 import { Provider } from "react-redux"
 
 import { IndexPage } from "../pages/index/index";
+import { SignUpPage } from "../pages/signUp";
 import store from "./store";
 
 import "./styles/index.css";
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
     {
         path: "/play",
         element: <IndexPage />,
+    },
+    {
+        path: "/sign-in",
+        element: <SignUpPage />,
     }
 ]);
 

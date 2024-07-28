@@ -1,0 +1,24 @@
+.flat-button {
+    display: flex;
+    min-width: 200px;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 40px;
+    border: none;
+    border-radius: var(--default-border-radius);
+    background-color: var(--white);
+    align-items: center;
+    justify-content: center;
+    transition-duration: var(--default-transition-duration);
+    outline: none;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.flat-button:hover {
+    color: var(--primary-color-darker);
+    transition-duration: var(--default-transition-duration);
+}
+
+
