@@ -53,4 +53,10 @@
     .page__mainContent {
         width: 100%;
     }
+
+    .page__form {
+        display: flex;
+        width: 100%;
+        padding: 16px;
+    }
 }

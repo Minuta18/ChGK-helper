@@ -34,3 +34,13 @@
     gap: 4px;
     width: 100%;
 }
+
+@media screen and (max-width: 600px) {
+    .sign-up__left-panel {
+        display: none;
+    }    
+
+    .sign-up__right-panel {
+        width: 100%;
+    }
+}
