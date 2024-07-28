@@ -43,10 +43,10 @@ def get_answers():
             Default value is 20.
     '''
 
-    page_size = flask.request.args.get('page_size', 20, type=int)
-    page = flask.request.args.get('page', 1, type=int)
+    start_answer_id = flask.request.args.get('start_answer_id', 20, type=int)
+    number_of_answers = flask.request.args.get('number_of_answers', 1, type=int)
 
-    answers = models.Answer.get_answers(page, page_size)
+    answers = models.Answer.get_answers(start_answer_id, start_answer_id + number_of_answers)
 
     return flask.jsonify({
         'error': False,
