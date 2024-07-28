@@ -554,7 +554,7 @@
                     }
                 }
             },
-            "crate": {
+            "post": {
                 "tags": [
                     "answer"
                 ],
