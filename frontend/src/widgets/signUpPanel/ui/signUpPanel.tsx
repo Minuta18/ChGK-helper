@@ -1,10 +1,6 @@
 import * as React from "react";
 
-import * as Heading from "../../../shared/kit/heading/index";
-import * as Label from "../../../shared/kit/label/index";
-import * as TextInput from "../../../shared/kit/textInput/index";
-import * as Button from "../../../shared/kit/button/index";
-import * as FlatButton from "../../../shared/kit/flatButton/index";
+import * as Kit from "../../../shared/kit";
 
 import "./signUpPanel.css";
 
@@ -14,51 +10,51 @@ export function SignUpPanel() {
             <aside className="sign-up__left-panel"></aside>
             <div className="sign-up__right-panel">
                 <form className="sign-up__form">
-                    <Heading.Heading underlined={ true }>
+                    <Kit.Heading underlined={ true }>
                         Регистрация
-                    </Heading.Heading>
+                    </Kit.Heading>
                     <div className="sign-up__form-group">
-                        <Label.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="email-field">
                             Никнейм:
-                        </Label.Label>
-                        <TextInput.TextInput 
+                        </Kit.Label>
+                        <Kit.TextInput 
                             required={ true } placeholder="Example username"
                             name="email-field"  
                         />
                     </div>
                     <div className="sign-up__form-group">
-                        <Label.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="email-field">
                             Почта:
-                        </Label.Label>
-                        <TextInput.TextInput 
+                        </Kit.Label>
+                        <Kit.TextInput 
                             required={ true } placeholder="john@email.example"
                             name="email-field" type="email"
                         />
                     </div>
                     <div className="sign-up__form-group">
-                        <Label.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="email-field">
                             Пароль:
-                        </Label.Label>
-                        <TextInput.TextInput 
+                        </Kit.Label>
+                        <Kit.TextInput 
                             required={ true }
                             name="email-field" type="password"
                         />
                     </div>
                     <div className="sign-up__form-group">
-                        <Label.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="email-field">
                             Подтверждение пароля:
-                        </Label.Label>
-                        <TextInput.TextInput 
+                        </Kit.Label>
+                        <Kit.TextInput 
                             required={ true }
                             name="email-field" type="password"
                         />
                     </div>
-                    <Button.Button>
+                    <Kit.Button>
                         Зарегистрироваться
-                    </Button.Button>
-                    <FlatButton.FlatButton>
+                    </Kit.Button>
+                    <Kit.FlatButton>
                         У меня уже есть аккаунт
-                    </FlatButton.FlatButton>
+                    </Kit.FlatButton>
                 </form>
             </div>
         </div>

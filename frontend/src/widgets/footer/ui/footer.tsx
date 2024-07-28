@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Logo } from "../../../shared/kit/logo/index";
+import * as Kit from "../../../shared/kit/index";
 
 import "./footer.css";
 
@@ -10,7 +10,7 @@ export function Footer() {
                 <div className="footer__column" style={{
                     alignItems: "center",
                 }}>
-                    <Logo />
+                    <Kit.Logo />
                     © Джентльмены Кроковцы, 2024
                 </div>
                 <div className="footer__column" style={{

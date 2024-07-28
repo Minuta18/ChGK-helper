@@ -8,11 +8,7 @@ import { FaBars } from "react-icons/fa6";
 
 import './header.css';
 
-import { Logo } from "../../../shared/kit/logo/index";
-import { Avatar } from "../../../shared/kit/avatar/index";
-import { HeaderLink } from "../../../shared/kit/headerLink";
-import { HoverDropdown } from "../../../shared/kit/hoverDropdown";
-import { IconElement } from "../../../shared/kit/iconElement";
+import * as Kit from "../../../shared/kit/index";
 
 export function Header() {
     return (
@@ -20,12 +16,12 @@ export function Header() {
             <div className="header__inner">
                 <div className="header__left">
                     <div className="header__element">
-                        <Logo />
+                        <Kit.Logo />
                     </div>
                 </div>
                 <div className="header__right">
                     <span className="header__element hide-on-pc">
-                        <HoverDropdown mainElement={ 
+                        <Kit.HoverDropdown mainElement={ 
                             <FaBars 
                                 color="var(--background-color)" 
                                 size={ 40 }
@@ -33,38 +29,38 @@ export function Header() {
                         }>
                             <Link to="/">Главная</Link>
                             <Link to="/play">Играть</Link>
-                        </HoverDropdown>
+                        </Kit.HoverDropdown>
                     </span>
                     <span className="header__element">
-                        <HoverDropdown mainElement={ <Avatar /> }>
-                            <IconElement icon={
+                        <Kit.HoverDropdown mainElement={ <Kit.Avatar /> }>
+                            <Kit.IconElement icon={
                                 <MdOutlineAccountCircle size={24}/>
                             }>
                                 <Link to="/profile">Профиль</Link>
-                            </IconElement>
-                            <IconElement icon={
+                            </Kit.IconElement>
+                            <Kit.IconElement icon={
                                 <MdOutlineSettings size={24}/>
                             }>
                                 <Link to="/settings">Настройки</Link>
-                            </IconElement>
-                            <IconElement icon={
+                            </Kit.IconElement>
+                            <Kit.IconElement icon={
                                 <MdExitToApp size={24} color="#FD151B"/>
                             }>
                                 <Link to="/exit" className="danger-text">
                                     Выход
                                 </Link>
-                            </IconElement>
-                        </HoverDropdown>
+                            </Kit.IconElement>
+                        </Kit.HoverDropdown>
                     </span>
                     <span className="header__element hide-on-phones">
-                        <HeaderLink to="/play">
+                        <Kit.HeaderLink to="/play">
                             Играть
-                        </HeaderLink>
+                        </Kit.HeaderLink>
                     </span>
                     <span className="header__element hide-on-phones">
-                        <HeaderLink to="/">
+                        <Kit.HeaderLink to="/">
                             Главная
-                        </HeaderLink>
+                        </Kit.HeaderLink>
                     </span>
                 </div>
             </div>

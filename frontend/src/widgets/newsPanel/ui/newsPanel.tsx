@@ -1,23 +1,22 @@
 import React from "react";
 
-import { Heading } from "../../../shared/kit/heading/index";
-import { News } from "../../../shared/kit/news/ui/news";
+import * as Kit from "../../../shared/kit";
 
 export function NewsPanel() {
     return (
         <div>
-            <Heading underlined={ false }>Новости</Heading>
-            <News 
+            <Kit.Heading underlined={ false }>Новости</Kit.Heading>
+            <Kit.News 
                 name="Релиз 236.382.1,2e29" 
                 shortText="Добавлены козлы" 
                 link="http://sdohni.tvar" 
             />
-            <News 
+            <Kit.News 
                 name="Релиз 236.382.1,2e29" 
                 shortText="Добавлены петухи" 
                 link="http://sdohni.tvar" 
             />
-            <News 
+            <Kit.News 
                 name="Релиз 236.382.1,2e29" 
                 shortText="Добавлены Степаны" 
                 link="http://sdohni.tvar" 
