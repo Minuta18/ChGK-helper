@@ -15,7 +15,8 @@ export function SignInPanel() {
                     </Kit.Heading>
                     <div className="sign-in__form-group">
                         <Kit.Label htmlFor="email-field">
-                            Никнейм или почта:
+                            Никнейм или почта: 
+                            <span className="required-star">*</span>
                         </Kit.Label>
                         <Kit.TextInput 
                             required={ true } placeholder="Example username"
@@ -23,12 +24,13 @@ export function SignInPanel() {
                         />
                     </div>
                     <div className="sign-in__form-group">
-                        <Kit.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="password-field">
                             Пароль:
+                            <span className="required-star">*</span>
                         </Kit.Label>
-                        <Kit.TextInput 
+                        <Kit.PasswordInput 
                             required={ true }
-                            name="email-field" type="password"
+                            name="password-field"
                         />
                     </div>
                     <Kit.Button>

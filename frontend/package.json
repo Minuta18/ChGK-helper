@@ -12,6 +12,7 @@
     "@types/node": "^16.18.101",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
     "crypto-randomuuid": "^1.0.0",
     "fsd": "^0.13.1",
     "react": "^18.3.1",

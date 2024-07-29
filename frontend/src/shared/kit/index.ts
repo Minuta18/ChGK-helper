@@ -11,6 +11,7 @@ export { Label } from "./label/index";
 export { Logo } from "./logo/index";
 export { News } from "./news/index";
 export { PageLayout } from "./pageLayout/index";
+export { PasswordInput } from "./passwordInput/index";
 export { Question } from "./question/index";
 export { RoundTag } from "./roundTag/index";
 export { Tag } from "./tag/index";

@@ -126,6 +126,17 @@ header {
     width: 100%;
 }
 
+.required-star {
+    display: inline-block;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--primary-color);
+    font-size: 30px;
+}
+
 @media screen and (max-width: 600px) {
     .hide-on-phones {
         display: none !important;

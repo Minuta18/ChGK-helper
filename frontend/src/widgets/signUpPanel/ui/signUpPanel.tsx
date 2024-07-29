@@ -14,17 +14,19 @@ export function SignUpPanel() {
                         Регистрация
                     </Kit.Heading>
                     <div className="sign-up__form-group">
-                        <Kit.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="nickname-field">
                             Никнейм:
+                            <span className="required-star">*</span>
                         </Kit.Label>
                         <Kit.TextInput 
                             required={ true } placeholder="Example username"
-                            name="email-field"  
+                            name="nickname-field"  
                         />
                     </div>
                     <div className="sign-up__form-group">
                         <Kit.Label htmlFor="email-field">
                             Почта:
+                            <span className="required-star">*</span>
                         </Kit.Label>
                         <Kit.TextInput 
                             required={ true } placeholder="john@email.example"
@@ -32,21 +34,23 @@ export function SignUpPanel() {
                         />
                     </div>
                     <div className="sign-up__form-group">
-                        <Kit.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="password-field">
                             Пароль:
+                            <span className="required-star">*</span>
                         </Kit.Label>
-                        <Kit.TextInput 
+                        <Kit.PasswordInput 
                             required={ true }
-                            name="email-field" type="password"
+                            name="password-field"
                         />
                     </div>
                     <div className="sign-up__form-group">
-                        <Kit.Label htmlFor="email-field">
+                        <Kit.Label htmlFor="password-confirm-field">
                             Подтверждение пароля:
+                            <span className="required-star">*</span>
                         </Kit.Label>
-                        <Kit.TextInput 
+                        <Kit.PasswordInput 
                             required={ true }
-                            name="email-field" type="password"
+                            name="password-confirm-field"
                         />
                     </div>
                     <Kit.Button>
