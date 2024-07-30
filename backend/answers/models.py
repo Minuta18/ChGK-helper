@@ -1,4 +1,5 @@
 from sqlalchemy import orm
+from shared_library import strings
 import sqlalchemy
 import api
 import typing_extensions
@@ -26,6 +27,9 @@ class Answer(api.orm_base):
     correct_answer: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.Text, nullable=False,
     )
+    raw_correct_answer: orm.Mapped[str] = orm.mapped_column(
+        sqlalchemy.Text, nullable=False,
+    )
 
     @staticmethod
     def get_answer(answer_id: int) -> typing_extensions.Self|None:
@@ -42,20 +46,25 @@ class Answer(api.orm_base):
         )).all()
 
     @staticmethod
-
     def create_answer(
         question_id: int, correct_answer: str
     ) -> typing_extensions.Self:
         '''create new answer with question_ia and correct_answer'''
         session = api.db.get_session()
-        answer = Answer(question_id=question_id, correct_answer=correct_answer)
+        cleaner = strings.TextCleaner()
+        cleaner.set_strategy(strings.HardCleanStrategy())
+        answer = Answer(
+            question_id=question_id, 
+            raw_correct_answer=correct_answer,
+            correct_answer=cleaner.clean(correct_answer),
+        )
         session.add(answer)
         session.commit()
         return answer
 
     @staticmethod
     def delete_answer(answer_id: int) -> None:
-        '''delete existful answer by id'''
+        '''delete existing answer by id'''
         answer = Answer.get_answer(answer_id)
         if answer is None:
             raise ValueError('User not found')
@@ -63,7 +72,9 @@ class Answer(api.orm_base):
         session.delete(answer)
         session.commit()
 
-    def update_answer(self, question_id: int = None, correct_answer: str = None):
+    def update_answer(
+        self, question_id: int = None, correct_answer: str = None
+    ):
         '''change question_id and correct_answer of choosen answer'''
         if question_id is not None:
             self.question_id = question_id
@@ -76,10 +87,13 @@ class Answer(api.orm_base):
 
     def check_answer(self, answer: str):
         '''check what answer is correct or not'''
-        if self.correct_answer.lower.split() == answer.lower().split():
-            return True
-        else:
-            return False
+        cleaner = strings.TextCleaner()
+        cleaner.set_strategy(strings.HardCleanStrategy())
+        checker = strings.AnswerChecker()
+        return checker.check_answer(
+            cleaner.clean(answer),
+            self.correct_answer,
+        )
 
     @staticmethod
     def get_answer_by_question(
