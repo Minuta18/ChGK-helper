@@ -1,1 +1,2 @@
 from shared_library.strings.text_cleaner import TextCleaner, HardCleanStrategy
+from shared_library.strings.answer_checker import AnswerChecker
