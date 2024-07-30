@@ -1,3 +1,5 @@
+from shared_library import utils
+
 class CleanStrategy:
     '''Strategy superclass'''
     def clean(self, text: str) -> str: pass
@@ -12,8 +14,9 @@ class HardCleanStrategy:
 
     def __init__(self):
         self.clean_methods = [
-            self._lower, self._remove_possible_prefixes, 
-            self._remove_garbage_symbols, self._convert_to_known_symbols, 
+            self._lower, self._remove_garbage_symbols,
+            self._convert_to_known_symbols, self._remove_possible_prefixes,
+            self._remove_double_spaces, 
         ]
 
     def _remove_garbage_symbols(self, text: str) -> str:
@@ -28,8 +31,8 @@ class HardCleanStrategy:
         garbage = '.,!?;@#%$^&*()~/\\|\t\n\u0301\''
         new_text = text
         for symbol in garbage:
-            new_text.replace(symbol, '')
-        return garbage
+            new_text = new_text.replace(symbol, '')
+        return new_text
     
     def _convert_to_known_symbols(self, text: str) -> str:
         '''Convert characters in a string to more popular 
@@ -43,18 +46,22 @@ class HardCleanStrategy:
         unknown_symbols = {'ё': 'е'}
         new_text = text
         for symbol in unknown_symbols.keys():
-            new_text.replace(symbol, unknown_symbols[symbol])
+            new_text = new_text.replace(symbol, unknown_symbols[symbol])
         return new_text
     
     def _remove_possible_prefixes(self, text: str) -> str:
         '''Removes prefix "Ответ: "'''
         new_text = text
-        new_text.removeprefix('ответ: ')
+        new_text = new_text.removeprefix('ответ: ')
         return new_text
     
     def _lower(self, text: str) -> str:
         '''Change all characters to lowercase'''
         return text.lower()
+    
+    def _remove_double_spaces(self, text: str) -> str:
+        '''Remove double spaces'''
+        return ' '.join(text.split())
 
     def clean(self, text: str) -> str:
         '''Cleans the text.
@@ -71,8 +78,8 @@ class HardCleanStrategy:
 
 class TextCleaner:
     '''Class to clean raw text from database. '''
-    def __init__(self, strategy: CleanStrategy):
-        self.strategy = strategy
+    def __init__(self):
+        self.strategy = CleanStrategy()
 
     def set_strategy(self, strategy: CleanStrategy):
         '''Sets strategy.
@@ -92,4 +99,4 @@ class TextCleaner:
         Args:
             text(str): The text to clean
         '''
-        self.strategy.clean(text)
+        return self.strategy.clean(text)

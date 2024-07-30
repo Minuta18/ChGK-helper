@@ -1,4 +1,5 @@
 import re
+from shared_library import utils
 
 class AnswerChecker:
     '''Class that checks the answer'''
@@ -37,7 +38,7 @@ class AnswerChecker:
         return new_answer
 
     def _tokenize(self, answer: str) -> tuple[list, list]:
-        return answer.split(' ')
+        return (' '.join(answer.split(' '))).lstrip(' ').rstrip(' ')
     
     def check_answer(self, given_answer: str, correct_answer: str) -> bool:
         optional_segments = self._find_optional_segments(correct_answer)
@@ -49,5 +50,5 @@ class AnswerChecker:
             correct_answer, [f'[{ segment }]' for segment in optional_segments]
         )
 
-        return AnswerChecker._tokenize(cleared_given_answer) == \
-            AnswerChecker._tokenize(cleared_correct_answer)
+        return self._tokenize(cleared_given_answer) == \
+            self._tokenize(cleared_correct_answer)
