@@ -137,6 +137,10 @@ header {
     font-size: 30px;
 }
 
+.hidden {
+    display: none !important;
+}
+
 @media screen and (max-width: 600px) {
     .hide-on-phones {
         display: none !important;

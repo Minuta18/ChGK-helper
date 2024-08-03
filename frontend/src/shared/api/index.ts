@@ -1,2 +1,1 @@
-export { createToken } from "./endpoints/createToken";
-export { apiUrl } from "./endpoints/apiUrl";
+export { apiUrl } from "./client";

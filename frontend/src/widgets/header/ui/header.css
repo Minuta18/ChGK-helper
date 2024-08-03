@@ -41,7 +41,7 @@
     min-width: 60px;
     padding: 16px;
     height: 100%;
-    font-size: 32px;
+    font-size: 32px !important;
     text-decoration: none;
     color: var(--black);
     display: flex;

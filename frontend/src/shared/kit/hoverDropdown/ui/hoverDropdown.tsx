@@ -11,6 +11,7 @@ interface HoverDropdownProps {
 
 export function HoverDropdown(props: HoverDropdownProps) {
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
+    // eslint-disable-next-line
     const [windowWidth, windowHeight] =  
         useWindowDimensions.useWindowDimensions();
 

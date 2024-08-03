@@ -9,7 +9,7 @@ import { IndexPage } from "../pages/index/index";
 import { SignUpPage } from "../pages/signUp/index";
 import { SignInPage } from "../pages/signIn/index";
 import { GamePage } from "../pages/gamePage";
-import store from "./store";
+import { store } from "./store";
 
 import "./styles/index.css";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { MdOutlineSettings } from "react-icons/md";
@@ -9,8 +9,12 @@ import { FaBars } from "react-icons/fa6";
 import './header.css';
 
 import * as Kit from "../../../shared/kit/index";
+import * as Hooks from "../../../shared/hooks/index";
 
 export function Header() {
+    const userData = Hooks.useUserData();
+    const navigate = useNavigate();
+
     return (
         <nav className="header">
             <div className="header__inner">
@@ -31,27 +35,34 @@ export function Header() {
                             <Link to="/play">Играть</Link>
                         </Kit.HoverDropdown>
                     </span>
-                    <span className="header__element">
-                        <Kit.HoverDropdown mainElement={ <Kit.Avatar /> }>
-                            <Kit.IconElement icon={
-                                <MdOutlineAccountCircle size={24}/>
-                            }>
-                                <Link to="/profile">Профиль</Link>
-                            </Kit.IconElement>
-                            <Kit.IconElement icon={
-                                <MdOutlineSettings size={24}/>
-                            }>
-                                <Link to="/settings">Настройки</Link>
-                            </Kit.IconElement>
-                            <Kit.IconElement icon={
-                                <MdExitToApp size={24} color="#FD151B"/>
-                            }>
-                                <Link to="/exit" className="danger-text">
-                                    Выход
-                                </Link>
-                            </Kit.IconElement>
-                        </Kit.HoverDropdown>
-                    </span>
+                    { userData !== null ?
+                        <span className="header__element">
+                            <Kit.HoverDropdown mainElement={ <Kit.Avatar /> }>
+                                <Kit.IconElement icon={
+                                    <MdOutlineAccountCircle size={24}/>
+                                }>
+                                    <Link to="/profile">Профиль</Link>
+                                </Kit.IconElement>
+                                <Kit.IconElement icon={
+                                    <MdOutlineSettings size={24}/>
+                                }>
+                                    <Link to="/settings">Настройки</Link>
+                                </Kit.IconElement>
+                                <Kit.IconElement icon={
+                                    <MdExitToApp size={24} color="#FD151B"/>
+                                }>
+                                    <Link to="/exit" className="danger-text">
+                                        Выход
+                                    </Link>
+                                </Kit.IconElement>
+                            </Kit.HoverDropdown>
+                        </span> :
+                        <span className="header__element">
+                            <Kit.HeaderButton onClickCallback={() => {
+                                navigate("/auth/sign-in");
+                            }}>Вход</Kit.HeaderButton>
+                        </span>
+                    }
                     <span className="header__element hide-on-phones">
                         <Kit.HeaderLink to="/play">
                             Играть

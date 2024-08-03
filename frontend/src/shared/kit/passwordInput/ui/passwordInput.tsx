@@ -10,22 +10,33 @@ interface PasswordInputProps {
     placeholder?: string;
     name?: string;
     children?: React.ReactNode | React.ReactNode[];
+    reactFormStuff?: any; // see detailed description in textInput.tsx
 }
 
 export function PasswordInput({ 
     disabled = false, required = false, placeholder, name, children,
+    reactFormStuff = null
 } : PasswordInputProps) {
     const [ type, setType ] = React.useState<string>("password");
 
     return (
         <div className="password-input">
-            <input 
-                type={ type } disabled={ disabled } required={ required } 
-                placeholder={ placeholder } name={ name } 
-                className="password-input__input"
-            >
-                { children }
-            </input>
+            { reactFormStuff !== null ?
+                <input 
+                    type={ type } disabled={ disabled } required={ required } 
+                    placeholder={ placeholder } name={ name } 
+                    className="password-input__input" { ...reactFormStuff }
+                >
+                    { children }
+                </input> :
+                <input 
+                    type={ type } disabled={ disabled } required={ required } 
+                    placeholder={ placeholder } name={ name } 
+                    className="password-input__input"
+                >
+                    { children }
+                </input>
+            }
             <div className="password-input__icon" onClick={() => {
                 if (type === "password") {
                     setType("text");

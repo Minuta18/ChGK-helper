@@ -3,6 +3,7 @@ export { Button } from "./button/index";
 export { Container } from "./container/index";
 export { FlatButton } from "./flatButton/index";
 export { GameShortcut } from "./gameShortcut/index";
+export { HeaderButton } from "./headerButton/index";
 export { HeaderLink } from "./headerLink/index";
 export { Heading } from "./heading/index";
 export { HoverDropdown } from "./hoverDropdown/index";
