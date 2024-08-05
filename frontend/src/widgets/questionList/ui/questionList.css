@@ -1,0 +1,16 @@
+.question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+@media screen and (min-width: 600px) {
+    .question-list {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        width: 100%;
+        overflow: scroll;
+    }
+}
