@@ -6,6 +6,8 @@ interface InitialStateType {
     userInfo: any;
     userToken: string|null;
     userInfoFetchingStarted: boolean;
+    userTokenFetchingStarted: boolean;
+    everythingLoaded2: boolean;
     everythingLoaded: boolean;
     error: any;
     success: any;
@@ -14,8 +16,10 @@ interface InitialStateType {
 const initialState: InitialStateType = {
     loading: false,
     everythingLoaded: false,
+    everythingLoaded2: false,
     userInfoFetchingStarted: false, 
-    userInfo: {},
+    userTokenFetchingStarted: false,
+    userInfo: null,
     userToken: null,
     error: false,
     success: false,
@@ -38,18 +42,21 @@ export const authSlice = redux.createSlice({
                 state.loading = true;
                 state.error = false;
                 state.success = false;
+                state.userTokenFetchingStarted = true;
             })
             .addCase(Features.signInUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = false;
                 state.success = true;
                 state.userToken = action.payload;
+                state.everythingLoaded2 = true;
             })
             .addCase(Features.signInUser.rejected, (state, action) => {
                 console.log(action);
                 state.loading = false;
                 state.error = action.payload;
                 state.success = false;
+                state.everythingLoaded2 = true;
             })
             .addCase(Features.fetchUserInfo.pending, (state) => {
                 state.loading = true;
@@ -59,16 +66,30 @@ export const authSlice = redux.createSlice({
             })
             .addCase(Features.fetchUserInfo.fulfilled, (state, action) => {
                 state.loading = false;
-                state.error = false;
                 state.success = true;
                 state.everythingLoaded = true;
                 state.userInfo = action.payload;
             })
             .addCase(Features.fetchUserInfo.rejected, (state, action) => {
                 state.loading = false;
-                state.error = true;
                 state.success = false;
                 state.everythingLoaded = true;
+                state.error = action.payload;
+            })
+            .addCase(Features.signUpUser.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+                state.success = false;
+            })
+            .addCase(Features.signUpUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = false;
+                state.success = true;
+                state.userInfo = action.payload;
+            })
+            .addCase(Features.signUpUser.rejected, (state, action) => {
+                state.loading = false;
+                state.success = false;
                 state.error = action.payload;
             })
     }

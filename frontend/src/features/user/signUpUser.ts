@@ -7,10 +7,11 @@ export type SignUpFormValues = {
     username: string,
     email: string,
     password: string,
+    passwordConfirmation: string,
 }
 
 export const signUpUser = redux.createAsyncThunk(
-    "auth/sign-in",
+    "auth/sign-up",
     async (
         formValues: SignUpFormValues, 
         thunk: any,

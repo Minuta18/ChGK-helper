@@ -81,8 +81,8 @@ export function SignInPanel() {
                         <IoWarning size={24} color="#FD151B" />
                     }>
                         <span className="danger-text">
-                            Не удалось подключиться к серверам. Попробуйте
-                            перезагрузить страницу.
+                            Не удалось подключиться к серверам. 
+                            Проверьте подключение к интернету.
                         </span>
                     </Kit.IconElement>
                     <Kit.IconElement className={ 
@@ -147,9 +147,9 @@ export function SignInPanel() {
                     <Kit.Button>
                         Вход
                     </Kit.Button>
-                    <Kit.FlatButton>
+                    <Kit.FlatButtonLink href="/auth/sign-up">
                         Создать аккаунт
-                    </Kit.FlatButton>
+                    </Kit.FlatButtonLink>
                 </form>
             </div>
         </div>
