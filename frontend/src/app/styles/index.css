@@ -42,6 +42,9 @@
     --default-transition-duration: 0.3s;
 
     --useful-width: 50%;
+
+    --tag-green: #61E466;
+    --tag-green-lighter: #d8ebd9;
 }
 
 @media screen and (max-width: 1600px) {

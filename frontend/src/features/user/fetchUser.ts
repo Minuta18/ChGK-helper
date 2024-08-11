@@ -19,10 +19,8 @@ export const fetchUserInfo = redux.createAsyncThunk(
                 }
             );
 
-            console.log(data);
             return data;
         } catch (error: unknown) {
-            console.log(error);
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 401) {
                     return thunk.rejectWithValue("Incorrect token");

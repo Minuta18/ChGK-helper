@@ -22,6 +22,9 @@ export function Question(props: QuestionProps) {
             { (props.status === "skipped") ? 
                 <Tag.Tag color="#CFCFCF">ПРОПУЩЕНО</Tag.Tag> : "" 
             }
+            { (props.status === "process") ?
+                <Tag.Tag color="#6495ED">В ПРОЦЕССЕ</Tag.Tag> : ""
+            }
         </div>
     );
 }

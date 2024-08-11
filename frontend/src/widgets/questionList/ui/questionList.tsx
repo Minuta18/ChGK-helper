@@ -36,10 +36,13 @@ export function QuestionList() {
                     </Kit.Question>
                 </Kit.Container>
                 <Kit.Container>
-                    <Kit.Question status="mistake">
+                    <Kit.Question status="process">
                         Вопрос #5
                     </Kit.Question>
                 </Kit.Container>
+                {/* <Kit.Button>
+                    Завершить игру
+                </Kit.Button> */}
             </div>
         </>
     );
