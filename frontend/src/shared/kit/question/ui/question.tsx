@@ -14,16 +14,16 @@ export function Question(props: QuestionProps) {
         <div className="question">
             <b>{ props.children }</b>
             { (props.status === "ok") ? 
-                <Tag.Tag color="#61E466">ВЕРНО</Tag.Tag> : "" 
+                <Tag.Tag color="var(--tag-green)">ВЕРНО</Tag.Tag> : "" 
             }
             { (props.status === "mistake") ? 
-                <Tag.Tag color="#E46161">НЕВЕРНО</Tag.Tag> : "" 
+                <Tag.Tag color="var(--tag-red)">НЕВЕРНО</Tag.Tag> : "" 
             }
             { (props.status === "skipped") ? 
-                <Tag.Tag color="#CFCFCF">ПРОПУЩЕНО</Tag.Tag> : "" 
+                <Tag.Tag color="var(--tag-grey)">ПРОПУЩЕНО</Tag.Tag> : "" 
             }
             { (props.status === "process") ?
-                <Tag.Tag color="#6495ED">В ПРОЦЕССЕ</Tag.Tag> : ""
+                <Tag.Tag color="var(--primary-color)">В ПРОЦЕССЕ</Tag.Tag> : ""
             }
         </div>
     );

@@ -6,8 +6,9 @@ export enum QuestionStatus {
 }
 
 export type Question = {
-    text: string;
-    comment: string;
-    correct_answer: string;
-    status: QuestionStatus;    
+    text?: string;
+    comment?: string;
+    correct_answer?: string;
+    status?: QuestionStatus;    
+    id?: number;
 }

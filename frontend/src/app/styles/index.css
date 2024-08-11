@@ -45,6 +45,9 @@
 
     --tag-green: #61E466;
     --tag-green-lighter: #d8ebd9;
+    --tag-red: #E46161;
+    --tag-red-lighter: #e7c2c2;
+    --tag-grey: #CFCFCF;
 }
 
 @media screen and (max-width: 1600px) {
