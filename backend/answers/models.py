@@ -3,7 +3,7 @@ from shared_library import strings
 import sqlalchemy
 import api
 import typing_extensions
-import passlib
+import questions
 
 class Answer(api.orm_base):
     '''User model
@@ -38,9 +38,20 @@ class Answer(api.orm_base):
         return session.get(Answer, answer_id)
     
     @staticmethod
-    def get_answers(from_id: int, to_id: int) -> list[typing_extensions.Self]:
+    def get_answers(
+        from_id: int, to_id: int, allow_private: bool,
+    ) -> list[typing_extensions.Self]:
         '''Returns answers with ids from from_id to to_id'''
         session = api.db.get_session()
+        if not allow_private:
+            return session.scalars(sqlalchemy.select(Answer).join(
+                questions.models.Question, 
+                questions.models.Question.id == Answer.question_id
+            ).where(
+                (Answer.id >= from_id) & (Answer.id <= to_id) &
+                (questions.models.Question.visibility == 
+                 questions.models.IsPublic.public)
+            )).all()
         return session.scalars(sqlalchemy.select(Answer).where(
             (Answer.id >= from_id) & (Answer.id <= to_id)
         )).all()

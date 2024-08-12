@@ -1,11 +1,8 @@
-from flask import Flask
-from flask_httpauth import HTTPTokenAuth
-import secrets
 from sqlalchemy import orm
 import sqlalchemy
 import api
 import typing_extensions
-
+import questions
 
 class Packages(api.orm_base):
     '''Packages model
@@ -30,8 +27,11 @@ class Packages(api.orm_base):
     description: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.Text,
     )
-    user_id: orm.Mapped[str] = orm.mapped_column(
+    creator_id: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.Text, nullable=False,
+    )
+    is_public: orm.Mapped[questions.models.IsPublic] = orm.mapped_column(
+        nullable=False,
     )
 
     @staticmethod
@@ -39,7 +39,6 @@ class Packages(api.orm_base):
         '''Returns package by id or None if it not found'''
         session = api.db.get_session()
         return session.get(Packages, package_id)
-
 
 class PackagesToQuestions(api.orm_base):
     '''Packages model
