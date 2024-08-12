@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactRedux from "react-redux";
+import * as ReactFormHook from "react-hook-form";
 
 import { IoIosSend } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
@@ -9,11 +10,17 @@ import "./questionPanel.css";
 import * as Kit from "../../../shared/kit/index"
 import * as Features from "../../../features/index";
 
+interface formValues {
+    answer: string;
+}
+
 export function QuestionPanel() {
     const [errors, setErrors] = React.useState<any>({});
 
-    const dispatch = ReactRedux.useDispatch<any>();
+    const { register, handleSubmit } = 
+        ReactFormHook.useForm<formValues>();
 
+    const dispatch = ReactRedux.useDispatch<any>();
     const questionData = ReactRedux.useSelector(
         (state: any) => state.questions
     );

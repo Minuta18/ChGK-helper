@@ -7,8 +7,9 @@ type InitialStateType = {
     questions: Array<Question>,
     is_current_question_loaded: boolean,
     is_current_answer_loaded: boolean,
-    is_current_question_answered: boolean,
     is_current_question_fetch_started: boolean,
+    is_current_answer_fetch_started: boolean,
+    checking_result: any,
     last_question_id: number;
     error: boolean|any,
     success: boolean,
@@ -18,8 +19,9 @@ const initialState: InitialStateType = {
     questions: [],
     is_current_answer_loaded: false,
     is_current_question_loaded: false,
-    is_current_question_answered: false,
     is_current_question_fetch_started: false,
+    is_current_answer_fetch_started: false,
+    checking_result: {},
     last_question_id: 0,
     error: false,
     success: false,
@@ -52,6 +54,22 @@ export const questionsSlice = redux.createSlice({
                 state.is_current_question_loaded = true;
                 state.error = action.payload;
                 state.success = false;
+            })
+            .addCase(Features.checkAnswer.pending, (state) => {
+                state.is_current_answer_fetch_started = true;
+                state.error = false;
+                state.success = false;
+            })
+            .addCase(Features.checkAnswer.rejected, (state, action) => {
+                state.is_current_answer_loaded = true;
+                state.error = action.payload;
+                state.success = false;
+            })
+            .addCase(Features.checkAnswer.fulfilled, (state, action) => {
+                state.is_current_answer_loaded = true;
+                state.error = false;
+                state.success = true;
+                state.checking_result = action.payload.answer_is_correct;
             })
     }
 })
