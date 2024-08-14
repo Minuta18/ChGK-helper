@@ -5,8 +5,8 @@ import typing_extensions
 import enum
 
 class IsPublic(enum.Enum):
-    private = 0
-    public = 1
+    private = 'private'
+    public = 'public'
 
 class Question(api.orm_base):
     '''Class for questions
