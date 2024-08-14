@@ -45,6 +45,34 @@ class PackagesToQuestions(api.orm_base):
         return session.scalars(sqlalchemy.select(PackagesToQuestions).where(
             (PackagesToQuestions.package_id == package_id)
         ).limit(limit).offset(offset)).all()
+    
+    @staticmethod
+    def add_question_to_package(question_id: int, package_id: int):
+        session = api.db.get_session()
+        inst = PackagesToQuestions(package_id, question_id)
+        session.add(inst)
+        session.commit()
+        return inst
+    
+    @staticmethod
+    def delete_all_by_question_id(question_id: int):
+        session = api.db.get_session()
+        session.scalars(sqlalchemy.delete(
+            PackagesToQuestions            
+        ).where(
+            PackagesToQuestions.question_id == question_id,
+        ))
+        session.commit()
+
+    @staticmethod
+    def delete_all_by_package_id(package_id: int):
+        session = api.db.get_session()
+        session.scalars(sqlalchemy.delete(
+            PackagesToQuestions            
+        ).where(
+            PackagesToQuestions.package_id == package_id,
+        ))
+        session.commit()
 
 class Packages(api.orm_base):
     '''Packages model
@@ -98,7 +126,10 @@ class Packages(api.orm_base):
     
     def set_is_tournament(self, is_tournament):
         '''Changes is_tournament'''
+        session = api.db.get_session()
         self.is_tournament == 1 if is_tournament else 0
+        session.add(self)
+        session.commit()
 
     def get_question_count(self):
         '''Returns the count of questions in the package.'''
@@ -164,16 +195,55 @@ class Packages(api.orm_base):
         hardness: PackageHardness = PackageHardness.custom, 
         is_public: questions.models.IsPublic = 
         questions.models.IsPublic.private, 
-    ):
+        is_tournament: bool = False,
+    ) -> typing.Self:
         session = api.db.get_session()
         try:
-            session.add(Packages(
+            package = Packages(
                 name=name,
                 description=description,
                 creator_id=creator_id,
                 hardness=hardness,
                 is_public=is_public,
-            ))
+            )
+
+            session.add(package)
             session.commit()
+
+            package.set_is_tournament(is_tournament)
+            return package
         except Exception as err:
             raise err
+
+    def edit_package(
+        self, name: str|None = None, description: str|None = None,
+        creator_id: int|None = None, hardness: PackageHardness|None = None,
+        is_public: questions.models.IsPublic|None = None,
+    ) -> typing.Self:
+        session = api.db.get_session()
+        
+        # I just need to use **kwargs
+        if name is not None:
+            self.name = name
+        if description is not None:
+            self.description = description
+        if creator_id is not None:
+            self.creator_id = creator_id
+        if hardness is not None:
+            self.hardness = hardness
+        if is_public is not None:
+            self.is_public = is_public
+
+        session.add(self)
+        session.commit()
+
+        return self
+
+    @staticmethod
+    def delete_package(package_id: int):
+        session = api.db.get_session()
+
+        package = Packages.get_package(package_id)
+
+        session.delete(package)
+        session.commit()

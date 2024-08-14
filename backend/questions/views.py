@@ -5,6 +5,7 @@ import api
 import flask
 import auth
 import users
+from packages import models as packages
 
 questions_router = flask.Blueprint('questions_urls', 'questions')
 
@@ -215,6 +216,8 @@ def delete_question(question_id: int):
         }), 401
 
     models.Question.delete_question(question_id)
+    packages.PackagesToQuestions.delete_all_by_question_id(question_id)
+
     return flask.jsonify({
         'error': False,
     }), 200
