@@ -17,7 +17,9 @@ app.register_blueprint(api.views.router, url_prefix='/api/v1')
 app.register_blueprint(users.views.users_router, url_prefix='/api/v1/users')
 app.register_blueprint(api.swagger_router, url_prefix='/api/v1/docs')
 app.register_blueprint(auth.views.auth_router, url_prefix='/api/v1/auth')
-app.register_blueprint(packages.views.users_router, url_prefix='/api/v1/packages')
+app.register_blueprint(
+    packages.views.packages_router, url_prefix='/api/v1/packages'
+)
 app.register_blueprint(
     questions.views.questions_router, url_prefix='/api/v1/questions'
 )

@@ -29,11 +29,14 @@ class PackagesToQuestions(api.orm_base):
     '''
     __tablename__ = 'packages_to_questions'
 
+    package_to_question_id: orm.Mapped[int] = orm.mapped_column(
+        sqlalchemy.Integer, nullable=False, primary_key=True,
+    )
     package_id: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer, nullable=False,
     )
     question_id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Text, nullable=False,
+        sqlalchemy.Integer, nullable=False,
     )
 
     @staticmethod
@@ -49,7 +52,10 @@ class PackagesToQuestions(api.orm_base):
     @staticmethod
     def add_question_to_package(question_id: int, package_id: int):
         session = api.db.get_session()
-        inst = PackagesToQuestions(package_id, question_id)
+        inst = PackagesToQuestions(
+            package_id=package_id,
+            question_id=question_id,
+        )
         session.add(inst)
         session.commit()
         return inst
@@ -95,7 +101,7 @@ class Packages(api.orm_base):
         sqlalchemy.String(255), nullable=False,
     )
     description: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.Text,
+        sqlalchemy.Text, nullable=True
     )
     creator_id: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.Text,
@@ -104,7 +110,7 @@ class Packages(api.orm_base):
         nullable=False,
     )
     hardness: orm.Mapped[PackageHardness] = orm.mapped_column(
-        nullable=False,
+        nullable=False, default=PackageHardness.custom,
     )
     created_at: orm.Mapped[datetime.datetime] = orm.mapped_column(
         sqlalchemy.DateTime(timezone=False), nullable=False, 
@@ -117,7 +123,7 @@ class Packages(api.orm_base):
     `set_is_tournament()` instead.
     '''
     is_tournament: orm.Mapped[int] = orm.mapped_column(
-        nullable=False
+        default=0, nullable=False, 
     )
 
     def get_is_tournament(self):
@@ -134,11 +140,11 @@ class Packages(api.orm_base):
     def get_question_count(self):
         '''Returns the count of questions in the package.'''
         session = api.db.get_session()
-        return session.scalars(session.select(
-            PackagesToQuestions, sqlalchemy.func.count()
-        ).where(
+        return session.scalars(sqlalchemy.select(
+            sqlalchemy.func.count()
+        ).select_from(PackagesToQuestions).where(
             (PackagesToQuestions.package_id == self.package_id)
-        )).all()
+        )).all()[0]
     
     def get_questions(self, limit: int = 20, offset: int = 0):
         '''Returns the list of questions in the package
@@ -151,9 +157,12 @@ class Packages(api.orm_base):
             offset (int): The number of questions for start
         '''
         session = api.db.get_session()
-        return session.scalars(session.select(questions.models.Question).join(
-            PackagesToQuestions, (
-                PackagesToQuestions.question_id == questions.models.Question.id
+        return session.scalars(sqlalchemy.select(
+                questions.models.Question
+            ).join(
+                PackagesToQuestions, (
+                    PackagesToQuestions.question_id == 
+                    questions.models.Question.id
             )).where(
                 PackagesToQuestions.package_id == self.package_id,
             ).limit(limit).offset(offset)
@@ -173,7 +182,7 @@ class Packages(api.orm_base):
     ) -> typing.Sequence[typing.Self]:
         '''I'm too tired to write this comment'''
         session = api.db.get_session()
-        return session.scalars(session.select(Packages).join(
+        return session.scalars(sqlalchemy.select(Packages).join(
             users.models.User, 
             (users.models.User.id == Packages.creator_id)            
         ).where(
@@ -197,6 +206,7 @@ class Packages(api.orm_base):
         questions.models.IsPublic.private, 
         is_tournament: bool = False,
     ) -> typing.Self:
+        '''Creates a new package'''
         session = api.db.get_session()
         try:
             package = Packages(

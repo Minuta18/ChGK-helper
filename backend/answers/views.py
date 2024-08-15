@@ -75,7 +75,6 @@ def get_answers():
     }), 200
 
 @answers_router.route('/', methods=['POST'])
-@auth.login_required(role='admin')
 def create_answer():
     '''Create answer.
 
@@ -163,7 +162,6 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/<number>', methods=['DELETE'])
-@auth.login_required(role='admin')
 def delete_answer(answer_id: int):
     '''Delete existful answer
 

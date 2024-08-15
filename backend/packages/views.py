@@ -1,6 +1,6 @@
 import flask
 import auth
-import models
+from packages import models
 import users
 import questions
 
@@ -29,14 +29,19 @@ def get_package(package_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'Incorrect page size',
-        })
+        }), 400
     if page < 1:
         return flask.jsonify({
             'error': True,
             'detail': 'Incorrect page',
-        })
+        }), 400
 
-    package = models.Package.get_package(package_id)
+    package = models.Packages.get_package(package_id)
+    if package is None:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Package not found',
+        }), 404
 
     needed_user = users.models.User.get_user(package.creator_id)
     real_user = auth.get_current_user()
@@ -46,17 +51,17 @@ def get_package(package_id: int):
                 return flask.jsonify({
                     'error': True,
                     'detail': 'Not enough permissions',
-                }, 403)            
-        if real_user is None:
+                }), 403            
+        if not real_user:
             return flask.jsonify({
                 'error': True,
                 'detail': 'Unauthorized',
-            }, 401)
+            }), 401
         if real_user.id != needed_user.id:
             return flask.jsonify({
                 'error': True,
                 'detail': 'Not enough permissions',
-            }, 403)
+            }), 403
 
     return {
         'error': False,
@@ -65,8 +70,8 @@ def get_package(package_id: int):
             'description': package.description,
             'creator_id': package.creator_id,
             'id': package.package_id,
-            'hardness': package.hardness.value(),
-            'visibility': package.visibility.value(),
+            'hardness': package.hardness.value,
+            'visibility': package.is_public.value,
             'is_tournament': package.get_is_tournament(),
             'question_count': package.get_question_count(),
         },
@@ -74,7 +79,7 @@ def get_package(package_id: int):
             'id': question.id,
             'text': question.text,
             'comment': question.comment,
-            'visibility': question.visibility.value(),
+            'visibility': question.is_public.value,
             'creator_id': question.creator_id,    
         } for question in package.get_questions(
             limit=page_size, offset=((page - 1) * page_size),
@@ -83,26 +88,26 @@ def get_package(package_id: int):
 
 @packages_router.route('/', methods=['GET', ])
 def get_packages():
-    page = flask.request.args.get('page')
+    page = flask.request.args.get('page', 1)
 
     if page < 1:
         return flask.jsonify({
             'error': True,
             'detail': 'incorrect page',
-        })
+        }), 400
 
-    page_size = flask.request.args.get('page_size')
+    page_size = flask.request.args.get('page_size', 20)
 
     if page_size < 1 or page_size > 100:
         return flask.jsonify({
             'error': True,
             'detail': 'incorrect page_size',
-        })
+        }), 400
 
-    by_user = flask.request.args.get('by_user')
-    sort_by = flask.request.args.get('sort_by')
-    reverse_sort = flask.request.args.get('reverse_sort')
-    reverse_sort = reverse_sort == 'True'
+    by_user = flask.request.args.get('by_user', None)
+    sort_by = flask.request.args.get('sort_by', 'id')
+    reverse_sort = flask.request.args.get('reverse_sort', 'false')
+    reverse_sort = reverse_sort == 'true'
 
     if sort_by == 'id':
         sort_by = models.SortBy.model_id
@@ -112,36 +117,36 @@ def get_packages():
         return flask.jsonify({
             'error': True,
             'detail': 'sort_by must be "id" or "time"',
-        }, 400)    
+        }), 400    
 
     user = auth.get_current_user()
-    if user is None:
+    if not user:
         if by_user is not None:
             return flask.jsonify({
                 'error': True,
                 'detail': 'Not enough permission',
-            }, 403)
+            }), 403
         else:
             user_packages = models.Packages.get_packages(
                 limit=page_size, offset=(page - 1) * page_size,
-                sort_by=sort_by, reverse_sort=reverse_sort,
+                sort_by=sort_by, reverse=reverse_sort,
             )
     else:
         if by_user is None:
             user_packages = models.Packages.get_packages(
                 limit=page_size, offset=(page - 1) * page_size,
-                sort_by=sort_by, reverse_sort=reverse_sort,
+                sort_by=sort_by, reverse=reverse_sort,
             )
         if by_user != user.id and \
-            user.permissions != users.models.UserPermissions.ADMIN:
+            user.permission != users.models.UserPermissions.ADMIN:
             return flask.jsonify({
                 'error': True,
                 'detail': 'Not enough permissions',
-            }, 403)
+            }), 403
         else:
             user_packages = models.Packages.get_packages(
                 limit=page_size, offset=(page - 1) * page_size,
-                sort_by=sort_by, reverse_sort=reverse_sort,
+                sort_by=sort_by, reverse=reverse_sort,
                 by_user=by_user,
             )
     return flask.jsonify({
@@ -152,33 +157,33 @@ def get_packages():
                 'description': package.description,
                 'creator_id': package.creator_id,
                 'id': package.package_id,
-                'hardness': package.hardness.value(),
-                'visibility': package.visibility.value(),
+                'hardness': package.hardness.value,
+                'visibility': package.is_public.value,
                 'is_tournament': package.get_is_tournament(),
                 'question_count': package.get_question_count(),
             }
         for package in user_packages],
     })
 
-@packages_router('/', methods=['POST', ])
+@packages_router.route('/', methods=['POST', ])
 def create_package():
     user = auth.get_current_user()
-    if user is None:
+    if not user:
         return flask.jsonify({
             'error': True,
             'detail': 'Not authenticated',
-        }, 401)    
+        }), 401    
     
     name = flask.request.json.get('name')
     description = flask.request.json.get('description')
-    hardness = flask.request.json.get('hardness')
-    is_tournament = flask.request.json.get('is_tournament')
+    hardness = flask.request.json.get('hardness', 'custom')
+    is_tournament = flask.request.json.get('is_tournament') == True
 
     if name is None:
         return flask.jsonify({
             'error': True,
             'detail': 'Param \"name\" is required',
-        }, 400)
+        }), 400
     
     try:
         hardness = models.PackageHardness(hardness)
@@ -186,12 +191,12 @@ def create_package():
         return flask.jsonify({
             'error': True,
             'detail': f'Unknown value \"{ hardness }\"',
-        })
+        }), 400
     
     package = models.Packages.create_package(
         user.id, name, description, hardness, 
         questions.models.IsPublic.public if 
-        user.permissions == users.models.UserPermissions.ADMIN 
+        user.permission == users.models.UserPermissions.ADMIN 
         else questions.models.IsPublic.private,
         is_tournament=is_tournament,
     )
@@ -201,10 +206,10 @@ def create_package():
         'package': {
             'title': package.name,
             'description': package.description,
-            'creator_id': package.creator_id,
+            'creator_id': int(package.creator_id),
             'id': package.package_id,
-            'hardness': package.hardness.value(),
-            'visibility': package.visibility.value(),
+            'hardness': package.hardness.value,
+            'visibility': package.is_public.value,
             'is_tournament': package.get_is_tournament(),
             'question_count': package.get_question_count(),
         }
@@ -217,7 +222,7 @@ def edit_package(package_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'package not found',
-        }, 404)
+        }), 404
 
     user = auth.get_current_user()
     if not auth.is_current_user_admin() and \
@@ -225,7 +230,7 @@ def edit_package(package_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'not enough permission',
-        }, 403)
+        }), 403
     
     package = package.edit_package(
         name = flask.request.json.get('name'),
@@ -240,14 +245,16 @@ def edit_package(package_id: int):
             'description': package.description,
             'creator_id': package.creator_id,
             'id': package.package_id,
-            'hardness': package.hardness.value(),
-            'visibility': package.visibility.value(),
+            'hardness': package.hardness.value,
+            'visibility': package.is_public.value,
             'is_tournament': package.get_is_tournament(),
             'question_count': package.get_question_count(),
         }
     })    
 
-@packages_router.route('/<int:package_id>/add/<int:question_id>')
+@packages_router.route(
+    '/<int:package_id>/add/<int:question_id>', methods=['PUT']
+)
 def add_question(package_id: int, question_id: int):
     package = models.Packages.get_package(package_id)
     question = questions.models.Question.get_question(question_id)
@@ -256,13 +263,13 @@ def add_question(package_id: int, question_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'Package not found',
-        }, 404)
+        }), 404
     
     if question is None:
         return flask.jsonify({
             'error': True,
             'detail': 'Question not found',
-        }, 404)
+        }), 404
     
     models.PackagesToQuestions.add_question_to_package(
         question.id,
@@ -271,7 +278,7 @@ def add_question(package_id: int, question_id: int):
 
     return flask.jsonify({
         'error': False,
-    }, 200)
+    }), 200
 
 @packages_router.route('/<int:package_id>', methods=['DELETE', ])
 def delete_package(package_id: int):
@@ -280,7 +287,7 @@ def delete_package(package_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'package not found',
-        }, 404)
+        }), 404
 
     user = auth.get_current_user()
     if not auth.is_current_user_admin() and \
@@ -288,11 +295,11 @@ def delete_package(package_id: int):
         return flask.jsonify({
             'error': True,
             'detail': 'not enough permission',
-        }, 403)
+        }), 403
         
     models.Packages.delete_package(package_id)
     models.PackagesToQuestions.delete_all_by_package_id(package_id)
 
     return flask.jsonify({
         'error': False,
-    }, 200)
+    }), 200
