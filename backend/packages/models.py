@@ -187,9 +187,9 @@ class Packages(api.orm_base):
             (users.models.User.id == Packages.creator_id)            
         ).where(
             ((Packages.creator_id == by_user) & (by_user is not None)) |
-            ((users.models.User.permission == 
+            (((users.models.User.permission == 
               users.models.UserPermissions.ADMIN) & (show_all_accessible)) |
-            (show_all)
+            ((Packages.package_id == Packages.package_id) & (show_all)))
         ).order_by(
             (sqlalchemy.asc if not reverse else sqlalchemy.desc)(
                 Packages.package_id if sort_by == SortBy.model_id 

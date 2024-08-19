@@ -135,9 +135,9 @@ def get_packages():
         if by_user is None:
             user_packages = models.Packages.get_packages(
                 limit=page_size, offset=(page - 1) * page_size,
-                sort_by=sort_by, reverse=reverse_sort,
+                sort_by=sort_by, reverse=reverse_sort, by_user=user.id,
             )
-        if by_user != user.id and \
+        elif by_user != user.id and \
             user.permission != users.models.UserPermissions.ADMIN:
             return flask.jsonify({
                 'error': True,
