@@ -303,3 +303,49 @@ def delete_package(package_id: int):
     return flask.jsonify({
         'error': False,
     }), 200
+
+@packages_router.route('/<int:package_id>/random')
+def random_package(package_id: int):
+    package = models.Packages.get_package(package_id)
+
+    if package is None:
+        return flask.jsonify({
+            'error': True,
+            'message': 'Package not found',
+        }), 404
+    
+    user = auth.get_current_user()
+    creator = users.models.User.get_user(user.id)
+    if creator is None:
+        if not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'message': 'Not enough permissions',
+            }), 403
+    if not creator.permission == models.users.models.UserPermissions.ADMIN:
+        if not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'message': 'Not enough permissions',
+            })
+    
+    question = package.get_random_question()
+    if user is None:
+        return flask.jsonify({
+            'error': True,
+            'message': 'No questions',
+        }), 404
+
+    return flask.jsonify({
+        'error': False,
+        'question': {
+            'id': question.id,
+            'text': question.text,
+            'comment': question.comment,
+            'visibility': 'public' if 
+                question.visibility == models.IsPublic.public else 'private',
+            'creator_id': question.creator_id,
+        }
+    }), 200
+
+    

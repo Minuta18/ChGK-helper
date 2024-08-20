@@ -248,6 +248,25 @@ class Packages(api.orm_base):
         session.commit()
 
         return self
+    
+    def get_random_question(self):
+        session = api.db.get_session()
+
+        question = session.scalars(
+            sqlalchemy.select(questions.models.Question).join(
+                PackagesToQuestions, PackagesToQuestions.question_id == 
+                questions.models.Question.id,
+            ).where(PackagesToQuestions.package_id == 
+                self.package_id        
+            ).order_by(
+                sqlalchemy.sql.expression.func.random()
+            ).limit(1)
+        ).all()
+
+        try:
+            return question[0]
+        except IndexError:
+            return None
 
     @staticmethod
     def delete_package(package_id: int):
