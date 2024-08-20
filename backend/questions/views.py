@@ -4,6 +4,8 @@ import sqlalchemy
 import api
 import flask
 import auth
+import users
+from packages import models as packages
 
 questions_router = flask.Blueprint('questions_urls', 'questions')
 
@@ -19,17 +21,31 @@ def get_question(question_id: int):
     '''
 
     question = models.Question.get_question(question_id)
+    
     if question is None:
         return flask.jsonify({
             'error': True,
             'detail': f'Could not find the question with id {question_id}',
         }), 404
+    
+    if not auth.is_current_user_admin() and \
+        question.visibility == models.IsPublic.private:
+        return flask.jsonify({
+            'error': True,
+            'detail': 'Not enough permissions',
+        }, 401)
+
+    creator = users.models.User.get_user(question.creator_id)
+    username = creator.nickname if creator is not None else 'deleted'
     return flask.jsonify({
         'error': False,
         'question': {
             'id': question_id,
             'text': question.text,
             'comment': question.comment,
+            'visibility': 'public' if 
+                question.visibility == models.IsPublic.public else 'private',
+            'creator_id': question.creator_id,
         }
     }), 200
 
@@ -62,19 +78,26 @@ def get_questions():
             'detail': f'Invalid page: {page}',
         }), 400
 
+    allow_private = True
+    if not auth.is_current_user_admin():
+        allow_private = False
+
     return flask.jsonify({
         'error': False,
         'questions': [{
             'id': question.id,
             'text': question.text,
             'comment': question.comment,
+            'visibility': 'public' if 
+                question.visibility == models.IsPublic.public else 'private',
+            'creator_id': question.creator_id,
         } for question in models.User.get_users(
-            from_id=((page - 1) * page_size + 1), to_id=(page * page_size)
+            from_id=((page - 1) * page_size + 1), to_id=(page * page_size), 
+            allow_private=allow_private,
         )]
     }), 200
 
 @questions_router.route('/', methods=['POST'])
-@auth.login_required(role='admin')
 def create_question():
     '''Creates new question.
 
@@ -95,7 +118,11 @@ def create_question():
     comment = flask.request.json.get('comment', '')
 
     try:
-        question = models.Question.add_question(text, comment)
+        question = models.Question.add_question(
+            text, comment, models.IsPublic.public if 
+                auth.is_current_user_admin() else models.IsPublic.private,
+            auth.get_current_user().id,
+        )
     except ValueError as e:
         return flask.jsonify({
             'error': True,
@@ -107,10 +134,12 @@ def create_question():
         'id': question.id,
         'text': question.text,
         'comment': question.comment,
+        'visibility': 'public' if 
+            question.visibility == models.IsPublic.public else 'private',
+        'creator_id': question.creator_id,
     }), 201
 
 @questions_router.route('/<int:question_id>', methods=['PUT'])
-@auth.login_required(role='admin')
 def edit_question(question_id: int):
     '''Edits question by given id.
 
@@ -131,6 +160,15 @@ def edit_question(question_id: int):
             'error': True,
             'detail': 'Question not found'
         }), 404
+    
+    if not (
+        auth.is_current_user_admin() or 
+        auth.get_current_user().id != question.creator_id
+    ):
+        return flask.jsonify({
+           'error': True,
+           'detail': 'Not enough permissions',
+        }), 401
 
     if text is not None:
         question.text = text
@@ -147,6 +185,9 @@ def edit_question(question_id: int):
             'id': question.id,
             'text': question.text,
             'comment': question.comment,
+            'visibility': 'public' if 
+                question.visibility == models.IsPublic.public else 'private',
+            'creator_id': question.creator_id,
         }), 200
     except sqlalchemy.exc.IntegrityError:
         session.rollback()
@@ -156,19 +197,30 @@ def edit_question(question_id: int):
         }), 400
 
 @questions_router.route('/<int:question_id>', methods=['DELETE'])
-@auth.login_required(role='admin')
 def delete_question(question_id: int):
     '''Deletes question by given id'''
-    try:
-        models.Question.delete_question(question_id)
-        return flask.jsonify({
-            'error': False,
-        }), 200
-    except ValueError:
+    question = models.Question.get_question(question_id)
+    if question is None:
         return flask.jsonify({
             'error': True,
-            'detail': 'Question not found',
+            'detail': 'Question not found'
         }), 404
+    
+    if not (
+        auth.is_current_user_admin() or 
+        auth.get_current_user().id != question.creator_id
+    ):
+        return flask.jsonify({
+           'error': True,
+           'detail': 'Not enough permissions',
+        }), 401
+
+    models.Question.delete_question(question_id)
+    packages.PackagesToQuestions.delete_all_by_question_id(question_id)
+
+    return flask.jsonify({
+        'error': False,
+    }), 200
 
 @questions_router.route('/random', methods=['GET'])
 def random_question():
@@ -188,5 +240,8 @@ def random_question():
         'error': False,
         'id': question.id,
         'text': question.text,
-        'comment': question.comment
+        'comment': question.comment,
+        'visibility': 'public' if 
+            question.visibility == models.IsPublic.public else 'private',
+        'creator_id': question.creator_id,
     }), 200

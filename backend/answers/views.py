@@ -3,8 +3,8 @@ from sqlalchemy import orm
 import sqlalchemy
 import api
 import flask
-import base64
 import auth
+import questions
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
@@ -17,13 +17,22 @@ def get_answer(answer_id: int):
     Args:
         answer_id(int): answer\'s id
     '''
-
     answer = models.Answer.get_answer(answer_id)
     if answer is None:
         return flask.jsonify({
             'error': True,
             'detail': f'Could not find answer with id {answer_id}',
         }), 404
+        
+    question = questions.models.Question.get_question(answer.question_id)
+    if question.visibility == questions.models.IsPublic.private:
+        if auth.get_current_user().id != question.creator_id and \
+            not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Not enough permissions',
+            }, 401)
+
     return flask.jsonify({
         'error': False,
         'id': answer_id,
@@ -45,10 +54,16 @@ def get_answers():
             Default value is 20.
     '''
 
-    page_size = flask.request.args.get('page_size', 20, type=int)
-    page = flask.request.args.get('page', 1, type=int)
+    start_answer_id = flask.request.args.get('start_answer_id', 20, type=int)
+    number_of_answers = flask.request.args.get(
+        'number_of_answers', 1, type=int
+    )
 
-    answers = models.Answer.get_answers(page, page_size)
+    allow_private = auth.is_current_user_admin()
+
+    answers = models.Answer.get_answers(
+        start_answer_id, start_answer_id + number_of_answers, allow_private
+    )
 
     return flask.jsonify({
         'error': False,
@@ -60,7 +75,6 @@ def get_answers():
     }), 200
 
 @answers_router.route('/', methods=['POST'])
-@auth.login_required(role='admin')
 def create_answer():
     '''Create answer.
 
@@ -74,6 +88,15 @@ def create_answer():
 
     question_id = flask.request.json.get('question_id', None)
     correct_answer = flask.request.json.get('correct_answer', None)
+
+    question = questions.models.Question.get_question(question_id)
+    if question.visibility == questions.models.IsPublic.private:
+        if auth.get_current_user().id != question.creator_id and \
+            not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Not enough permissions',
+            }, 401)
 
     if question_id is None or correct_answer is None:
         return flask.jsonify({
@@ -99,7 +122,6 @@ def create_answer():
     }), 201
 
 @answers_router.route('/<answer_id>', methods=['PUT'])
-@auth.login_required(role='admin')
 def update_answer(answer_id):
     '''Update existful answer
 
@@ -122,6 +144,15 @@ def update_answer(answer_id):
             'error': True,
             'message': str(e),
         }), 400
+    
+    question = questions.models.Question.get_question(answer.question_id)
+    if question.visibility == questions.models.IsPublic.private:
+        if auth.get_current_user().id != question.creator_id and \
+            not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Not enough permissions',
+            }, 401)
 
     return flask.jsonify({
         'error': False,
@@ -131,7 +162,6 @@ def update_answer(answer_id):
     }), 200
 
 @answers_router.route('/<number>', methods=['DELETE'])
-@auth.login_required(role='admin')
 def delete_answer(answer_id: int):
     '''Delete existful answer
 
@@ -140,19 +170,27 @@ def delete_answer(answer_id: int):
     '''
 
     try:
-        answer = models.Answer.delete_answer(answer_id)
+        answer = models.Answer.get_answer(answer_id)
     except ValueError as e:
         return flask.jsonify({
             'error': True,
             'message': str(e),
         }), 400
 
+    question = questions.models.Question.get_question(answer.question_id)
+    if question.visibility == questions.models.IsPublic.private:
+        if auth.get_current_user().id != question.creator_id and \
+            not auth.is_current_user_admin():
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Not enough permissions',
+            }, 401)
+
+    models.Answer.delete_answer(answer_id)
+
     return flask.jsonify({
         'error': False
     }), 200
-
-def remove_rubbish(answer: str) -> str:
-    return answer.replace('.', '').replace(',', '').lower().split()
 
 @answers_router.route('/<question_id>/check', methods=['POST'])
 def check_answer(question_id: int):
@@ -171,7 +209,9 @@ def check_answer(question_id: int):
 
     session = api.db.get_session()
     try:
-        correct_answer = session.scalars(sqlalchemy.select(models.Answer).where(
+        correct_answer = session.scalars(sqlalchemy.select(
+            models.Answer
+        ).where(
             models.Answer.question_id == question_id
         )).all()[0]
     except IndexError:
@@ -181,11 +221,6 @@ def check_answer(question_id: int):
         })
 
     answer = flask.request.json.get('answer', '')
-
-    # print(
-    #     'correct_answer \t' + remove_rubbish(correct_answer.correct_answer), 
-    #     'answer \t' + remove_rubbish(answer),
-    # )
 
     if correct_answer.correct_answer == answer:
         return flask.jsonify({
@@ -201,7 +236,7 @@ def check_answer(question_id: int):
 
 @answers_router.route('/get/<question_id>', methods=['GET'])
 def get_answer_by_question(question_id: int):
-    '''Gets answer by an questuion_id.
+    '''Gets answer by an question_id.
 
     Returns answer by given question_id (int).
     If user not found returns 404 error.

@@ -13,12 +13,12 @@ def create_token():
     Creates a token for a user by the user's nickname and password
 
     Args:
-        user_nickname(str): user's nickname
-        user_password(str): user's password
+        nickname(str): user's nickname
+        password(str): user's password
     '''
     
-    user_nickname = flask.request.json.get('user_nickname', '')
-    user_password = flask.request.json.get('user_password', '')
+    user_nickname = flask.request.json.get('nickname', '')
+    user_password = flask.request.json.get('password', '')
 
     user = users.models.User.get_user_by_nickname(user_nickname)
     if user is None:
