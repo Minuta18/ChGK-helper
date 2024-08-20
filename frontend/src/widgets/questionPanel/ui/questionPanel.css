@@ -38,3 +38,19 @@
     border-radius: 16px;
     background-color: var(--tag-green-lighter);
 }
+
+.neutral-container {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: var(--white);
+}
+
+.incorrect-container {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: var(--tag-red-lighter);
+}

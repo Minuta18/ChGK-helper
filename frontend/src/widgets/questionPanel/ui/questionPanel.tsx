@@ -31,6 +31,12 @@ export function QuestionPanel() {
         }
     }, [dispatch, questionData])
 
+    const processForm: ReactFormHook.SubmitHandler<
+        formValues
+    > = (data: any) => {
+        dispatch(Features.checkAnswer(data))
+    }
+
     React.useEffect(() => {
         if (questionData.error === "Unable to connect to the server") {
             setErrors({ unableToConnect: true });
@@ -88,30 +94,54 @@ export function QuestionPanel() {
                 :
                 <Kit.LoadingAnimation />
             }
-            <form className="question-panel__form">
+            <form className="question-panel__form" onSubmit={
+                handleSubmit(processForm)
+            }>
                 <div className="question-panel__form-group">
                     <Kit.TextInput 
                         required={ true } placeholder="Ваш ответ"
-                        name="question-field"
+                        name="question-field" reactFormStuff={
+                            register("answer")
+                        } disabled={
+                            questionData.is_current_answer_fetch_started
+                        }
                     />
-                    <Kit.IconButton>
+                    <Kit.IconButton disabled={ 
+                        questionData.is_current_answer_fetch_started 
+                    }>
                         <IoIosSend size={30} color="var(--white)" />
                     </Kit.IconButton>
                 </div>
             </form>
             <br></br>
-            {/* <div className="correct-container">
-                <div className="question-panel__auto-check">
-                    <Kit.Heading underlined={ false }>
-                        Автоматическая проверка
-                    </Kit.Heading>
-                    <Kit.Tag color="var(--tag-green)">ВЕРНО</Kit.Tag>
-                </div>
-                <p>
-                Nulla dapibus ligula nisi, in lobortis turpis feugiat in. Sed tortor mi, lobortis in lobortis non, convallis et lorem. Sed eleifend pellentesque neque nec feugiat. Sed auctor pretium consectetur. Sed porttitor eget nisi nec aliquet. Nam in magna eu nulla feugiat faucibus a non felis. In leo nisi, commodo quis diam a, varius semper massa. Aliquam erat volutpat. Aenean quam velit, consectetur quis mi nec, efficitur faucibus nibh. In laoreet nisi et maximus consectetur. 
-                </p>
-                {<Kit.LoadingAnimation />}
-            </div> */}
+            { questionData.is_current_answer_fetch_started ? (
+                questionData.is_current_answer_loaded ?
+                    <div className={ 
+                        questionData.checking_result ? 
+                        "correct-container" :
+                        "incorrect-container"
+                    }>
+                        <div className="question-panel__auto-check">
+                            <Kit.Heading underlined={ false }>
+                                Автоматическая проверка
+                            </Kit.Heading>
+                            <Kit.Tag color="var(--tag-green)">ВЕРНО</Kit.Tag>
+                        </div>
+                        <p>{ 
+                            questionData.questions[
+                                questionData.last_question_id
+                            ].comment 
+                        } </p>
+                        <b>Верный ответ: </b> {
+                            questionData.questions[
+                                questionData.last_question_id
+                            ].correct_answer    
+                        }
+                    </div> :
+                    <div className="neutral-container">
+                        {<Kit.LoadingAnimation />}
+                    </div>
+            ) : null }
             <div className="question-panel__buttons-panel">
                 <Kit.Button disabled={ true }>
                     Следующий вопрос

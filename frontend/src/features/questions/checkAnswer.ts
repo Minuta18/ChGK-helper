@@ -10,7 +10,7 @@ export type checkAnswerArgs = {
 }
 
 export const checkAnswer = redux.createAsyncThunk(
-    "questions/fetch-random-question",
+    "questions/check-answer",
     async (
         args: checkAnswerArgs,
         thunk: any,
