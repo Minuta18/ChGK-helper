@@ -16,7 +16,7 @@ export function Question(props: QuestionProps) {
             { (props.status === "ok") ? 
                 <Tag.Tag color="var(--tag-green)">ВЕРНО</Tag.Tag> : "" 
             }
-            { (props.status === "mistake") ? 
+            { (props.status === "failed") ? 
                 <Tag.Tag color="var(--tag-red)">НЕВЕРНО</Tag.Tag> : "" 
             }
             { (props.status === "skipped") ? 

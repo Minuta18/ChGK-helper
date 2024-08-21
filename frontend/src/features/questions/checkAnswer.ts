@@ -25,8 +25,8 @@ export const checkAnswer = redux.createAsyncThunk(
                     }
                 }
             ); 
-
-            return response;
+            
+            return response.data.answer_is_correct;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status == 500) {

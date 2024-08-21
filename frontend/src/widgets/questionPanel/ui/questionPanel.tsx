@@ -9,6 +9,7 @@ import "./questionPanel.css";
 
 import * as Kit from "../../../shared/kit/index"
 import * as Features from "../../../features/index";
+import * as Slice from "../../../processes/questions/questionsSlice";
 
 interface formValues {
     answer: string;
@@ -34,7 +35,12 @@ export function QuestionPanel() {
     const processForm: ReactFormHook.SubmitHandler<
         formValues
     > = (data: any) => {
-        dispatch(Features.checkAnswer(data))
+        dispatch(Features.checkAnswer({
+            question_id: questionData.questions[
+                questionData.selected_question
+            ].id,
+            answer: data.answer
+        }))
     }
 
     React.useEffect(() => {
@@ -48,10 +54,18 @@ export function QuestionPanel() {
     }, [questionData, setErrors])
 
     loadQuestion();
+    // React.useEffect(() => {
+    //     console.log(
+    //         'For some reason React requires console.log in useEffect to \n' +
+    //         'execute in ONLY ONE shitty time. I like JS </sarcasm> - Minuta18'
+    //     );
+    // }, [loadQuestion]);
 
     return (
         <div>
-            <Kit.Heading underlined={ false }>Вопрос #5</Kit.Heading>
+            <Kit.Heading underlined={ false }>Вопрос #{
+                questionData.selected_question + 1    
+            }</Kit.Heading>
             <Kit.IconElement className={ 
                 errors.internalServerError ? "" : "hidden"
             } icon={
@@ -89,7 +103,7 @@ export function QuestionPanel() {
             </Kit.IconElement>
             { questionData.is_current_question_loaded ?
                 <p>{ 
-                    questionData.questions[questionData.last_question_id].text 
+                    questionData.questions[questionData.selected_question].text
                 }</p>
                 :
                 <Kit.LoadingAnimation />
@@ -125,16 +139,23 @@ export function QuestionPanel() {
                             <Kit.Heading underlined={ false }>
                                 Автоматическая проверка
                             </Kit.Heading>
-                            <Kit.Tag color="var(--tag-green)">ВЕРНО</Kit.Tag>
+                            { questionData.checking_result ?
+                                <Kit.Tag color="var(--tag-green)">
+                                    ВЕРНО
+                                </Kit.Tag> :
+                                <Kit.Tag color="var(--tag-red)">
+                                    НЕВЕРНО
+                                </Kit.Tag>
+                            }
                         </div>
                         <p>{ 
                             questionData.questions[
-                                questionData.last_question_id
+                                questionData.selected_question
                             ].comment 
                         } </p>
                         <b>Верный ответ: </b> {
                             questionData.questions[
-                                questionData.last_question_id
+                                questionData.selected_question
                             ].correct_answer    
                         }
                     </div> :
@@ -143,7 +164,16 @@ export function QuestionPanel() {
                     </div>
             ) : null }
             <div className="question-panel__buttons-panel">
-                <Kit.Button disabled={ true }>
+                <Kit.Button onClickCallback={() => {
+                    console.debug("!");
+                    if (!questionData.is_current_answer_loaded) {
+                        dispatch(Slice.skipQuestion(
+                            questionData.selected_question
+                        ));
+                    }                    
+                    // dispatch(Features.fetchRandomQuestion({}));
+                    dispatch(Slice.newQuestion());
+                }}>
                     Следующий вопрос
                 </Kit.Button>
                 <Kit.FlatButton>
