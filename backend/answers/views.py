@@ -5,6 +5,7 @@ import api
 import flask
 import auth
 import questions
+import shared_library
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
@@ -18,6 +19,9 @@ def get_answer(answer_id: int):
         answer_id(int): answer\'s id
     '''
     answer = models.Answer.get_answer(answer_id)
+
+    print(answer)
+
     if answer is None:
         return flask.jsonify({
             'error': True,
@@ -222,7 +226,10 @@ def check_answer(question_id: int):
 
     answer = flask.request.json.get('answer', '')
 
-    if correct_answer.correct_answer == answer:
+    cleaner = shared_library.strings.TextCleaner()
+    cleaner.set_strategy(shared_library.strings.HardCleanStrategy())
+
+    if cleaner.clean(correct_answer.correct_answer) == cleaner.clean(answer): 
         return flask.jsonify({
             'error': False,
             'answer_is_correct': True
