@@ -54,12 +54,6 @@ export function QuestionPanel() {
     }, [questionData, setErrors])
 
     loadQuestion();
-    // React.useEffect(() => {
-    //     console.log(
-    //         'For some reason React requires console.log in useEffect to \n' +
-    //         'execute in ONLY ONE shitty time. I like JS </sarcasm> - Minuta18'
-    //     );
-    // }, [loadQuestion]);
 
     return (
         <div>

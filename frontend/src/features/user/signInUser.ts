@@ -15,16 +15,18 @@ export const signInUser = redux.createAsyncThunk(
         thunk: any,
     ) => {
         try {
-            const { data } = await axios.post(`${apiUrl}/auth/login`, {
-                "user_nickname": formValues.username,
-                "user_password": formValues.password,
+            const response = await axios.post(`${apiUrl}/auth/login`, {
+                "nickname": formValues.username,
+                "password": formValues.password,
             }, {
                 headers: {
                     "Content-Type": "application/json"
                 }
             })
 
-            return data.token;
+            console.log(response);
+
+            return response.data.token;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 console.log(error);
