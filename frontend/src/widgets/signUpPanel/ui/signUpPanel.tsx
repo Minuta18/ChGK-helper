@@ -30,8 +30,8 @@ export function SignUpPanel() {
         ReactFormHook.useForm<Features.SignUpFormValues>();
     const dispatch = ReactRedux.useDispatch<any>();
     const { userInfo, everythingLoaded2, error, success, loading,
-        userTokenFetchingStarted, 
-     } = 
+        userTokenFetchingStarted, settings, userToken
+    } = 
         ReactRedux.useSelector((state: any) => state.auth);
     const [formData, setFormData] = React.useState<any>({})
 
@@ -41,7 +41,7 @@ export function SignUpPanel() {
         setFormData(data);
         if (data.password !== data.passwordConfirmation) {
             setErrors({ passwordDoesNotMatch: true });
-        } else if (data.username.length < 2) {
+    } else if (data.username.length < 2) {
             setErrors({ nicknameTooShort: true });
         } else if (data.username.length > 200) {
             setErrors({ nicknameTooLong: true });
@@ -79,12 +79,19 @@ export function SignUpPanel() {
                 password: formData.password,
             }));
         }
-        if (everythingLoaded2 && success) {
+        if (!settings.loading_started && everythingLoaded2) {
+            dispatch(Features.fetchUserSettings({
+                user_id: userInfo.id,
+                token: userToken,
+            }));
+        }
+        if (everythingLoaded2 && success && settings.loaded) {
             navigate("/");
         }
     }, [
         error, success, userInfo, navigate, dispatch, loading, 
         everythingLoaded2, userTokenFetchingStarted, formData, 
+        settings, userToken, 
     ]);
 
     return (

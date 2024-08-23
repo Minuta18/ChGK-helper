@@ -30,6 +30,7 @@
     --black: #0e0e0e;
 
     --primary-color: #6495ED;
+    --primary-color-lighter: #c3d3f0;
     --primary-color-darker: #3d72d3;
 
     --red: #FD151B;
@@ -48,6 +49,7 @@
     --tag-red: #E46161;
     --tag-red-lighter: #e7c2c2;
     --tag-grey: #CFCFCF;
+    --tag-grey-lighter: #ececec;
 }
 
 @media screen and (max-width: 1600px) {

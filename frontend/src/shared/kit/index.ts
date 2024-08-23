@@ -20,4 +20,5 @@ export { Question } from "./question/index";
 export { RoundTag } from "./roundTag/index";
 export { Tag } from "./tag/index";
 export { TextInput } from "./textInput/index";
+export { Timer } from "./timer/index";
 export { Warning } from "./warning/index";

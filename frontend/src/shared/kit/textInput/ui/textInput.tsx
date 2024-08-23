@@ -13,7 +13,7 @@ interface TextInputProps {
 }
 
 export function TextInput({ 
-    disabled = false, required = false, placeholder, name, children,
+    disabled = false, required = false, placeholder, name = "fd", children,
     type = "text", reactFormStuff = null
 } : TextInputProps) {
     return (

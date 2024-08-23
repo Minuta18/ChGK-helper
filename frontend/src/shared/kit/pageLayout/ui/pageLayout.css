@@ -25,13 +25,13 @@
 
 .page__aside {
     display: block;
-    width: 30%;
+    width: 32%;
     padding: 16px;
 }
 
 .page__mainContent {
     display: block;
-    width: 70%;
+    width: 68%;
     padding: 16px;
 }
 

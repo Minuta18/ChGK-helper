@@ -11,6 +11,13 @@ interface InitialStateType {
     everythingLoaded: boolean;
     error: any;
     success: any;
+    settings: {
+        loading_started: boolean,
+        loaded: boolean,
+        time_for_reading: number,
+        time_for_solving: number,
+        time_for_typing: number,
+    },
 }
 
 const initialState: InitialStateType = {
@@ -23,6 +30,14 @@ const initialState: InitialStateType = {
     userToken: null,
     error: false,
     success: false,
+    settings: {
+        loading_started: false,
+        loaded: false,
+        time_for_reading: 60,
+        time_for_solving: 60,
+        time_for_typing: 60,
+    },
+    
 };
 
 export const authSlice = redux.createSlice({
@@ -91,6 +106,27 @@ export const authSlice = redux.createSlice({
                 state.loading = false;
                 state.success = false;
                 state.error = action.payload;
+            })
+            .addCase(Features.fetchUserSettings.pending, (state) => {
+                state.settings.loading_started = true;
+                state.error = false;
+                state.success = false;
+            })
+            .addCase(Features.fetchUserSettings.rejected, (state, action) => {
+                state.settings.loaded = true;
+                state.error = action.payload;
+                state.success = false;
+            })
+            .addCase(Features.fetchUserSettings.fulfilled, (state, action) => {
+                state.settings.loaded = true;
+                state.error = false;
+                state.success = true;
+                state.settings.time_for_reading = 
+                    action.payload.time_for_reading;
+                state.settings.time_for_solving = 
+                    action.payload.time_for_solving;
+                state.settings.time_for_typing = 
+                    action.payload.time_for_typing;
             })
     }
 });  

@@ -24,8 +24,6 @@ export const signInUser = redux.createAsyncThunk(
                 }
             })
 
-            console.log(response);
-
             return response.data.token;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {

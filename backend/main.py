@@ -52,6 +52,7 @@ if __name__ == '__main__':
     print(app.url_map)
 
     app.run(
-        host=os.environ.get('APP_HOST'),
+        # host=os.environ.get('APP_HOST'),
+        host='0.0.0.0',        
         port=os.environ.get('APP_PORT'),
     )

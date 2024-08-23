@@ -7,11 +7,12 @@ import "./question.css";
 interface QuestionProps {
     children?: React.ReactNode | React.ReactNode[];
     status?: string;    
+    onClick?: () => void;
 }
 
 export function Question(props: QuestionProps) {
     return (
-        <div className="question">
+        <div className="question" onClick={ props.onClick }>
             <b>{ props.children }</b>
             { (props.status === "ok") ? 
                 <Tag.Tag color="var(--tag-green)">ВЕРНО</Tag.Tag> : "" 

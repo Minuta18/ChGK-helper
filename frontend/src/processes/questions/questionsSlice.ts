@@ -13,7 +13,7 @@ type InitialStateType = {
     last_question_id: number;
     error: boolean|any,
     success: boolean,
-    selected_question: number|null;
+    selected_question: number|null,
 }
 
 const initialState: InitialStateType = {
@@ -48,6 +48,9 @@ export const questionsSlice = redux.createSlice({
             }
             state.error = false;
             state.success = false;
+        },
+        selectQuestion: (state, action) => {
+            state.selected_question = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -99,4 +102,5 @@ export const questionsSlice = redux.createSlice({
     }
 })
 
-export const { skipQuestion, newQuestion } = questionsSlice.actions;
+export const { skipQuestion, newQuestion, selectQuestion } = 
+    questionsSlice.actions;

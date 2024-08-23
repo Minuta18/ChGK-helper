@@ -3,6 +3,7 @@ import * as ReactRedux from "react-redux";
 
 import * as Kit from "../../../shared/kit/index";
 import * as Entities from "../../../entities/index";
+import * as QuestionSlice from "../../../processes/questions/questionsSlice";
 
 import "./questionList.css"
 
@@ -10,6 +11,7 @@ export function QuestionList() {
     const questionData = ReactRedux.useSelector(
         (state: any) => state.questions
     );
+    const dispatch = ReactRedux.useDispatch<any>();
 
     return (
         <>
@@ -68,7 +70,14 @@ export function QuestionList() {
                             }
                             return (
                                 <Kit.Container key={ ind }>
-                                    <Kit.Question status={ status }>
+                                    <Kit.Question 
+                                        status={ status } onClick={() => {
+                                            dispatch(
+                                                QuestionSlice.selectQuestion(
+                                                    ind
+                                                )
+                                            );
+                                        }}>
                                         Вопрос #{ ind + 1 }
                                     </Kit.Question>
                                 </Kit.Container>

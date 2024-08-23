@@ -24,7 +24,7 @@ export function SignInPanel() {
     const dispatch = ReactRedux.useDispatch<any>();
     // eslint-disable-next-line
     const { userToken, everythingLoaded, error, success, loading,
-        userInfoFetchingStarted, 
+        userInfoFetchingStarted, settings, userInfo
      } = 
         ReactRedux.useSelector((state: any) => state.auth);
     const navigate = ReactRouterDom.useNavigate();
@@ -54,15 +54,24 @@ export function SignInPanel() {
         } else if (success) {
             setErrors({});
         }
+
         if (userToken !== null && !userInfoFetchingStarted) {
             dispatch(Features.fetchUserInfo(userToken));
         }
-        if (everythingLoaded && success) {
+        if (!settings.loading_started && userInfo !== null) {
+            dispatch(Features.fetchUserSettings({
+                user_id: userInfo.id,
+                token: userToken,
+            }))
+        }
+
+        if (everythingLoaded && success && settings.loaded) {
             navigate("/");
         }
     }, [
         error, success, userToken, everythingLoaded, navigate, 
-        dispatch, loading, userInfoFetchingStarted
+        dispatch, loading, userInfoFetchingStarted, userInfo,
+        settings, 
     ]);
 
     return (

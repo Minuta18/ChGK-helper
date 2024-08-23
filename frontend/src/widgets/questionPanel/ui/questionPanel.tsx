@@ -10,6 +10,7 @@ import "./questionPanel.css";
 import * as Kit from "../../../shared/kit/index"
 import * as Features from "../../../features/index";
 import * as Slice from "../../../processes/questions/questionsSlice";
+import { QuestionStatus } from "../../../entities";
 
 interface formValues {
     answer: string;
@@ -17,13 +18,17 @@ interface formValues {
 
 export function QuestionPanel() {
     const [errors, setErrors] = React.useState<any>({});
-
+    const answer = React.useRef<any>({});
+    const [resetTimer, setResetTimer] = React.useState<boolean>(false);
     const { register, handleSubmit } = 
         ReactFormHook.useForm<formValues>();
 
     const dispatch = ReactRedux.useDispatch<any>();
     const questionData = ReactRedux.useSelector(
         (state: any) => state.questions
+    );
+    const userData = ReactRedux.useSelector(
+        (state: any) => state.auth
     );
 
     const loadQuestion = React.useCallback(() => {
@@ -35,6 +40,7 @@ export function QuestionPanel() {
     const processForm: ReactFormHook.SubmitHandler<
         formValues
     > = (data: any) => {
+        console.log("!")
         dispatch(Features.checkAnswer({
             question_id: questionData.questions[
                 questionData.selected_question
@@ -57,9 +63,30 @@ export function QuestionPanel() {
 
     return (
         <div>
-            <Kit.Heading underlined={ false }>Вопрос #{
-                questionData.selected_question + 1    
-            }</Kit.Heading>
+            <div className="question-panel__timer-container">
+                <Kit.Heading underlined={ false }>Вопрос #{
+                    questionData.selected_question + 1    
+                }</Kit.Heading>
+                <Kit.Timer
+                    length={ userData.settings.time_for_reading }
+                    length1={ userData.settings.time_for_solving }
+                    length2={ userData.settings.time_for_typing }
+                    on_end_func={ () => {} }
+                    on_end1_func={ () => {} }
+                    on_end2_func={() => {
+                        dispatch(Features.checkAnswer({
+                            question_id: questionData.questions[
+                                questionData.selected_question
+                            ].id,
+                            answer: answer.current !== null ? 
+                                answer.current["answer"].value : 
+                                ""
+                        }))
+                    }}
+                    reset_timer={ resetTimer }
+                    set_reset_timer={ setResetTimer }
+                />
+            </div>
             <Kit.IconElement className={ 
                 errors.internalServerError ? "" : "hidden"
             } icon={
@@ -104,7 +131,7 @@ export function QuestionPanel() {
             }
             <form className="question-panel__form" onSubmit={
                 handleSubmit(processForm)
-            }>
+            } ref={ answer }>
                 <div className="question-panel__form-group">
                     <Kit.TextInput 
                         required={ true } placeholder="Ваш ответ"
@@ -112,7 +139,7 @@ export function QuestionPanel() {
                             register("answer")
                         } disabled={
                             questionData.is_current_answer_fetch_started
-                        }
+                        } 
                     />
                     <Kit.IconButton disabled={ 
                         questionData.is_current_answer_fetch_started 
@@ -125,21 +152,50 @@ export function QuestionPanel() {
             { questionData.is_current_answer_fetch_started ? (
                 questionData.is_current_answer_loaded ?
                     <div className={ 
-                        questionData.checking_result ? 
+                        questionData.questions[
+                            questionData.selected_question
+                        ].status === QuestionStatus.SOLVED ? 
                         "correct-container" :
-                        "incorrect-container"
+                    (
+                        questionData.questions[
+                            questionData.selected_question
+                        ].status === QuestionStatus.FAILED ?
+                        "incorrect-container" :
+                    (
+                        questionData.questions[
+                            questionData.selected_question
+                        ].status === QuestionStatus.SKIPPED ?
+                        "skipped-container" : ""
+                    )
+                    )
                     }>
                         <div className="question-panel__auto-check">
                             <Kit.Heading underlined={ false }>
                                 Автоматическая проверка
                             </Kit.Heading>
-                            { questionData.checking_result ?
+                            {
+                                questionData.questions[
+                                    questionData.selected_question
+                                ].status === QuestionStatus.SOLVED ? 
                                 <Kit.Tag color="var(--tag-green)">
                                     ВЕРНО
-                                </Kit.Tag> :
+                                </Kit.Tag> : ""
+                            }
+                            {
+                                questionData.questions[
+                                    questionData.selected_question
+                                ].status === QuestionStatus.FAILED ? 
                                 <Kit.Tag color="var(--tag-red)">
-                                    НЕВЕРНО
-                                </Kit.Tag>
+                                    НЕ ВЕРНО
+                                </Kit.Tag> : ""
+                            }
+                            {
+                                questionData.questions[
+                                    questionData.selected_question
+                                ].status === QuestionStatus.SKIPPED ? 
+                                <Kit.Tag color="var(--tag-grey)">
+                                    ПРОПУЩЕНО
+                                </Kit.Tag> : ""
                             }
                         </div>
                         <p>{ 
@@ -159,7 +215,7 @@ export function QuestionPanel() {
             ) : null }
             <div className="question-panel__buttons-panel">
                 <Kit.Button onClickCallback={() => {
-                    console.debug("!");
+                    setResetTimer(true);
                     if (!questionData.is_current_answer_loaded) {
                         dispatch(Slice.skipQuestion(
                             questionData.selected_question
