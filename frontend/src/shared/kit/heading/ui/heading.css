@@ -1,0 +1,17 @@
+.heading-text {
+    font-size: 32px;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--black);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.underlined-text {
+    text-decoration-line: underline;
+    text-decoration-style: "solid";
+    text-decoration-color: var(--primary-color);
+    text-decoration-thickness: 5px;
+    text-underline-offset: 9px;
+}

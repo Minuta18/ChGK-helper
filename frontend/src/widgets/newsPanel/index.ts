@@ -1,0 +1,1 @@
+export { NewsPanel } from "./ui/newsPanel";

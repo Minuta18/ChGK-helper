@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+.pt-sans-regular {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.pt-sans-bold {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.pt-sans-regular-italic {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.pt-sans-bold-italic {
+    font-family: "PT Sans", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+}
+
+:root {
+    --white: #fff;
+    --background-color: #eee;
+    --black: #0e0e0e;
+
+    --primary-color: #6495ED;
+    --primary-color-lighter: #c3d3f0;
+    --primary-color-darker: #3d72d3;
+
+    --red: #FD151B;
+    --yellow: #FFB30F;
+    --green: #26C485;
+    --dark-blue: #01295F;
+
+    --default-border-radius: 16px;
+    --default-padding: 16px;
+    --default-transition-duration: 0.3s;
+
+    --useful-width: 50%;
+
+    --tag-green: #61E466;
+    --tag-green-lighter: #d8ebd9;
+    --tag-red: #E46161;
+    --tag-red-lighter: #e7c2c2;
+    --tag-grey: #CFCFCF;
+    --tag-grey-lighter: #ececec;
+}
+
+@media screen and (max-width: 1600px) {
+    :root {
+        --useful-width: 70%;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    :root {
+        --useful-width: 100%;
+    }
+}
+
+html {
+    min-height: 100%;
+    margin: 0px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-height: 100%;
+    margin: 0px;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    color: var(--black);
+}
+
+body > #root {
+    min-height: 100vh;
+    margin: 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--black);
+}
+
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+svg {
+    vertical-align: top;
+    line-height: 20px;
+    font-size: 20px;
+    align-items: center;
+}
+
+.link {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.danger-text {
+    color: var(--red);
+}
+
+.vertical-line {
+    height: 5px;
+    width: 100%;
+    display: block;
+    background-color: var(--background-color);
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+footer {
+    width: 100%;
+}
+
+header {
+    width: 100%;
+}
+
+.required-star {
+    display: inline-block;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--primary-color);
+    font-size: 30px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media screen and (max-width: 600px) {
+    .hide-on-phones {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 601px) {
+    .hide-on-pc {
+        display: none !important;
+    }
+}

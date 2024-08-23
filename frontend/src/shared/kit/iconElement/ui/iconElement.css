@@ -1,0 +1,11 @@
+.icon-element {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.icon-element__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

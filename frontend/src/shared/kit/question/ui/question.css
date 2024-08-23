@@ -1,0 +1,8 @@
+.question {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+}

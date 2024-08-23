@@ -210,8 +210,6 @@ class User(api.orm_base):
 
     @staticmethod
     def get_user_by_nickname(user_nickname: str):
-        if not User.validate_nickname(user_nickname):
-            raise ValueError('Invalid nickname')
         session = api.db.get_session()
         try:
             return session.scalars(

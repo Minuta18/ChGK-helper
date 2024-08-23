@@ -1,0 +1,46 @@
+.sign-in {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.sign-in__left-panel {
+    display: flex;
+    height: 100%; 
+    width: 30%;
+    background-image: url('../assets/form-background.svg');
+    border-radius: 16px 0px 0px 16px;
+}
+
+.sign-in__right-panel {
+    display: flex;
+    height: 100%;
+    width: 70%;
+    padding: 16px;
+}
+
+.sign-in__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+}
+
+.sign-in__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+    .sign-in__left-panel {
+        display: none;
+    }    
+
+    .sign-in__right-panel {
+        width: 100%;
+    }
+}

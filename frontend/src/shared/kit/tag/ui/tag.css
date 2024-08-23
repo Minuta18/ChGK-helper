@@ -1,0 +1,17 @@
+.tag {
+    font-size: 20px;
+    padding: 2px;
+    background-color: #61E466;
+    color: #fff;
+    border-radius: 16px;
+    width: fit-content;
+    padding-right: 8px;
+    padding-left: 8px;
+    display: block;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 4px;
+    overflow-wrap: anywhere;
+    height: fit-content;
+}

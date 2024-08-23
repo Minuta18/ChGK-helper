@@ -1,0 +1,26 @@
+.text-input {
+    display: block;
+    width: 100%;
+    padding: 4px;
+    border: none;
+    border-bottom: 2px solid var(--background-color);
+    transition-duration: var(--default-transition-duration);
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    font-family: "PT Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+}
+
+.text-input:hover {
+    transition-duration: var(--default-transition-duration);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.text-input:focus {
+    transition-duration: var(--default-transition-duration);
+    border-bottom: 2px solid var(--primary-color);
+}

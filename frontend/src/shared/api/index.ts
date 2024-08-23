@@ -1,0 +1,1 @@
+export { apiUrl } from "./client";

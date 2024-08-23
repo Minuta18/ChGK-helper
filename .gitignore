@@ -8,6 +8,8 @@ postgres-admin-service/data/
 __pycache__
 app.db
 
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
@@ -34,3 +36,8 @@ package-lock.json
 
 sus.html
 crawler.log
+
+.venv
+node_modules
+
+.pytest_cache
