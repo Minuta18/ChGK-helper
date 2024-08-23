@@ -13,4 +13,5 @@
     font-style: normal;
     letter-spacing: 4px;
     overflow-wrap: anywhere;
+    height: fit-content;
 }

@@ -1,0 +1,11 @@
+.timer {
+    font-weight: 700;
+}
+
+.timer-default {
+    color: var(--black);
+}
+
+.timer-red {
+    color: var(--tag-red);
+}

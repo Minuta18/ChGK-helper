@@ -3,23 +3,28 @@ import * as redux from "@reduxjs/toolkit";
 
 import { apiUrl } from "../../shared/api";
 
-export const fetchUserInfo = redux.createAsyncThunk(
-    "auth/fetch-user-info",
+export interface UserInfo {
+    user_id: number;
+    token: string;
+}
+
+export const fetchUserSettings = redux.createAsyncThunk(
+    "auth/fetch-user-settings",
     async (
-        token: string,
+        info: UserInfo,
         thunk: any,
     ) => {
         try {
-            const { data } = await axios.get(
-                `${ apiUrl }/users/self`, {
+            const response = await axios.get(
+                `${apiUrl}/users/settings/${info.user_id}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
+                        "Authorization": "Bearer " + info.token
                     }
                 }
             );
 
-            return data;
+            return response.data.user;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 401) {

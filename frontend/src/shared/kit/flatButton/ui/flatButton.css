@@ -23,4 +23,8 @@
     transition-duration: var(--default-transition-duration);
 }
 
-
+@media screen and (max-width: 601px) {
+    .flat-button {
+        width: 100%;
+    }
+}
