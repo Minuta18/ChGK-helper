@@ -179,7 +179,7 @@ class Packages(api.orm_base):
         limit: int = 20, offset: int = 20, by_user: int|None = None, 
         sort_by: SortBy = SortBy.created_time, reverse: bool = False,
         show_all_accessible: bool = True, show_all: bool = False,
-    ) -> typing.Sequence[typing.Self]:
+    ) -> typing.Sequence[typing_extensions.Self]:
         '''I'm too tired to write this comment'''
         session = api.db.get_session()
         return session.scalars(sqlalchemy.select(Packages).join(
@@ -205,7 +205,7 @@ class Packages(api.orm_base):
         is_public: questions.models.IsPublic = 
         questions.models.IsPublic.private, 
         is_tournament: bool = False,
-    ) -> typing.Self:
+    ) -> typing_extensions.Self:
         '''Creates a new package'''
         session = api.db.get_session()
         try:
@@ -229,7 +229,7 @@ class Packages(api.orm_base):
         self, name: str|None = None, description: str|None = None,
         creator_id: int|None = None, hardness: PackageHardness|None = None,
         is_public: questions.models.IsPublic|None = None,
-    ) -> typing.Self:
+    ) -> typing_extensions.Self:
         session = api.db.get_session()
         
         # I just need to use **kwargs

@@ -8,7 +8,7 @@ interface TimerProps {
     length2: number;
     on_end_func: any;
     on_end1_func: any;
-    on_end2_func: any;
+    on_end2_func: any; 
     reset_timer: boolean;
     set_reset_timer: any;
 }
