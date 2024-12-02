@@ -8,6 +8,8 @@ class BaseEndpoint(flask.views.View):
     Provides basic endpoint functionality
     '''
     
+    init_every_request = False
+    
     def dispatch_request(self, *args, **kwargs) -> typing.Any:
         '''Dispatches request'''
         req_method = flask.request.method
