@@ -2,9 +2,7 @@ import shared_library
 import flask_swagger_ui
 import re
 from api import views
-
-db = shared_library.DB_connection('sqlite:///./app.db')
-orm_base = db.get_base()
+from .orm import db, orm_base
 
 def load_regex(filename: str):
     with open(filename, 'r') as f:
