@@ -1,6 +1,7 @@
 import typing
+import abc
 
-class IModelController:
+class ModelController:
     '''Model interface
     
     Interface that specifies required methods for model. More specifically:
@@ -10,6 +11,7 @@ class IModelController:
      - create(**kwargs: Any): creates model 
     '''
     
+    @abc.abstractmethod
     def get_by_id(id: int) -> typing.Any:
         '''Returns model by id
         
@@ -27,6 +29,7 @@ class IModelController:
         
         raise NotImplementedError
     
+    @abc.abstractmethod
     def edit_by_id(id: int, **kwargs: typing.Any) -> typing.Any:
         '''Edits model by id
         
@@ -42,8 +45,10 @@ class IModelController:
         Returns:
             Any: found model
         '''
-        return NotImplementedError
+        
+        raise NotImplementedError
     
+    @abc.abstractmethod
     def delete_by_id(id: int) -> typing.Any:
         '''Deletes model by id
         
@@ -58,8 +63,10 @@ class IModelController:
         Returns:
             Any: deleted model
         '''
-        return NotImplementedError
+        
+        raise NotImplementedError
     
+    @abc.abstractmethod
     def create(**kwargs: typing.Any) -> typing.Any:
         '''Creates new model
         
@@ -71,4 +78,5 @@ class IModelController:
         Returns:
             Any: created models
         '''
-        return NotImplementedError
+        
+        raise NotImplementedError
