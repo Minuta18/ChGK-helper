@@ -1,7 +1,7 @@
 import typing
 import abc
 
-class ModelController:
+class ModelController(abc.ABC):
     '''Model interface
     
     Interface that specifies required methods for model. More specifically:
