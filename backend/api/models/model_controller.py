@@ -1,5 +1,6 @@
 import typing
 import abc
+from .types import id_type
 
 class ModelController(abc.ABC):
     '''Model interface
@@ -12,13 +13,13 @@ class ModelController(abc.ABC):
     '''
     
     @abc.abstractmethod
-    def get_by_id(id: int) -> typing.Any:
+    def get_by_id(id: id_type) -> typing.Any:
         '''Returns model by id
         
         Returns model by id. Raises `ModelNotFound` if there is no such model
         
         Args:
-            id (int): id of model to find
+            id (id_type): id of model to find
             
         Raises:
             ModelNotFound: raises `ModelNotFound` if there is no such model
@@ -30,14 +31,14 @@ class ModelController(abc.ABC):
         raise NotImplementedError
     
     @abc.abstractmethod
-    def edit_by_id(id: int, **kwargs: typing.Any) -> typing.Any:
+    def edit_by_id(id: id_type, **kwargs: typing.Any) -> typing.Any:
         '''Edits model by id
         
         Finds model by id and then edits it using kwargs (keys=new_value). 
         Returns edited model
         
         Args:
-            id (int): id of model to find
+            id (id_type): id of model to find
             
         Raises:
             ModelNotFound: raises `ModelNotFound` if there is no such model
@@ -49,13 +50,13 @@ class ModelController(abc.ABC):
         raise NotImplementedError
     
     @abc.abstractmethod
-    def delete_by_id(id: int) -> typing.Any:
+    def delete_by_id(id: id_type) -> typing.Any:
         '''Deletes model by id
         
         Deletes model by id. Raises `ModelNotFound` if there is no such model
         
         Args:
-            id (int): id of model to find
+            id (id_type): id of model to find
             
         Raises:
             ModelNotFound: raises `ModelNotFound` if there is no such model

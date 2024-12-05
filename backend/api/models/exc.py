@@ -5,3 +5,9 @@ class ModelNotFound(Exception):
     '''
     
     pass
+
+class ValidationError(Exception):
+    '''ValidationError exception
+    
+    Exception which can be used if validation failed
+    '''
