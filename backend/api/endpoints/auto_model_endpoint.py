@@ -4,21 +4,31 @@ import flask
 import typing
 
 class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
-    '''Auto endpoint
+    '''Auto model endpoint
     
-    API endpoint that generates responses automatically 
+    Automatic endpoint which is used for operations which requires to use 
+    existing model 
     '''
     
     def _model_as_dict(self, model: models.BaseModel) -> dict:
+        '''Represents model as dict
+        
+        Represents model as dicts, where keys equals keys from model and blah 
+        blah blah im too tired to write this comment
+        '''
+        
         return {key: getattr(model, key, None) 
             for key in self.visible_fields} 
         
     def _model_not_found_error(self, model_id: models.id_type|None = None):
+        '''Returns text of error if model not found'''
+        
         if model_id is None:
             return f'{self.model_name.title()} not found'
         return f'{self.model_name.title()} with id={model_id} not found'
 
     def _make_validation_error(self, error: models.exc.ValidationError) -> str:
+        '''Same as self._model_not_found_error()'''
         if len(error.args) < 1:
             return 'No detail provided'
         return error.args[0]
@@ -26,6 +36,8 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     def _filter_kwargs(
         self, kwargs: dict[str, typing.Any]
     ) -> dict[str, typing.Any]:
+        '''Returns only kwargs which are in self.visible_field'''
+        
         filtered = dict()
         for key, val in kwargs:
             if key in self.visible_fields:
