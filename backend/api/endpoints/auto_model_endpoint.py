@@ -31,7 +31,7 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         '''Same as self._model_not_found_error()'''
         if len(error.args) < 1:
             return 'No detail provided'
-        return error.args[0]
+        return str(error)
 
     def _filter_kwargs(
         self, kwargs: dict[str, typing.Any]
