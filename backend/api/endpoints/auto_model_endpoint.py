@@ -8,6 +8,8 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     
     Automatic endpoint which is used for operations which requires to use 
     existing model 
+    
+    TODO: we need to separate authorization logic somehow
     '''
     
     def _model_as_dict(self, model: models.BaseModel) -> dict:

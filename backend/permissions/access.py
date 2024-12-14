@@ -11,17 +11,16 @@ class Access(api.models.BaseModel):
     Model to store objects accesses
     '''
     
-    __tablename__ = 'accesses'
-    
-    id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer, primary_key=True, autoincrement=True,
-    )
+    __tablename__ = 'access'
+
     selector: orm.Mapped[access_type.AccessSelector] = orm.mapped_column(
         nullable=False,
     )
     special_user_id: orm.Mapped[int] = orm.mapped_column(
         nullable=True,
-    ) 
+    ),
+    special_user_status: orm.Mapped[access_type.UserStatus] = \
+        orm.mapped_column(nullable=True)
     acc_type: orm.Mapped[access_type.AccessType] = orm.mapped_column(
         nullable=False
     )

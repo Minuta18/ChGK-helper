@@ -9,4 +9,9 @@ class AccessType(enum.Enum):
 
 class AccessSelector(enum.Enum):
     EVERYBODY = 'EVERYBODY',
-    SPECIAL = 'SPECIAL'
+    SPECIAL = 'SPECIAL',
+
+class UserStatus(enum.Enum):
+    DEFAULT = 'DEFAULT',
+    ADMIN = 'ADMIN',
+    CREATOR = 'CREATOR',
