@@ -31,8 +31,10 @@ class AccessController:
         for obj in access_objects:
             if obj.acc_type == access_type.AccessSelector.EVERYBODY:
                 everyone_access = obj
-            elif obj.acc_type == access_type.AccessSelector.SPECIAL:
-                special_access = obj
+            if user is not None:
+                if obj.acc_type == access_type.AccessSelector.SPECIAL and \
+                    obj.special_user_id == user.id:
+                    special_access = obj
 
         if special_access is not None:
             return special_access.acc_type
