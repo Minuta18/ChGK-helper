@@ -8,9 +8,16 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     
     Automatic endpoint which is used for operations which requires to use 
     existing model 
-    
+
     TODO: we need to separate authorization logic somehow
+    
+    Attrs:
+        disable_auth (bool): if True, auth will be disabled
+        
+        + and please see models.ModelInfo
     '''
+    
+    disable_auth: bool = False
     
     def _model_as_dict(self, model: models.BaseModel) -> dict:
         '''Represents model as dict

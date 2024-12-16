@@ -1,6 +1,7 @@
 from sqlalchemy import orm
 import sqlalchemy
 import api
+import api.models
 from . import access_type
 
 MAX_TABLENAME_LENGTH = 24
@@ -16,7 +17,7 @@ class Access(api.models.BaseModel):
     selector: orm.Mapped[access_type.AccessSelector] = orm.mapped_column(
         nullable=False,
     )
-    special_user_id: orm.Mapped[int] = orm.mapped_column(
+    special_user_id: orm.Mapped[api.models.id_type] = orm.mapped_column(
         nullable=True,
     ),
     special_user_status: orm.Mapped[access_type.UserStatus] = \

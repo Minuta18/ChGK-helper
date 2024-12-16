@@ -59,7 +59,11 @@ class User(api.orm_base):
     time_for_typing: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer, nullable=False, default=20
     )
-
+    
+    tokens: orm.Mapped[list['Token']] = orm.relationship(
+        back_populates='parent'
+    )
+    
     def set_password(self, plain_password: str):
         '''Set password and hashes it'''
         self.hashed_password = crypt_context.hash(plain_password)
