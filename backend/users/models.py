@@ -5,7 +5,7 @@ import api
 import api.models
 import typing_extensions
 import re
-import enum
+import typing
 
 crypt_context = context.CryptContext(
     schemes=['bcrypt'], deprecated='auto',
@@ -201,6 +201,12 @@ class User(api.models.BaseModel):
                 session.rollback()
             else:
                 session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            session.rollback()
+            print(str(e))
+            raise api.models.exc.ValidationError(
+                'Nickname or email already used'
+            )
         except Exception as e:
             session.rollback()
             raise e
@@ -211,3 +217,40 @@ class User(api.models.BaseModel):
         session.commit()
         
         return self
+
+class UserController(api.models.ModelController):
+    def get_by_id(id: api.models.id_type) -> User:
+        session = api.db.get_session()
+        usr = session.get(User, id)
+        
+        if usr is None:
+            raise api.models.exc.ModelNotFound
+        return usr
+    
+    def create(**kwargs: typing.Any) -> User:
+        try:
+            email = kwargs['email']
+            password = kwargs['password']
+            nickname = kwargs['nickname']
+        except IndexError:
+            raise ValueError('Missed required param')
+        
+        try:
+            if not User.validate_email(email):
+                raise ValueError('Invalid email')
+            if not User.validate_password(password):
+                raise ValueError('Invalid password')
+            if not User.validate_nickname(nickname):
+                raise ValueError('Invalid nickname')
+            session = api.db.get_session()
+            user = User(
+                email=email,
+                nickname=nickname,
+            )
+            session.add(user)
+            session.commit()
+            user.set_password(password)
+            return user
+        except sqlalchemy.exc.IntegrityError:
+            session.rollback()
+            raise ValueError('Email or nickname already used')

@@ -17,11 +17,22 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     
     disable_auth: bool = False
     access_controller = permissions.AccessController()
-        
+    default_everyone_permission: permissions.AccessType = \
+        permissions.AccessType.DISALLOW
+
     def _is_user_unauthorized(self, method: str) -> bool:
         if method in self.login_required:
             return auth.AuthUser.get_current_user() is None
         return False
+    
+    def _model_as_dict(self, model: models.BaseModel) -> dict:
+        '''I've just pasted this method from AutoModelEndpoint. Isn't it code 
+        duplicating, is it?
+        Right? 
+        '''
+        
+        return {key: getattr(model, key, None) 
+            for key in self.visible_fields} 
     
     def post(self, **kwargs) -> flask.Response:
         try:
@@ -32,11 +43,17 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
                 **(flask.request.json[self.model_name]))
             
             self.access_controller.create_access_for_object(
-                model, auth.AuthUser.get_current_user(),
+                model, auth.AuthUser.get_current_user(), 
+                default_access_for_everyone=self.default_everyone_permission,
             )
+            
+            return flask.jsonify({
+                'error': False,
+                f'{self.model_name}': self._model_as_dict(model),
+            }), 201
         except models.exc.ValidationError as err:
             return flask.jsonify({
                 'error': True,
                 'detail': self._make_validation_error(err)
-            })
+            }), 400
 
