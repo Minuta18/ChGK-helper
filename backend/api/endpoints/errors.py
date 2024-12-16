@@ -39,28 +39,28 @@ class HttpError:
             'detail': self.detail,
         }), self.error_code
         
-class NotEnoughPermissionsError:
+class NotEnoughPermissionsError(HttpError):
     def __init__(self, 
-        detail: str | None = 'Not enough permission',
+        detail: str | None = 'Not enough permissions',
         error_code: int = 403,
     ):
         super().__init__(detail=detail, error_code=error_code)
         
-class UnauthorizedError:
+class UnauthorizedError(HttpError):
     def __init__(self, 
         detail: str | None = 'Unauthorized',
         error_code: int = 401,
     ):
         super().__init__(detail=detail, error_code=error_code)
         
-class NotFoundError:
+class NotFoundError(HttpError):
     def __init__(self, 
         detail: str | None = 'Item not found',
         error_code: int = 404,
     ):
         super().__init__(detail=detail, error_code=error_code)
         
-class MethodNotAllowedError:
+class MethodNotAllowedError(HttpError):
     def __init__(self, 
         detail: str | None = 'Method not allowed',
         error_code: int = 409,

@@ -1,7 +1,10 @@
 from . import api_endpoint
+from . import errors
 from api import models
 import flask
 import typing
+import permissions
+import auth
 
 class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     '''Auto model endpoint
@@ -18,6 +21,11 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     '''
     
     disable_auth: bool = False
+    access_controller = permissions.AccessController()
+    
+    def _get_access_level(self, obj: typing.Any) -> permissions.AccessType:
+        usr = auth.AuthUser.get_current_user()        
+        return self.access_controller.get_access_level(obj, usr)
     
     def _model_as_dict(self, model: models.BaseModel) -> dict:
         '''Represents model as dict
@@ -55,7 +63,11 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         
     def get(self, model_id, **kwargs) -> flask.Response:
         try:
-            model = self.model_controller.get_by_id()
+            model, status = self.model_controller.get_by_id(model_id)
+            
+            access = self._get_access_level(model)
+            if access == permissions.AccessType.DISALLOW:
+                return errors.NotEnoughPermissionsError().make_error()
                 
             return flask.jsonify({
                 'error': False,
@@ -67,12 +79,17 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
                 'detail': self._model_not_found_error(model_id),
             }), 404
                 
-    def patch(self, model_id: models.id_type, **kwargs) -> flask.Response:
-        try:            
-            model = self.model_controller.edit_by_id(
-                model_id,
-                **self._filter_kwargs(**(flask.request.json[self.model_name])) 
-            )
+    def put(self, model_id: models.id_type, **kwargs) -> flask.Response:
+        try:                
+            model, status = self.model_controller.get_by_id(model_id)
+
+            access = self._get_access_level(model)
+            if access == permissions.AccessType.DISALLOW or \
+                access == permissions.AccessType.ALLOW_VIEW:
+                return errors.NotEnoughPermissionsError().make_error()
+
+            model.edit(
+                **self._filter_kwargs(**(flask.request.json[self.model_name])))
             
             return flask.jsonify({
                 'error': False,
@@ -91,7 +108,18 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
             
     def delete(self, model_id: models.id_type, **kwargs) -> flask.Response:
         try:
-            model = self.model_controller.delete_by_id(model_id)
+            model, status = self.model_controller.get_by_id(model_id)
+            
+            access = self._get_access_level(model)
+            if access == permissions.AccessType.DISALLOW or \
+                access == permissions.AccessType.ALLOW_VIEW:
+                return errors.NotEnoughPermissionsError().make_error()
+            
+            if status != permissions.UserStatus.CREATOR:
+                return errors.NotEnoughPermissionsError().make_error()
+            
+            self.access_controller.delete_access_for_object(model)
+            model.delete()
             
             return flask.jsonify({
                 'error': False,

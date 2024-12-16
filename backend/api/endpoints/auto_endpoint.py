@@ -3,6 +3,7 @@ from . import errors
 from api import models
 import auth
 import flask
+import permissions
 
 class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     '''Auto endpoint
@@ -15,43 +16,27 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     '''
     
     disable_auth: bool = False
-    
-    login_required: list
-    
+    access_controller = permissions.AccessController()
+        
     def _is_user_unauthorized(self, method: str) -> bool:
         if method in self.login_required:
             return auth.AuthUser.get_current_user() is None
         return False
-    
-    def get(self, *args, **kwargs) -> flask.Response:
-        if self._is_user_unauthorized('get'):
-            return errors.UnauthorizedError().make_error() 
-        return super().get(*args, **kwargs)
     
     def post(self, **kwargs) -> flask.Response:
         try:
             if self._is_user_unauthorized('post'):
                 return errors.UnauthorizedError().make_error() 
             
-            self.model_controller.create(
+            model = self.model_controller.create(
                 **(flask.request.json[self.model_name]))
+            
+            self.access_controller.create_access_for_object(
+                model, auth.AuthUser.get_current_user(),
+            )
         except models.exc.ValidationError as err:
             return flask.jsonify({
                 'error': True,
                 'detail': self._make_validation_error(err)
             })
 
-    def put(self, *args, **kwargs) -> flask.Response:
-        if self._is_user_unauthorized('put'):
-            return errors.UnauthorizedError().make_error() 
-        return super().put(*args, **kwargs)
-    
-    def patch(self, *args, **kwargs) -> flask.Response:
-        if self._is_user_unauthorized('patch'):
-            return errors.UnauthorizedError().make_error() 
-        return super().patch(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs) -> flask.Response:
-        if self._is_user_unauthorized('delete'):
-            return errors.UnauthorizedError().make_error() 
-        return super().delete(*args, **kwargs)

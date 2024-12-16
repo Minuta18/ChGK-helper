@@ -14,6 +14,8 @@ class AccessController:
     IS THAT A MOTHERFUCKING TNO REFERENCE??????!!!!!!!!!!11!1!1!1!1!1!
     '''
     
+    # def why(self): return 'Yo, Speer!'
+    
     def get_access_level(self,
         object: models.BaseModel, 
         user: user_models.User | None = None,
@@ -36,12 +38,12 @@ class AccessController:
                     special_access = obj
 
         if special_access is not None:
-            return special_access.acc_type
+            return special_access.acc_type, special_access.special_user_status
         
         if everyone_access is not None:
-            return everyone_access.acc_type
+            return everyone_access.acc_type, access_type.UserStatus.DEFAULT
         
-        return access_type.AccessType.DISALLOW
+        return access_type.AccessType.DISALLOW, access_type.UserStatus.DEFAULT
     
     def create_access_for_object(self, 
         object: models.BaseModel, 
@@ -74,3 +76,20 @@ class AccessController:
         session.add(everybody_access)
         session.add(special_access)
         session.commit()
+        
+    def delete_access_for_object(self,
+        object: models.BaseModel, 
+    ) -> None:
+        '''Deletes access instances for object'''
+
+        session = db.get_session()
+        
+        access_objects = session.scalars(
+            sqlalchemy.select(access.Access).where(
+                (access.Access.model_id == object.id) &
+                (access.Access.model_name == object.__tablename__)
+            )
+        ).all()
+        
+        for obj in access_objects:
+            session.delete(obj)
