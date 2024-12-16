@@ -2,7 +2,7 @@ from sqlalchemy import orm
 from passlib import context
 import sqlalchemy
 import api
-import typing
+import api.models
 import typing_extensions
 import re
 import enum
@@ -13,14 +13,7 @@ crypt_context = context.CryptContext(
 
 EMAIL_REGEX = api.load_regex('users/email.re')
 
-class UserPermissions(enum.Enum):
-    DEFAULT = 0
-    ADMIN = 1
-
-def user_permissions_to_string(user_permissions: UserPermissions):
-    return 'admin' if user_permissions == UserPermissions.ADMIN else 'default'
-
-class User(api.orm_base):
+class User(api.models.BaseModel):
     '''User model
 
     Model for users of our app.
@@ -31,14 +24,11 @@ class User(api.orm_base):
         nickname (str): username
         hashed_password (str): password of the user
     '''
+    
     __tablename__ = 'users'
-
-    id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer, primary_key=True, autoincrement=True
-    )
+    
     email: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.String(255), nullable=False,
-        unique=True,
+        sqlalchemy.String(255), nullable=False, unique=True,
     )
     nickname: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=False,
@@ -46,9 +36,6 @@ class User(api.orm_base):
     )
     hashed_password: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String(255), nullable=True,
-    )
-    permission: orm.Mapped[UserPermissions] = orm.mapped_column(
-        nullable=False
     )
     time_for_reading: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer, nullable=False, default=20
@@ -65,11 +52,11 @@ class User(api.orm_base):
     )
     
     def set_password(self, plain_password: str):
-        '''Set password and hashes it'''
+        '''Set password and hashes it
+        IMPORTANT: it DO NOT commits to database! You need to use 
+        session.commit MANUALLY
+        '''
         self.hashed_password = crypt_context.hash(plain_password)
-        session = api.db.get_session()
-        session.add(self)
-        session.commit()
 
     def set_email(self, email: str):
         if not self.validate_email(email):
@@ -146,26 +133,6 @@ class User(api.orm_base):
         return True
 
     @staticmethod
-    def get_user(user_id: int) -> typing_extensions.Self | None:
-        '''Returns user by id or None if it not found'''
-        session = api.db.get_session()
-        # print('!', user_id, session.get(User, user_id))
-        return session.get(User, user_id)
-
-    @staticmethod
-    def get_users(
-        from_id: int = 1, to_id: int = 1
-    ) -> list[typing_extensions.Self]:
-        '''Returns users with ids from from_id to to_id'''
-        try:
-            session = api.db.get_session()
-            return session.scalars(sqlalchemy.select(User).where(
-                (User.id >= from_id) & (User.id <= to_id)
-            )).all()
-        except OverflowError:
-            raise OverflowError('Argument too big')
-
-    @staticmethod
     def create_user(
         email: str,
         nickname: str,
@@ -192,7 +159,6 @@ class User(api.orm_base):
             user = User(
                 email=email,
                 nickname=nickname,
-                permission=UserPermissions.DEFAULT
             )
             session.add(user)
             session.commit()
@@ -202,57 +168,46 @@ class User(api.orm_base):
             session.rollback()
             raise ValueError('Email or Nickname already used')
 
-    @staticmethod
-    def delete_user(user_id: int) -> None:
-        '''Deletes user by given id'''
-        user = User.get_user(user_id)
-        if user is None:
-            raise ValueError('User not found')
-        session = api.db.get_session()
-        session.delete(user)
-        session.commit()
+    def edit(self, **kwargs) -> None:
+        changeable_keys = ['time_for_reading', 'time_for_typing', 'time_for_solving']
+        for key in changeable_keys:
+            if kwargs.get(key) is not None:
+                setattr(self, key, kwargs.get(key))
+                
+        something_wrong = False
+        if kwargs.get('password') is not None:
+            if not self.validate_password(kwargs['password']):
+                something_wrong = True
+            else:
+                self.set_password(kwargs['password'])
+                
+        if kwargs.get('email') is not None:
+            if not self.validate_email(kwargs['email']):
+                something_wrong = True
+            else:
+                self.email = kwargs['email']
 
-    @staticmethod
-    def get_user_by_nickname(user_nickname: str):
-        session = api.db.get_session()
+        if kwargs.get('nickname') is not None:
+            if not self.validate_nickname(kwargs['nickname']):
+                something_wrong = True
+            else:
+                self.nickname = kwargs['nickname']
+                
         try:
-            return session.scalars(
-                sqlalchemy.select(User
-                        ).where(User.nickname == user_nickname)).all()[0]
-        except IndexError:
-            try: 
-                return session.scalars(
-                    sqlalchemy.select(User
-                        ).where(User.email == user_nickname)).all()[0]
-            except IndexError:
-                return None
+            session = api.db.get_session()
+            session.add(self)
+            
+            if something_wrong:
+                session.rollback()
+            else:
+                session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
 
-    def update_user_settings(self, time_for_reading: int = None,
-                             time_for_solving: int = None,
-                             time_for_typing: int = None):
-        '''change question_id and correct_answer of choosen answer'''
-        if time_for_reading is not None:
-            self.time_for_reading = time_for_reading
-        if time_for_solving is not None:
-            self.time_for_solving = time_for_solving
-        if time_for_typing is not None:
-            self.time_for_typing = time_for_typing
+    def delete(self) -> typing_extensions.Self:
         session = api.db.get_session()
-        session.add(self)
+        session.delete(self)
         session.commit()
+        
         return self
-
-    def check_for_admin(self):
-        if self.permission == UserPermissions.ADMIN:
-            return True
-        return False
-
-    def check_permissions(self, permission: str|UserPermissions) -> bool:
-        '''Returns True if user has enough permissions'''
-        perms = permission
-        if type(permission) is UserPermissions:
-            perms = user_permissions_to_string(permission)
-        our_perms = user_permissions_to_string(self.permission)
-        if our_perms == 'admin': return True
-        if perms == 'default' and our_perms == 'default': return True
-        return False

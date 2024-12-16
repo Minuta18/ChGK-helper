@@ -6,6 +6,8 @@ import typing_extensions
 
 class BaseModel(api_orm.orm_base):
     '''Model interface'''
+    
+    __abstract__ = True
 
     id: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer, primary_key=True, autoincrement=True,

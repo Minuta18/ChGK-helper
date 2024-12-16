@@ -29,7 +29,7 @@ class Token(api.orm_base):
         ), 
         nullable=False,
     )
-    user: orm.Mapped['models.User'] = orm.relationship(
+    user: orm.Mapped['User'] = orm.relationship(
         back_populates='children'
     )
     token: orm.Mapped[str] = orm.mapped_column(
