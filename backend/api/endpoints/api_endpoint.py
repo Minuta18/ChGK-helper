@@ -1,4 +1,5 @@
 from . import endpoint
+from . import errors
 import typing
 import flask
 
@@ -10,35 +11,20 @@ class BaseApiEndpoint(endpoint.BaseEndpoint):
     
     def get(self, *args, **kwargs) -> typing.Any:
         '''Serves GET request'''
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Method not allowed'
-        }), 409
+        return errors.MethodNotAllowedError().make_error()
     
     def post(self, *args, **kwargs) -> typing.Any:
         '''Serves POST request'''
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Method not allowed'
-        }), 409
+        return errors.MethodNotAllowedError().make_error()
     
     def delete(self, *args, **kwargs) -> typing.Any:
         '''Serves DELETE request'''
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Method not allowed'
-        }), 409
+        return errors.MethodNotAllowedError().make_error()
     
     def patch(self, *args, **kwargs) -> typing.Any:
         '''Serves PATCH request'''
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Method not allowed'
-        }), 409
+        return errors.MethodNotAllowedError().make_error()
     
     def put(self, *args, **kwargs) -> typing.Any:
         '''Serves PUT request'''
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Method not allowed'
-        }), 409
+        return errors.MethodNotAllowedError().make_error()

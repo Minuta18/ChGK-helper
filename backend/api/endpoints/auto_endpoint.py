@@ -1,6 +1,7 @@
 from . import api_endpoint
+from . import errors
 from api import models
-from permissions import
+import auth
 import flask
 
 class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
@@ -17,10 +18,20 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     
     login_required: list
     
+    def _is_user_unauthorized(self, method: str) -> bool:
+        if method in self.login_required:
+            return auth.AuthUser.get_current_user() is None
+        return False
+    
+    def get(self, *args, **kwargs) -> flask.Response:
+        if self._is_user_unauthorized('get'):
+            return errors.UnauthorizedError().make_error() 
+        return super().get(*args, **kwargs)
+    
     def post(self, **kwargs) -> flask.Response:
         try:
-            if 'post' in self.login_required:
-                pass
+            if self._is_user_unauthorized('post'):
+                return errors.UnauthorizedError().make_error() 
             
             self.model_controller.create(
                 **(flask.request.json[self.model_name]))
@@ -30,4 +41,17 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
                 'detail': self._make_validation_error(err)
             })
 
-
+    def put(self, *args, **kwargs) -> flask.Response:
+        if self._is_user_unauthorized('put'):
+            return errors.UnauthorizedError().make_error() 
+        return super().put(*args, **kwargs)
+    
+    def patch(self, *args, **kwargs) -> flask.Response:
+        if self._is_user_unauthorized('patch'):
+            return errors.UnauthorizedError().make_error() 
+        return super().patch(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs) -> flask.Response:
+        if self._is_user_unauthorized('delete'):
+            return errors.UnauthorizedError().make_error() 
+        return super().delete(*args, **kwargs)
