@@ -34,8 +34,9 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         blah blah im too tired to write this comment
         '''
         
-        return {key: getattr(model, key, None) 
+        result = {key: getattr(model, key, None) 
             for key in self.visible_fields} 
+        result['access_object_id'] = model.__tablename__ + ':' + model.id
         
     def _model_not_found_error(self, model_id: models.id_type|None = None):
         '''Returns text of error if model not found'''
@@ -133,3 +134,4 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
                 'error': True,
                 'detail': self._model_not_found_error(model_id),
             }), 404
+            

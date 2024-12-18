@@ -6,10 +6,16 @@ import permissions
 import api
 import flask
 import auth
+import typing
 
 users_router = flask.Blueprint('users_urls', 'users')
 
 class UsersService(api.endpoints.AutoModelEndpoint):
+    '''UsersService
+    
+    Implements GET, PUT, DELETE methods in /api/v1/users
+    '''
+
     model: type[api.models.BaseModel] = models.User
     model_name: str = 'User'
     model_controller: api.models.ModelController = models.UserController()
@@ -17,12 +23,12 @@ class UsersService(api.endpoints.AutoModelEndpoint):
     visible_fields: list[str] = ['id', 'email', 'nickname', 'time_for_reading',
         'time_for_solving', 'time_for_typing']
     
-users_router.add_url_rule(
-    '/<int:model_id>', 
-    view_func=UsersService.as_view('users_service')
-)
-
 class UsersStaticService(api.endpoints.AutoEndpoint):
+    '''UsersStaticService
+    
+    Implements POST method for /api/v1/users
+    '''
+    
     model: type[api.models.BaseModel] = models.User
     model_name: str = 'User'
     model_controller: api.models.ModelController = models.UserController()
@@ -47,93 +53,40 @@ class UsersStaticService(api.endpoints.AutoEndpoint):
                 'error': True,
                 'detail': self._make_validation_error(err),
             }), 400
+            
+    @staticmethod
+    def user_as_dict(user: models.User) -> dict[str, typing.Any]:
+        model = {key: getattr(model, key, None) 
+            for key in UsersStaticService.visible_fields} 
+        model['access_object_id'] = model.__tablename__ + ':' + model.id
+        return model
+
+class UserAuthService(api.endpoints.BaseApiEndpoint):
+    access_controller = permissions.AccessController()
+    aut_user_controller = auth.AuthUser()
     
-users_router.add_url_rule(
-    '/', 
-    view_func=UsersStaticService.as_view('users_static_service')
-)
-    
-@users_router.route('/self', methods=['GET', ])
-def get_user_by_token():
-    token = flask.request.headers.get('Authorization', '')
-    user = auth.models.Token.get_user_by_token(token.removeprefix('Bearer '))
-    if user is None:
-        # print(token, token.removeprefix('Bearer '), sep='\n')
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Incorrect token',
-        }), 401
-    else:
-        return flask.jsonify({
-            'error': False,
-            'id': user.id,
-            'email': user.email,
-            'nickname': user.nickname,
-        }), 200
-
-@users_router.route('/<int:user_id>/change_password', methods=['PUT'])
-def change_password(user_id: int):
-    '''Changes password of a user by an id.
-
-    Changes password of a user by an id. Needs old password.
-
-    Args:
-        old_password (str): Old password.
-        new_password (str): New password.
-    '''
-
-    if flask.request.headers.get('Content-Type') != 'application/json':
-        return flask.jsonify({
-            'error': True,
-            'message': 'Incorrect Content-Type header',
-        })
+    def get(self, **kwargs):
+        user = self.aut_user_controller.get_current_user()
         
-    user = auth.verify_token(
-        flask.request.headers.get('Authorization', '').removeprefix('Bearer ')
-    )
-    if user is None:
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Incorrect token'
-        }), 401
-    elif user.id != user_id:
-        return flask.jsonify({
-            'error': True,
-            'detail': 'Access denied'
-        }), 401
+        if user is None:
+            return flask.jsonify({
+                'error': True,
+                'detail': 'Incorrect token'
+            })
+        else:
+            return flask.jsonify({
+                'error': False,
+                'user': UsersStaticService.user_as_dict(user)
+            })
 
-    password = flask.request.json.get('old_password', '')
-    new_password = flask.request.json.get('new_password', '')
+users_router.add_url_rule(
+    '/<int:model_id>', view_func=UsersService.as_view('users_service')
+)
+   
+users_router.add_url_rule(
+    '/', view_func=UsersStaticService.as_view('users_static_service')
+)
 
-    try:
-        user = models.User.get_user(user_id)
-    except OverflowError:
-        return flask.jsonify({
-            'error': True,
-            'detail': f'Could not find user with id {user_id}',
-        }), 404
-
-    if user is None:
-        return flask.jsonify({
-            'error': True,
-            'message': 'User not found',
-        }), 404
-
-    # print(password, user.hashed_password, user.verify_password(password))
-    if not user.verify_password(password):
-        return flask.jsonify({
-            'error': True,
-            'message': 'Password is incorrect',
-        }), 401
-
-    if not models.User.validate_password(new_password):
-        return flask.jsonify({
-            'error': True,
-            'message': 'Invalid password',
-        }), 400
-
-    user.set_password(new_password)
-
-    return flask.jsonify({
-        'error': False,
-    }), 200
+users_router.add_url_rule(
+    '/self', view_func=UserAuthService.as_view('users_auth_service')
+)
