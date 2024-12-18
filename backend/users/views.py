@@ -80,13 +80,16 @@ class UserAuthService(api.endpoints.BaseApiEndpoint):
             })
 
 users_router.add_url_rule(
-    '/<int:model_id>', view_func=UsersService.as_view('users_service')
+    '/<int:model_id>', view_func=UsersService.as_view('users_service'),
+    methods=['GET', 'PUT', 'DELETE', ],
 )
    
 users_router.add_url_rule(
-    '/', view_func=UsersStaticService.as_view('users_static_service')
+    '/', view_func=UsersStaticService.as_view('users_static_service'),
+    methods=['POST', ],
 )
 
 users_router.add_url_rule(
-    '/self', view_func=UserAuthService.as_view('users_auth_service')
+    '/self', view_func=UserAuthService.as_view('users_auth_service'),
+    methods=['GET', ],
 )
