@@ -1,12 +1,13 @@
 from sqlalchemy import orm
 from shared_library import strings
+import api.models
 import sqlalchemy
 import api
 import typing_extensions
-import questions
+import typing
 
-class Answer(api.orm_base):
-    '''User model
+class Answer(api.models.BaseModel):
+    '''Answer model
     
     Model for users of our app.
     
@@ -15,14 +16,14 @@ class Answer(api.orm_base):
         question_id (int): id of the question
         correct_answer (str): correct answer
     '''
+    
     __tablename__ = 'answers'
     
-    id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer, primary_key=True, 
-        autoincrement=True, unique=True,
+    question_id: orm.Mapped[api.models.id_type] = orm.mapped_column(
+        sqlalchemy.ForeignKey('questions.id')
     )
-    question_id: orm.Mapped[str] = orm.mapped_column(
-        sqlalchemy.Integer, unique=True,
+    question: orm.Mapped['Question'] = orm.relationship(
+        back_populates='children'
     )
     correct_answer: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.Text, nullable=False,
@@ -31,36 +32,27 @@ class Answer(api.orm_base):
         sqlalchemy.Text, nullable=False,
     )
 
-    @staticmethod
-    def get_answer(answer_id: int) -> typing_extensions.Self|None:
-        '''Returns answer by id or None if it not found'''
-        session = api.db.get_session()
-        return session.get(Answer, answer_id)
-    
-    @staticmethod
-    def get_answers(
-        from_id: int, to_id: int, allow_private: bool,
-    ) -> list[typing_extensions.Self]:
-        '''Returns answers with ids from from_id to to_id'''
-        session = api.db.get_session()
-        if not allow_private:
-            return session.scalars(sqlalchemy.select(Answer).join(
-                questions.models.Question, 
-                questions.models.Question.id == Answer.question_id
-            ).where(
-                (Answer.id >= from_id) & (Answer.id <= to_id) &
-                (questions.models.Question.visibility == 
-                 questions.models.IsPublic.public)
-            )).all()
-        return session.scalars(sqlalchemy.select(Answer).where(
-            (Answer.id >= from_id) & (Answer.id <= to_id)
-        )).all()
+    def set_correct_answer(self, raw_correct_answer: str):
+        '''Parses raw correct answer and writes it to model
+        
+        IMPORTANT: This method DOES NOT commits the changes, so you need to do
+        it MANUALLY
+        '''
+        
+        self.raw_correct_answer = raw_correct_answer
+        cleaner = strings.TextCleaner()
+        cleaner.set_strategy(strings.HardCleanStrategy())
+        self.correct_answer = cleaner.clean(self.raw_correct_answer)
 
     @staticmethod
-    def create_answer(
-        question_id: int, correct_answer: str
+    def create(
+        question_id: int = ..., correct_answer: str = ...
     ) -> typing_extensions.Self:
         '''create new answer with question_ia and correct_answer'''
+        
+        assert question_id != ..., 'question_id is required'
+        assert correct_answer != ..., 'correct_answer is required'
+        
         session = api.db.get_session()
         cleaner = strings.TextCleaner()
         cleaner.set_strategy(strings.HardCleanStrategy())
@@ -73,31 +65,31 @@ class Answer(api.orm_base):
         session.commit()
         return answer
 
-    @staticmethod
-    def delete_answer(answer_id: int) -> None:
+    def delete_answer(self) -> typing_extensions.Self:
         '''delete existing answer by id'''
-        answer = Answer.get_answer(answer_id)
-        if answer is None:
-            raise ValueError('User not found')
         session = api.db.get_session()
-        session.delete(answer)
+        session.delete(self)
         session.commit()
+        
+        return self
 
-    def update_answer(
-        self, question_id: int = None, correct_answer: str = None
-    ):
-        '''change question_id and correct_answer of choosen answer'''
-        if question_id is not None:
-            self.question_id = question_id
-        if correct_answer is not None:
-            self.correct_answer = correct_answer
+    def edit(self, **kwargs: dict[str, typing.Any]) -> None:
+        '''Edits answer
+        
+        Edits answer as said in `kwargs`. (In fact there is only one param:
+        `correct_answer`.
+        '''
+        
+        new_text = kwargs.get('correct_answer')
+        if new_text is not None:
+            self.set_correct_answer(new_text)
+        
         session = api.db.get_session()
         session.add(self)
         session.commit()
-        return self
 
     def check_answer(self, answer: str):
-        '''check what answer is correct or not'''
+        '''check if answer is correct or not'''
         cleaner = strings.TextCleaner()
         cleaner.set_strategy(strings.HardCleanStrategy())
         checker = strings.AnswerChecker()
@@ -106,10 +98,19 @@ class Answer(api.orm_base):
             self.correct_answer,
         )
 
-    @staticmethod
-    def get_answer_by_question(
-        question_id: int
-    ) -> typing_extensions.Self|None:
-        '''Returns answer by question_id or None if it not found'''
+class AnswerController(api.models.ModelController):
+    '''AnswerController
+    
+    AnswerController is a class which implements TNO REFERENCE
+    '''
+    
+    def get_by_id(model_id: api.models.id_type) -> Answer:
         session = api.db.get_session()
-        return session.get(Answer, question_id)
+        ans = session.get(Answer, model_id)
+        
+        if ans is None:
+            raise api.models.exc.ModelNotFound
+        return ans
+    
+    def create(**kwargs: typing.Any) -> Answer:
+        return Answer.create(**kwargs)

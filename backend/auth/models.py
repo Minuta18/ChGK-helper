@@ -24,10 +24,7 @@ class Token(api.orm_base):
         sqlalchemy.Integer, primary_key=True, autoincrement=True,
     )
     user_id: orm.Mapped[api.models.id_type] = orm.mapped_column(
-        sqlalchemy.ForeignKey(
-            models.User.__tablename__ + '.id', 
-        ), 
-        nullable=False,
+        sqlalchemy.ForeignKey('users.id'), nullable=False,
     )
     user: orm.Mapped['User'] = orm.relationship(
         back_populates='children'

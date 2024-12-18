@@ -1,8 +1,9 @@
-import sqlalchemy
-import api
 from sqlalchemy import orm
 import typing_extensions
+import sqlalchemy
+import typing
 import enum
+import api
 
 class IsPublic(enum.Enum):
     private = 'private'
@@ -31,6 +32,10 @@ class Question(api.orm_base):
     )
     creator_id: orm.Mapped[int] = orm.mapped_column(
         sqlalchemy.Integer, nullable=False,
+    )
+    
+    answers: orm.Mapped[typing.List['Answer']] = orm.relationship(
+        back_populates='parent'
     )
 
     @staticmethod

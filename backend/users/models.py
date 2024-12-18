@@ -47,7 +47,7 @@ class User(api.models.BaseModel):
         sqlalchemy.Integer, nullable=False, default=20
     )
     
-    tokens: orm.Mapped[list['Token']] = orm.relationship(
+    tokens: orm.Mapped[typing.List['Token']] = orm.relationship(
         back_populates='parent'
     )
     
@@ -219,6 +219,12 @@ class User(api.models.BaseModel):
         return self
 
 class UserController(api.models.ModelController):
+    '''UserController
+    
+    UserController is a class which implements static methods like 
+    get user or create user
+    '''
+    
     def get_by_id(id: api.models.id_type) -> User:
         session = api.db.get_session()
         usr = session.get(User, id)
