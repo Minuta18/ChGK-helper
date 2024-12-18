@@ -2,7 +2,7 @@ from users import models
 from sqlalchemy import orm
 import api.models
 import api.endpoints
-import sqlalchemy
+import permissions
 import api
 import flask
 import auth
@@ -22,6 +22,37 @@ users_router.add_url_rule(
     view_func=UsersService.as_view('users_service')
 )
 
+class UsersStaticService(api.endpoints.AutoEndpoint):
+    model: type[api.models.BaseModel] = models.User
+    model_name: str = 'User'
+    model_controller: api.models.ModelController = models.UserController()
+    
+    visible_fields: list[str] = ['id', 'email', 'nickname', 'time_for_reading',
+        'time_for_solving', 'time_for_typing']
+    default_everyone_permission: permissions.AccessType = \
+        permissions.AccessType.ALLOW_VIEW
+    
+    def post(self, **kwargs) -> flask.Response:
+        try:
+            user = self.model_controller.create(
+                **(flask.request.json[self.model_name])
+            )
+            
+            self.access_controller.create_access_for_object(
+                user, user, 
+                default_access_for_everyone=self.default_everyone_permission,
+            )
+        except api.models.exc.ValidationError as err:
+            return flask.jsonify({
+                'error': True,
+                'detail': self._make_validation_error(err),
+            }), 400
+    
+users_router.add_url_rule(
+    '/', 
+    view_func=UsersStaticService.as_view('users_static_service')
+)
+    
 @users_router.route('/self', methods=['GET', ])
 def get_user_by_token():
     token = flask.request.headers.get('Authorization', '')
