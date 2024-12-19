@@ -1,3 +1,4 @@
+import api.endpoints
 from questions import models
 from sqlalchemy import orm, func
 import sqlalchemy
@@ -8,6 +9,49 @@ import users
 from packages import models as packages
 
 questions_router = flask.Blueprint('questions_urls', 'questions')
+
+class QuestionService(api.endpoints.AutoModelEndpoint):
+    '''Question Service
+    
+    Implements GET, PUT, DELETE methods in /api/v1/questions
+    '''
+    
+    model: type[api.models.BaseModel] = models.Question
+    model_name: str = 'Question'
+    model_controller: api.models.ModelController = models.QuestionController
+    
+    visible_fields: list[str] = ['id', 'creator_id', 'text', 'comment']
+
+class QuestionStaticService(api.endpoints.AutoEndpoint):
+    '''Question static service
+    
+    Implements POST method for /api/v1/questions
+    '''
+    
+    model: type[api.models.BaseModel] = models.Question
+    model_name: str = 'Question'
+    model_controller: api.models.ModelController = models.QuestionController
+    
+    visible_fields: list[str] = ['id', 'creator_id', 'text', 'comment']
+
+    def post(self, **kwargs) -> flask.Response:
+        try:
+            if self._id_user_unauthorized('post'):
+                return api.endpoints.errors.UnauthorizedError().make_error()
+            
+            user = auth.AuthUser.get_current_user()
+            create_kwargs = flask.request.json[self.model_name]
+            create_kwargs['creator_id'] = user.id
+            model = self.model_controller.create(**create_kwargs)
+            
+            self.access_controller.create_access_for_object(
+                model, user,
+            )
+        except api.models.exc.ValidationError as err:
+            return flask.jsonify({
+                'error': True,
+                'detail': self._make_validation_error(err),
+            }), 400
 
 @questions_router.route('/<int:question_id>', methods=['GET'])
 def get_question(question_id: int):
