@@ -100,12 +100,12 @@ questions_router.add_url_rule(
     methods=['GET', 'PUT', 'DELETE', ],
 )
 
-# questions_router.add_url_rule(
-#     '/<int:model_id>', view_func=QuestionService.as_view('questions_service'),
-#     methods=['GET', 'PUT', 'DELETE', ],
-# )
+questions_router.add_url_rule(
+    '/', view_func=QuestionStaticService.as_view('question_static_service'),
+    methods=['POST', ],
+)
 
-# questions_router.add_url_rule(
-#     '/<int:model_id>', view_func=QuestionService.as_view('questions_service'),
-#     methods=['GET', 'PUT', 'DELETE', ],
-# )
+questions_router.add_url_rule(
+    '/<int:model_id>/check', view_func=QuestionCheckingService.as_view(
+        'question_checking_service'), methods=['GET', ],
+)
