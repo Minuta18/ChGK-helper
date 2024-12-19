@@ -55,12 +55,12 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
             }), 400
 
 answers_router.add_url_rule(
-    '/<int:model_id>', view_func=AnswersService.as_view('users_service'),
+    '/<int:model_id>', view_func=AnswersService.as_view('answers_service'),
     methods=['GET', 'PUT', 'DELETE', ],
 )
    
 answers_router.add_url_rule(
-    '/', view_func=AnswersStaticService.as_view('users_static_service'),
+    '/', view_func=AnswersStaticService.as_view('answers_static_service'),
     methods=['POST', ],
 )
 
