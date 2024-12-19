@@ -1,13 +1,9 @@
 from answers import models
-from sqlalchemy import orm
 import api.models
 import api.endpoints
-import sqlalchemy
 import api
 import flask
 import auth
-import questions
-import shared_library
 
 answers_router = flask.Blueprint('answers_urls', 'answers')
 
@@ -57,6 +53,16 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
                 'error': True,
                 'detail': self._make_validation_error(err),
             }), 400
+
+answers_router.add_url_rule(
+    '/<int:model_id>', view_func=AnswersService.as_view('users_service'),
+    methods=['GET', 'PUT', 'DELETE', ],
+)
+   
+answers_router.add_url_rule(
+    '/', view_func=AnswersStaticService.as_view('users_static_service'),
+    methods=['POST', ],
+)
 
 '''
 TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
