@@ -1,4 +1,5 @@
 from answers import models
+from questions import models as question_models
 import api.models
 import api.endpoints
 import api
@@ -36,8 +37,9 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
             if self._is_user_unauthorized('post'):
                 return api.endpoints.errors.UnauthorizedError().make_error()
             
-            question = ... # TODO
-             
+            question_id = flask.request.json[self.model_name]['question_id']
+            question = question_models.QuestionController.get_by_id(question_id)
+            
             model = self.model_controller.create(
                 **(flask.request.json[self.model_name])
             )
@@ -45,8 +47,8 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
             user = auth.AuthUser.get_current_user()
             self.access_controller.create_access_for_object(
                 user, model, 
-                # TODO
-                default_access_for_everyone=self.default_everyone_permission,
+                default_access_for_everyone =
+                    self.access_controller.get_access_level(question, None),   
             )
             
             return flask.jsonify({
@@ -54,6 +56,11 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
                 'answer': self._model_as_dict(model),    
             }), 201
         except api.models.exc.ValidationError as err:
+            return flask.jsonify({
+                'error': True,
+                'detail': self._make_validation_error(err),
+            }), 400
+        except IndexError as err:
             return flask.jsonify({
                 'error': True,
                 'detail': self._make_validation_error(err),
@@ -68,12 +75,3 @@ answers_router.add_url_rule(
     '/', view_func=AnswersStaticService.as_view('answers_static_service'),
     methods=['POST', ],
 )
-
-'''
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-Make sure that I haven't forgotten to create 
-check_answer() method in question package and
-I have completed AnswersStaticService (this is 
-VERY important shit)
-TODO TODO TODO TODO  TODO TODO TODO TODO TODO TODO
-'''
