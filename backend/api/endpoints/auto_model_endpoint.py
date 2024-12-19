@@ -26,17 +26,6 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     def _get_access_level(self, obj: typing.Any) -> permissions.AccessType:
         usr = auth.AuthUser.get_current_user()        
         return self.access_controller.get_access_level(obj, usr)
-    
-    def _model_as_dict(self, model: models.BaseModel) -> dict:
-        '''Represents model as dict
-        
-        Represents model as dicts, where keys equals keys from model and blah 
-        blah blah im too tired to write this comment
-        '''
-        
-        result = {key: getattr(model, key, None) 
-            for key in self.visible_fields} 
-        result['access_object_id'] = model.__tablename__ + ':' + model.id
         
     def _model_not_found_error(self, model_id: models.id_type|None = None):
         '''Returns text of error if model not found'''

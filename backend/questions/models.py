@@ -15,6 +15,9 @@ class Question(api.models.BaseModel):
     
     __tablename__ = 'questions'
 
+    title: orm.Mapped[str] = orm.mapped_column(
+        sqlalchemy.String, nullable=True,
+    )
     text: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String, nullable=False,
     )
@@ -33,7 +36,7 @@ class Question(api.models.BaseModel):
     @staticmethod
     def create(
         text: str = ..., comment: str|None = None,
-        creator_id: int = ..., 
+        creator_id: int = ..., title: str|None = None,
     ) -> typing_extensions.Self:
         '''Adds a new question
 
@@ -52,14 +55,14 @@ class Question(api.models.BaseModel):
         session = api.db.get_session()
         question = Question(
             text=text, comment=comment, 
-            creator_id=creator_id, 
+            creator_id=creator_id, title=title,
         )
         session.add(question)
         session.commit()
         return question
     
     def edit(self, **kwargs: dict[str, typing.Any]) -> None:
-        changeable_keys = ['text', 'comment']
+        changeable_keys = ['text', 'comment', 'title']
         for key in changeable_keys:
             if kwargs.get(key) is not None:
                 setattr(self, key, kwargs.get(key))

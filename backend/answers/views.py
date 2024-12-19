@@ -48,6 +48,11 @@ class AnswersStaticService(api.endpoints.AutoEndpoint):
                 # TODO
                 default_access_for_everyone=self.default_everyone_permission,
             )
+            
+            return flask.jsonify({
+                'error': False,
+                'answer': self._model_as_dict(model),    
+            }), 201
         except api.models.exc.ValidationError as err:
             return flask.jsonify({
                 'error': True,

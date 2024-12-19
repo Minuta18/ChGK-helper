@@ -25,15 +25,6 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
             return auth.AuthUser.get_current_user() is None
         return False
     
-    def _model_as_dict(self, model: models.BaseModel) -> dict:
-        '''I've just pasted this method from AutoModelEndpoint. Isn't it code 
-        duplicating, is it?
-        Right? 
-        '''
-        
-        return {key: getattr(model, key, None) 
-            for key in self.visible_fields} 
-    
     def post(self, **kwargs) -> flask.Response:
         try:
             if self._is_user_unauthorized('post'):
