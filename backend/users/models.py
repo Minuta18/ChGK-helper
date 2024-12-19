@@ -50,6 +50,9 @@ class User(api.models.BaseModel):
     tokens: orm.Mapped[typing.List['Token']] = orm.relationship(
         back_populates='parent'
     )
+    questions: orm.Mapped[typing.List['Question']] = orm.relationship(
+        back_populates='parent'
+    )
     
     def set_password(self, plain_password: str):
         '''Set password and hashes it
@@ -131,42 +134,6 @@ class User(api.models.BaseModel):
             return False
         # TODO
         return True
-
-    @staticmethod
-    def create_user(
-        email: str,
-        nickname: str,
-        password: str
-    ) -> typing_extensions.Self:
-        '''Creates new user
-
-        Args:
-            email(str): The email of new user
-            nickname(str): The nickname of new user
-            password(str): The password of new user (plain)
-
-        Returns:
-            users.models.User: created user
-        '''
-        try:
-            if not User.validate_email(email):
-                raise ValueError('Invalid email')
-            if not User.validate_password(password):
-                raise ValueError('Invalid password')
-            if not User.validate_nickname(nickname):
-                raise ValueError('Invalid nickname')
-            session = api.db.get_session()
-            user = User(
-                email=email,
-                nickname=nickname,
-            )
-            session.add(user)
-            session.commit()
-            user.set_password(password)
-            return user
-        except sqlalchemy.exc.IntegrityError:
-            session.rollback()
-            raise ValueError('Email or Nickname already used')
 
     def edit(self, **kwargs) -> None:
         changeable_keys = ['time_for_reading', 'time_for_typing', 'time_for_solving']
