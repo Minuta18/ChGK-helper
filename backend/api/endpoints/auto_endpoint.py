@@ -12,7 +12,7 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     use existing model 
     
     literally same with auto_model_endpoint so visit it please 
-    (than go to jail)
+    (then go to jail)
     '''
     
     disable_auth: bool = False
@@ -26,7 +26,7 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         return False
     
     def _model_as_dict(self, model: models.BaseModel) -> dict:
-        '''I've just pasted this method from AutoModelEndpoint. Isn't it code 
+        '''I've just pasted this method from AutoModelEndpoint. This isn't code 
         duplicating, is it?
         Right? 
         '''
