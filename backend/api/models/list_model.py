@@ -1,5 +1,16 @@
 from . import BaseModel
+from sqlalchemy import orm
 import typing
+
+class BaseAssociation(BaseModel):
+    '''Base association 
+    
+    Base class used for association objects
+    '''
+    
+    __abstract__ = True
+    
+    parent_id: or
 
 class ListModel(BaseModel):
     '''List model

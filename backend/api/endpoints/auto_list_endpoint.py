@@ -1,4 +1,5 @@
 from . import errors
+from .api_endpoint import BaseApiEndpoint
 from .auto_model_endpoint import AutoModelEndpoint
 from api import models
 import permissions
@@ -37,7 +38,7 @@ class AutoListEndpoint(AutoModelEndpoint):
         response = self._model_as_dict(
             model, exclude_keys=[self.list_field, ])
         response[self.list_field_name] = [
-            self._model_as_dict(item) for item in items]
+            self._model_as_dict(item.child) for item in items]
         return response
     
     def get(self, model_id: models.id_type, **kwargs) -> flask.Response:
@@ -95,3 +96,18 @@ class AutoListEndpoint(AutoModelEndpoint):
                 'detail': str(err),
             }), 400
             
+class ListManagerEndpoint(BaseApiEndpoint, models.ModelInfo):
+    '''Auto list endpoint
+    
+    Sometimes you need to display a list of something. Here it is
+    '''
+    
+    disable_auth: bool = False
+    access_controller = permissions.AccessController()
+    list_field: str
+    list_field_name: str = 'items'
+    
+    def get(self, 
+        model_id: models.id_type, item_order_id: models.id_type
+    ) -> flask.Response:
+        
