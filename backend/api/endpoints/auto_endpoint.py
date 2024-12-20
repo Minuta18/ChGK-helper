@@ -12,7 +12,7 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
     use existing model 
     
     literally same with auto_model_endpoint so visit it please 
-    (than go to jail)
+    (then go to jail)
     '''
     
     disable_auth: bool = False
@@ -24,6 +24,15 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         if method in self.login_required:
             return auth.AuthUser.get_current_user() is None
         return False
+    
+    def _model_as_dict(self, model: models.BaseModel) -> dict:
+        '''I've just pasted this method from AutoModelEndpoint. This isn't code 
+        duplicating, is it?
+        Right? 
+        '''
+        
+        return {key: getattr(model, key, None) 
+            for key in self.visible_fields} 
     
     def post(self, **kwargs) -> flask.Response:
         try:
