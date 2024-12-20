@@ -27,29 +27,11 @@ class AutoModelEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
         usr = auth.AuthUser.get_current_user()        
         return self.access_controller.get_access_level(obj, usr)
         
-    def _model_not_found_error(self, model_id: models.id_type|None = None):
-        '''Returns text of error if model not found'''
-        
-        if model_id is None:
-            return f'{self.model_name.title()} not found'
-        return f'{self.model_name.title()} with id={model_id} not found'
-
     def _make_validation_error(self, error: models.exc.ValidationError) -> str:
         '''Same as self._model_not_found_error()'''
         if len(error.args) < 1:
             return 'No detail provided'
         return str(error)
-
-    def _filter_kwargs(
-        self, kwargs: dict[str, typing.Any]
-    ) -> dict[str, typing.Any]:
-        '''Returns only kwargs which are in self.visible_field'''
-        
-        filtered = dict()
-        for key, val in kwargs:
-            if key in self.visible_fields:
-                filtered[key] = val
-        return filtered
         
     def get(self, model_id, **kwargs) -> flask.Response:
         try:
