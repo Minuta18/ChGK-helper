@@ -27,4 +27,4 @@ class BaseModel(api_orm.orm_base):
         pass
     
     def delete(self) -> typing_extensions.Self:
-        return self
+        pass

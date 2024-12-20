@@ -48,6 +48,11 @@ class UsersStaticService(api.endpoints.AutoEndpoint):
                 user, user, 
                 default_access_for_everyone=self.default_everyone_permission,
             )
+            
+            return flask.jsonify({
+                'error': False,
+                'user': UsersStaticService.user_as_dict(user)
+            }), 201
         except api.models.exc.ValidationError as err:
             return flask.jsonify({
                 'error': True,

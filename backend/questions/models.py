@@ -2,24 +2,21 @@ from sqlalchemy import orm
 import typing_extensions
 import sqlalchemy
 import typing
-import enum
+import api.models
 import api
 
-class IsPublic(enum.Enum):
-    private = 'private'
-    public = 'public'
-
-class Question(api.orm_base):
+class Question(api.models.BaseModel):
     '''Class for questions
 
     Creates a table for questions that have an id, the question's text and
     optionally a comment
 
     '''
+    
     __tablename__ = 'questions'
 
-    id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer, primary_key=True, autoincrement=True
+    title: orm.Mapped[str] = orm.mapped_column(
+        sqlalchemy.String, nullable=True,
     )
     text: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String, nullable=False,
@@ -27,69 +24,78 @@ class Question(api.orm_base):
     comment: orm.Mapped[str] = orm.mapped_column(
         sqlalchemy.String,
     )
-    visibility: orm.Mapped[IsPublic] = orm.mapped_column(
-        nullable=False,
+    creator_id: orm.Mapped[api.models.id_type] = orm.mapped_column(
+        sqlalchemy.ForeignKey('users.id'), nullable=False,
     )
-    creator_id: orm.Mapped[int] = orm.mapped_column(
-        sqlalchemy.Integer, nullable=False,
-    )
+    creator: orm.Mapped['User'] = orm.relationship(back_populates='children')
     
     answers: orm.Mapped[typing.List['Answer']] = orm.relationship(
         back_populates='parent'
     )
 
     @staticmethod
-    def get_question(question_id: int) -> typing_extensions.Self | None:
-        '''Returns question by id or None if user not found'''
-        session = api.db.get_session()
-        return session.get(Question, question_id)
-
-    @staticmethod
-    def get_questions(
-        from_id: int = 1, to_id: int = 1, allow_private: bool = True,
-    ) -> list[typing_extensions.Self]:
-        '''Returns questions with ids from from_id to to_id'''
-        session = api.db.get_session()
-        if not allow_private:
-            return session.scalars(sqlalchemy.select(Question).where(
-                (Question.id >= from_id) & (Question.id <= to_id) 
-                & (Question.public == IsPublic.public)
-            )).all()
-        return session.scalars(sqlalchemy.select(Question).where(
-            (Question.id >= from_id) & (Question.id <= to_id)
-        )).all()
-
-    @staticmethod
-    def add_question(
-        text: str, comment: str, visibility: IsPublic,
-        creator_id: int, 
+    def create(
+        text: str = ..., comment: str|None = None,
+        creator_id: int = ..., title: str|None = None,
     ) -> typing_extensions.Self:
         '''Adds a new question
 
         Args:
             text(str): The question's text
             comment(str, optional): A comment to the question
+            creator_id(int)
 
         Returns:
             questions.models.Question: created question
         '''
+        
+        assert text != ..., 'text is required'
+        assert creator_id != ..., 'creator_id is required'
 
         session = api.db.get_session()
         question = Question(
-            text=text, comment=comment, visibility=visibility, 
-            creator_id=creator_id, 
+            text=text, comment=comment, 
+            creator_id=creator_id, title=title,
         )
         session.add(question)
         session.commit()
         return question
-
-    @staticmethod
-    def delete_question(question_id) -> typing_extensions.Self:
-        '''Deletes the question by given id'''
-
-        question = Question.get_question(question_id)
-        if question is None:
-            raise ValueError('Question not found')
+    
+    def edit(self, **kwargs: dict[str, typing.Any]) -> None:
+        changeable_keys = ['text', 'comment', 'title']
+        for key in changeable_keys:
+            if kwargs.get(key) is not None:
+                setattr(self, key, kwargs.get(key))
+        
         session = api.db.get_session()
-        session.delete(question)
+        session.add(self)
         session.commit()
+        
+    def delete(self) -> typing_extensions.Self:
+        session = api.db.get_session()
+        session.delete(self)
+        session.commit()
+        
+        return self
+
+class QuestionController(api.models.ModelController):
+    '''QuestionController
+    
+    во-вторых я НЕ буду работать с докером. Даже после твоих лекций, даже после
+    ПЯТИ(!!!) гугл-запросов я не понял нихрена кроме самой сути программы и 
+    того что такое dockerfile. 
+    И в-третьих блин, если то, что тебе надо дописать, не касается дальнейшего 
+    написания кода, то СДЕЛАЙ ПУЛ РЕКВЕСТ СТЕАПИЩЕ ТЫ НЕДОДЕЛАННОЕ
+    (c) Ivun Levkov
+    '''
+    
+    def get_by_id(model_id: api.models.id_type) -> Question:
+        session = api.db.get_session()
+        model = session.get(Question, model_id)
+        
+        if model is None:
+            raise api.models.exc.ModelNotFound
+        return model
+    
+    def create(**kwargs: typing.Any) -> Question:
+        return Question.create(**kwargs)

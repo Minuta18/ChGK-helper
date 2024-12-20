@@ -88,16 +88,6 @@ class Answer(api.models.BaseModel):
         session.add(self)
         session.commit()
 
-    def check_answer(self, answer: str):
-        '''check if answer is correct or not'''
-        cleaner = strings.TextCleaner()
-        cleaner.set_strategy(strings.HardCleanStrategy())
-        checker = strings.AnswerChecker()
-        return checker.check_answer(
-            cleaner.clean(answer),
-            self.correct_answer,
-        )
-
 class AnswerController(api.models.ModelController):
     '''AnswerController
     

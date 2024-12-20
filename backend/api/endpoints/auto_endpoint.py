@@ -56,4 +56,8 @@ class AutoEndpoint(api_endpoint.BaseApiEndpoint, models.ModelInfo):
                 'error': True,
                 'detail': self._make_validation_error(err)
             }), 400
-
+        except models.exc.IndexError as err:
+            return flask.jsonify({
+                'error': True,
+                'detail': str(err),
+            }), 400
