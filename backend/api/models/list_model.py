@@ -13,6 +13,7 @@ class ListModel(BaseModel):
         limit: int = 20,
         sort_by: str = 'time_updated',
         reverse: bool = False,
+        page: int = 1,
     ) -> list[typing.Any]:
         pass
     

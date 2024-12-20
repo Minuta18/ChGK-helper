@@ -10,7 +10,7 @@ class ModelInfo:
     
     def _model_as_dict(self, 
         model: BaseModel,
-        list_fields: list[str],
+        exclude_keys: list[str] = [],
     ) -> dict:
         '''I've just pasted this method from AutoModelEndpoint. Isn't it code 
         duplicating, is it?
@@ -24,19 +24,20 @@ class ModelInfo:
                 #     res.append(self._model_as_dict(model))
             return val
         
-        result = {key: parse_key(key, getattr(model, key, None)) 
-            for key in self.visible_fields if key} 
+        result = {key: getattr(model, key, None) 
+            for key in self.visible_fields if key not in exclude_keys} 
         result['access_object_id'] = model.__tablename__ + ':' + model.id
         return result
 
     def _filter_kwargs(
-        self, kwargs: dict[str, typing.Any]
+        self, kwargs: dict[str, typing.Any],
+        exclude_keys: list[str] = [],
     ) -> dict[str, typing.Any]:
         '''Returns only kwargs which are in self.visible_field'''
         
         filtered = dict()
         for key, val in kwargs:
-            if key in self.visible_fields:
+            if key in self.visible_fields and key not in exclude_keys:
                 filtered[key] = val
         return filtered
 
